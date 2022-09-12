@@ -6,25 +6,19 @@ namespace SnowflakeID
     public class Snowflake : IEquatable<Snowflake>, IComparable<Snowflake>, IComparable
     {
         #region constants
-        public const ulong MAXIMO_SECUENCIA = 4096ul; //poner en 0 cuando se lleque a este valor. seq % MAXIMO_SECUENCIA
-        public const ulong MAXIMO_TERMINAL = 1024ul; //cantidad. Rango: [0..1024) = [0..1023]
-        //public const ulong MAXIMO_HASH = 16ul;
+        public const ulong MaxSequence = 4096ul; //poner en 0 cuando se lleque a este valor. seq % MaxSequence
+        public const ulong MaxMachineId = 1024ul; //cantidad. Rango: [0..1024) = [0..1023]
+        
 
         private const int BITS_SHIFT_DATETIMEMILLIS = 22;
         private const int BITS_SHIFT_ESTACION = 12;
-        //private const int BITS_SHIFT_HASH = 8;
         private const int BITS_SHIFT_SECUENCIA = 0;
 
-        private const ulong MASK_DATETIMEMILLIS = 0b1111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1100_0000_0000_0000_0000_0000;
-        private const ulong MASK_ESTACION = 0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0011_1111_1111_0000_0000_0000;
-        //private const ulong MASK_APP_HASH       = 0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_1111_0000_0000;
-        private const ulong MASK_SECUENCIA = 0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_1111_1111_1111;
+        
         private const ulong MASK_DATETIMEMILLIS_RIGHT_ALIGNED
                                                 = 0b0000_0000_0000_0000_0000_0011_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111;
         private const ulong MASK_ESTACION_RIGHT_ALIGNED
                                                 = 0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0011_1111_1111;
-        //private const ulong MASK_APP_HASH_RIGHT_ALIGNED
-        //                                        = 0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_1111;
         private const ulong MASK_SECUENCIA_RIGHT_ALIGNED
                                                 = 0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_1111_1111_1111;
 
@@ -40,9 +34,9 @@ namespace SnowflakeID
             get => _MachineId;
             set
             {
-                if (value >= MAXIMO_TERMINAL)
+                if (value >= MaxMachineId)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(MachineId), $"{nameof(MachineId)} must be less than {MAXIMO_TERMINAL}. Got: {value}.");
+                    throw new ArgumentOutOfRangeException(nameof(MachineId), $"{nameof(MachineId)} must be less than {MaxMachineId}. Got: {value}.");
                 }
                 else
                 {
@@ -56,9 +50,9 @@ namespace SnowflakeID
             get => _Secuencia;
             set
             {
-                if (value >= MAXIMO_SECUENCIA)
+                if (value >= MaxSequence)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(Secuencia), $"{nameof(Secuencia)} must be less than {MAXIMO_SECUENCIA}. Got: {value}.");
+                    throw new ArgumentOutOfRangeException(nameof(Secuencia), $"{nameof(Secuencia)} must be less than {MaxSequence}. Got: {value}.");
                 }
                 else
                 {
@@ -108,7 +102,7 @@ namespace SnowflakeID
             }
             private set
             {
-                Id = ulong.Parse(value,CultureInfo.InvariantCulture);
+                Id = ulong.Parse(value, CultureInfo.InvariantCulture);
             }
         }
 
@@ -132,7 +126,7 @@ namespace SnowflakeID
 
         public override bool Equals(object obj)
         {
-            if (!(obj is Snowflake other)) { return false; }
+            if (obj is not Snowflake other) { return false; }
             return Equals(other);
         }
 
@@ -148,7 +142,7 @@ namespace SnowflakeID
 
         public int CompareTo(object obj)
         {
-            if (!(obj is Snowflake other)) { return 1; }
+            if (obj is not Snowflake other) { return 1; }
             return CompareTo(other);
         }
 
@@ -176,9 +170,10 @@ namespace SnowflakeID
 
         public static bool operator !=(Snowflake s1, Snowflake s2) => !(s1 == s2);
 
-        public static bool operator >(Snowflake s1, Snowflake s2) => (s1.CompareTo(s2) > 0);
-        public static bool operator <(Snowflake s1, Snowflake s2) => (s1.CompareTo(s2) < 0);
-        public static bool operator >=(Snowflake s1, Snowflake s2) => (s1.CompareTo(s2) >= 0);
-        public static bool operator <=(Snowflake s1, Snowflake s2) => (s1.CompareTo(s2) <= 0);
+        public static bool operator >(Snowflake s1, Snowflake s2) => (!(s1 is null ^ s2 is null) && s1.CompareTo(s2) > 0);
+
+        public static bool operator <(Snowflake s1, Snowflake s2) => (!(s1 is null ^ s2 is null) && s1.CompareTo(s2) < 0);
+        public static bool operator >=(Snowflake s1, Snowflake s2) => (!(s1 is null ^ s2 is null) && s1.CompareTo(s2) >= 0);
+        public static bool operator <=(Snowflake s1, Snowflake s2) => (!(s1 is null ^ s2 is null) && s1.CompareTo(s2) <= 0);
     }
 }

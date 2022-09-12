@@ -10,9 +10,9 @@ namespace SnowflakeID
         //private readonly ulong APP_HASH;
 
         private static ulong _Secuencia;
-        private static ulong Secuencia { get => _Secuencia; set => _Secuencia = value % Snowflake.MAXIMO_SECUENCIA; }
+        private static ulong Secuencia { get => _Secuencia; set => _Secuencia = value % Snowflake.MaxSequence; }
 
-        public static readonly object lockObject = new object();
+        public static readonly object lockObject = new();
         private static readonly DateTime epoch = new DateTime(1970, 1, 1);
 
         private static ulong ultimoTimestamp;
@@ -23,12 +23,11 @@ namespace SnowflakeID
 
         public SnowflakeIDGenerator(ulong machineId)
         {
-            if (machineId >= Snowflake.MAXIMO_TERMINAL)
+            if (machineId >= Snowflake.MaxMachineId)
             {
-                throw new ArgumentOutOfRangeException(nameof(machineId), $"{nameof(machineId)} must be less than {Snowflake.MAXIMO_TERMINAL}. Got: {machineId}.");
+                throw new ArgumentOutOfRangeException(nameof(machineId), $"{nameof(machineId)} must be less than {Snowflake.MaxMachineId}. Got: {machineId}.");
             }
             MACHINE_ID = machineId;
-            //APP_HASH = AppGen();
         }
         public SnowflakeIDGenerator(int machineId) : this((ulong)machineId)
         { }

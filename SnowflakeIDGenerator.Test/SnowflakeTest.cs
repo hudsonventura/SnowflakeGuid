@@ -60,10 +60,10 @@
         {
             DateTime d = DateTime.UtcNow;
             ulong timestampActualMillis = ((ulong)d.Subtract(epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
-            long i_ini = (long)(desc ? Snowflake.MAXIMO_TERMINAL - 1 : 0);
-            long i_fin = (long)(desc ? 0 : Snowflake.MAXIMO_TERMINAL - 1);
-            long j_ini = (long)(desc ? Snowflake.MAXIMO_SECUENCIA - 1 : 0);
-            long j_fin = (long)(desc ? 0 : Snowflake.MAXIMO_SECUENCIA - 1);
+            long i_ini = (long)(desc ? Snowflake.MaxMachineId - 1 : 0);
+            long i_fin = (long)(desc ? 0 : Snowflake.MaxMachineId - 1);
+            long j_ini = (long)(desc ? Snowflake.MaxSequence - 1 : 0);
+            long j_fin = (long)(desc ? 0 : Snowflake.MaxSequence - 1);
             long step = desc ? -10 : 10;
 
 
