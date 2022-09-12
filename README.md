@@ -1,15 +1,24 @@
 # Introduction 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project. 
+Generate unique identifiers based on Twitter's Snowflake ID
 
-# Getting Started
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
-1.	Installation process
-2.	Software dependencies
-3.	Latest releases
-4.	API references
+# Usage
+1. Instantiate class `SnowflakeIDGenerator`
+```c#
+SnowflakeIDGenerator gen = new SnowflakeIDGenerator(machineId) 
+```
+where `machineId` is the number of the system currently trying to get an id
 
-# Build and Test
-TODO: Describe and show how to build your code and run the tests. 
+2. Now you have 3 options:
+   1. Call `GetSnowflake` to get a `Snowflake` object
+   2. Call `GetCode` to get an Id in number (ulong) format
+   3. Call `GetCodeString` to get an Id in string format
+
+
+Additionally, the `SnowflakeIDGenerator` class methods can be used as static.
+IE.: `GetCode(machineId)` or `GetCodeString(machineId)`
+
+
+
 
 # Contribute
 TODO: Explain how other users and developers can contribute to make your code better. 

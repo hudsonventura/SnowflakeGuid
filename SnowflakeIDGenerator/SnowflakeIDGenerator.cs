@@ -65,25 +65,25 @@ namespace SnowflakeID
             }
         }
 
-        public ulong GetBarcode()
+        public ulong GetCode()
         {
             return GetSnowflake().Id;
         }
 
-        public string GetBarcodeString()
+        public string GetCodeString()
         {
             return GetSnowflake().Barcode;
         }
 
 
-        public static ulong GetBarcode(ulong machineId)
+        public static ulong GetCode(ulong machineId)
         {
-            return new SnowflakeIDGenerator(machineId).GetBarcode();
+            return new SnowflakeIDGenerator(machineId).GetCode();
         }
 
-        public static string GetBarcodeString(ulong machineId)
+        public static string GetCodeString(ulong machineId)
         {
-            return new SnowflakeIDGenerator(machineId).GetBarcodeString();
+            return new SnowflakeIDGenerator(machineId).GetCodeString();
         }
 
     }

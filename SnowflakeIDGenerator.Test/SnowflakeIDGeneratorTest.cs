@@ -21,7 +21,7 @@
             DateTime d1 = DateTimeUtcMillis();
             for (int i = 0; i < cant; i++)
             {
-                generados.Enqueue(SnowflakeIDGenerator.GetBarcodeString(idEstacion));
+                generados.Enqueue(SnowflakeIDGenerator.GetCodeString(idEstacion));
             }
             DateTime d2 = DateTimeUtcMillis();
             Snowflake anterior = Snowflake.Parse(generados.Dequeue());
@@ -66,7 +66,7 @@
                         List<string> l = new List<string>();
                         for (int j = 0; j < cantidadGenerados; j++)
                         {
-                            l.Add(SnowflakeIDGenerator.GetBarcodeString(idEstacion));
+                            l.Add(SnowflakeIDGenerator.GetCodeString(idEstacion));
                         }
                         return l;
                     }));
@@ -122,12 +122,12 @@
             {
                 Assert.Throws<ArgumentOutOfRangeException>(() =>
                 {
-                    SnowflakeIDGenerator.GetBarcode(idEstacion);
+                    SnowflakeIDGenerator.GetCode(idEstacion);
                 });
 
                 Assert.Throws<ArgumentOutOfRangeException>(() =>
                 {
-                    SnowflakeIDGenerator.GetBarcodeString(idEstacion);
+                    SnowflakeIDGenerator.GetCodeString(idEstacion);
                 });
 
                 Assert.Throws<ArgumentOutOfRangeException>(() =>

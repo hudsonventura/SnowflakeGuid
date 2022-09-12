@@ -20,7 +20,7 @@
         [TestCase(1023ul)]
         public void ParseTest(ulong idEstacion)
         {
-            string s = SnowflakeIDGenerator.GetBarcodeString(idEstacion);
+            string s = SnowflakeIDGenerator.GetCodeString(idEstacion);
             Snowflake ss = Snowflake.Parse(s);
             Assert.That(ss.Barcode, Is.EqualTo(s));
             Assert.Multiple(() =>
@@ -28,7 +28,7 @@
                 Assert.That(ss.MachineId, Is.EqualTo(idEstacion));
                 Assert.That(ss.Id, Is.EqualTo(ulong.Parse(s)));
             });
-            ulong b = SnowflakeIDGenerator.GetBarcode(idEstacion);
+            ulong b = SnowflakeIDGenerator.GetCode(idEstacion);
             Snowflake bs = Snowflake.Parse(b);
             Assert.Multiple(() =>
             {
