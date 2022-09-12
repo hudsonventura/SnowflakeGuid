@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnowflakeIDGenerator", "SnowflakeIDGenerator\SnowflakeIDGenerator.csproj", "{DBCAA729-09DE-4D2F-9124-998B097E98D3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnowflakeIDGenerator.Test", "SnowflakeIDGenerator.Test\SnowflakeIDGenerator.Test.csproj", "{08678513-A462-40BF-9195-BC6DE14DDE50}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DBCAA729-09DE-4D2F-9124-998B097E98D3} = {DBCAA729-09DE-4D2F-9124-998B097E98D3}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DBCAA729-09DE-4D2F-9124-998B097E98D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBCAA729-09DE-4D2F-9124-998B097E98D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBCAA729-09DE-4D2F-9124-998B097E98D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBCAA729-09DE-4D2F-9124-998B097E98D3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08678513-A462-40BF-9195-BC6DE14DDE50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08678513-A462-40BF-9195-BC6DE14DDE50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08678513-A462-40BF-9195-BC6DE14DDE50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08678513-A462-40BF-9195-BC6DE14DDE50}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BB960EAB-A96F-427E-95AD-CB22351DA611}
+	EndGlobalSection
+EndGlobal
