@@ -20,7 +20,11 @@ namespace SnowflakeID
 
 
 
-
+        /// <summary>
+        /// Creates a SnowflakeIDGenerator for a given machine number
+        /// </summary>
+        /// <param name="machineId">Machine number</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
         public SnowflakeIDGenerator(ulong machineId)
         {
             if (machineId >= Snowflake.MaxMachineId)
@@ -29,9 +33,20 @@ namespace SnowflakeID
             }
             MACHINE_ID = machineId;
         }
+
+        /// <summary>
+        /// Creates a SnowflakeIDGenerator for a given machine number
+        /// </summary>
+        /// <param name="machineId"></param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
         public SnowflakeIDGenerator(int machineId) : this((ulong)machineId)
         { }
 
+        /// <summary>
+        /// Gets next Snowflake id
+        /// </summary>
+        /// <returns><typeparamref cref="Snowflake">Snowflake</typeparamref></returns>
+        /// <typeparam cref="Snowflake"/>
         public Snowflake GetSnowflake()
         {
             lock (lockObject)
@@ -65,22 +80,44 @@ namespace SnowflakeID
             }
         }
 
+        /// <summary>
+        /// Gets next Snowlflake as number (<typeparamref cref="ulong">ulong</typeparamref>)
+        /// </summary>
+        /// <returns></returns>
+        /// <typeparam cref="ulong">ulong</typeparam>
         public ulong GetCode()
         {
             return GetSnowflake().Id;
         }
 
+        /// <summary>
+        /// Gets next Snowlflake as <typeparamref cref="string">string</typeparamref>
+        /// </summary>
+        /// <returns></returns>
+        /// <typeparam cref="string">string</typeparam>
         public string GetCodeString()
         {
             return GetSnowflake().Code;
         }
 
 
+        /// <summary>
+        /// Static method
+        /// Gets next Snowlflake as <typeparamref cref="ulong">ulong</typeparamref> for a given <typeparamref cref="ulong"><paramref name="machineId"/></typeparamref>
+        /// </summary>
+        /// <returns></returns>
+        /// <param name="machineId">Machine number</param>
+        /// <typeparam cref="ulong">ulong</typeparam>
         public static ulong GetCode(ulong machineId)
         {
             return new SnowflakeIDGenerator(machineId).GetCode();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="machineId"></param>
+        /// <returns></returns>
         public static string GetCodeString(ulong machineId)
         {
             return new SnowflakeIDGenerator(machineId).GetCodeString();

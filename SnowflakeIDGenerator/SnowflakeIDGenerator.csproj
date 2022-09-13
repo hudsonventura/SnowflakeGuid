@@ -3,8 +3,9 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard1.3;net40;net35;net20</TargetFrameworks>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-    <Title>Generate unique identifiers based on Twitter's Snowflake ID</Title>
-    <Description>Generate unique identifiers based on Twitter's Snowflake ID</Description>
+    <Title>Generate unique identifiers based on Twitter's Snowflake ID. Parse a Snowflake to get information about it's creation.</Title>
+    <Description>Generate unique identifiers based on Twitter's Snowflake ID.
+Parse a Snowflake to get information about it's creation.</Description>
     <Authors>Federico Seckel</Authors>
     <PackageTags>Id;Snowflake;SnowflakeId;Snowflake Id;</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>

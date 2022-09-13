@@ -80,7 +80,6 @@ namespace SnowflakeID
                 ulong timestamp = ((ulong)UtcDateTime.Subtract(epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
                 return ((timestamp & MASK_DATETIMEMILLIS_RIGHT_ALIGNED) << BITS_SHIFT_DATETIMEMILLIS)
                                         | ((MachineId & MASK_ESTACION_RIGHT_ALIGNED) << BITS_SHIFT_ESTACION)
-                                        //| ((APP_HASH & MASK_APP_HASH_RIGHT_ALIGNED) << BITS_SHIFT_HASH)
                                         | ((Sequence & MASK_SECUENCIA_RIGHT_ALIGNED) << BITS_SHIFT_SECUENCIA);
             }
             private set

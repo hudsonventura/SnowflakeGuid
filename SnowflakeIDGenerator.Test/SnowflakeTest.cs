@@ -22,9 +22,9 @@
         {
             string s = SnowflakeIDGenerator.GetCodeString(machineId);
             Snowflake ss = Snowflake.Parse(s);
-            Assert.That(ss.Code, Is.EqualTo(s));
             Assert.Multiple(() =>
             {
+                Assert.That(ss.Code, Is.EqualTo(s));
                 Assert.That(ss.MachineId, Is.EqualTo(machineId));
                 Assert.That(ss.Id, Is.EqualTo(ulong.Parse(s)));
             });
@@ -139,6 +139,59 @@
                     MachineId = machine,
                     Sequence = sequence,
                 };
+            });
+        }
+
+
+        [TestCase(0ul, 0ul)]
+        [TestCase(0ul, 4095ul)]
+        [TestCase(1ul, 542ul)]
+        [TestCase(2ul, 42ul)]
+        [TestCase(3ul, 52ul)]
+        [TestCase(33ul, 3442ul)]
+        [TestCase(1021ul, 1542ul)]
+        [TestCase(1023ul, 2542ul)]
+        public void Date(ulong machineId, ulong sequence)
+        {
+            DateTime d = DateTime.UtcNow;
+            ulong timestampActualMillis = ((ulong)d.Subtract(epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
+            DateTime dMillis = DateTime.SpecifyKind(epoch.AddMilliseconds(timestampActualMillis), DateTimeKind.Utc);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(dMillis.Year, Is.EqualTo(d.Year));
+                Assert.That(dMillis.Month, Is.EqualTo(d.Month));
+                Assert.That(dMillis.Day, Is.EqualTo(d.Day));
+                Assert.That(dMillis.DayOfWeek, Is.EqualTo(d.DayOfWeek));
+                Assert.That(dMillis.Hour, Is.EqualTo(d.Hour));
+                Assert.That(dMillis.Minute, Is.EqualTo(d.Minute));
+                Assert.That(dMillis.Second, Is.EqualTo(d.Second));
+                Assert.That(dMillis.Millisecond, Is.EqualTo(d.Millisecond));
+                Assert.That(dMillis.Kind, Is.EqualTo(d.Kind));
+            });
+
+            Snowflake snowflakeDateTime = new Snowflake()
+            {
+                UtcDateTime = dMillis,
+                MachineId = machineId,
+                Sequence = sequence,
+            };
+            Snowflake snowflakeTimestamp = new Snowflake()
+            {
+                Timestamp = timestampActualMillis,
+                MachineId = machineId,
+                Sequence = sequence,
+            };
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(snowflakeTimestamp.Sequence, Is.EqualTo(snowflakeDateTime.Sequence));
+                Assert.That(snowflakeTimestamp.Timestamp, Is.EqualTo(snowflakeDateTime.Timestamp));
+                Assert.That(snowflakeTimestamp.UtcDateTime, Is.EqualTo(snowflakeDateTime.UtcDateTime));
+                Assert.That(snowflakeTimestamp.MachineId, Is.EqualTo(snowflakeDateTime.MachineId));
+                Assert.That(snowflakeTimestamp.Id, Is.EqualTo(snowflakeDateTime.Id));
+                Assert.That(snowflakeTimestamp.Code, Is.EqualTo(snowflakeDateTime.Code));
+                Assert.That(snowflakeTimestamp, Is.EqualTo(snowflakeDateTime));
             });
         }
 
