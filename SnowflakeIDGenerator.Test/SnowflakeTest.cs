@@ -37,7 +37,7 @@
                 Assert.That(bs.Code, Is.EqualTo(b.ToString().PadLeft(Snowflake.NumberOfDigits, '0')));
 
                 Assert.That(ss, Is.LessThan(bs));
-                Assert.LessOrEqual(ss.Timestamp, bs.Timestamp);
+                Assert.That(ss.Timestamp, Is.LessThanOrEqualTo(bs.Timestamp));
                 if (ss.Timestamp == bs.Timestamp)
                 {
                     Assert.That(ss.Sequence, Is.LessThan(bs.Sequence));

@@ -8,13 +8,13 @@ namespace SnowflakeID
         #region constants
         public const ulong MaxSequence = 4096ul; //poner en 0 cuando se lleque a este valor. seq % MaxSequence
         public const ulong MaxMachineId = 1024ul; //cantidad. Rango: [0..1024) = [0..1023]
-        
+
 
         private const int BITS_SHIFT_DATETIMEMILLIS = 22;
         private const int BITS_SHIFT_ESTACION = 12;
         private const int BITS_SHIFT_SECUENCIA = 0;
 
-        
+
         private const ulong MASK_DATETIMEMILLIS_RIGHT_ALIGNED
                                                 = 0b0000_0000_0000_0000_0000_0011_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111;
         private const ulong MASK_ESTACION_RIGHT_ALIGNED

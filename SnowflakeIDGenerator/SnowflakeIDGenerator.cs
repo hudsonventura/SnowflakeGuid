@@ -67,7 +67,7 @@ namespace SnowflakeID
                 }
                 ultimoTimestamp = timestampActualMillis;
 
-                Snowflake snowflake = new Snowflake()
+                Snowflake snowflake = new Snowflake
                 {
                     Timestamp = timestampActualMillis,
                     MachineId = MACHINE_ID,
