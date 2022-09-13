@@ -14,20 +14,20 @@
         [TestCase(33ul)]
         [TestCase(1021ul)]
         [TestCase(1023ul)]
-        public void SecuenciaTest(ulong idEstacion)
+        public void SecuenciaTest(ulong machineId)
         {
             Queue<string> generados = new Queue<string>();
             int cant = 100000;
             DateTime d1 = DateTimeUtcMillis();
             for (int i = 0; i < cant; i++)
             {
-                generados.Enqueue(SnowflakeIDGenerator.GetCodeString(idEstacion));
+                generados.Enqueue(SnowflakeIDGenerator.GetCodeString(machineId));
             }
             DateTime d2 = DateTimeUtcMillis();
             Snowflake anterior = Snowflake.Parse(generados.Dequeue());
             Assert.Multiple(() =>
             {
-                Assert.That(anterior.MachineId, Is.EqualTo(idEstacion));
+                Assert.That(anterior.MachineId, Is.EqualTo(machineId));
                 Assert.That(d1, Is.LessThanOrEqualTo(anterior.UtcDateTime));
                 Assert.That(d2, Is.GreaterThanOrEqualTo(anterior.UtcDateTime));
             });
@@ -36,7 +36,7 @@
                 Snowflake actual = Snowflake.Parse(generados.Dequeue());
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual.MachineId, Is.EqualTo(idEstacion));
+                    Assert.That(actual.MachineId, Is.EqualTo(machineId));
                     Assert.That(anterior, Is.LessThan(actual));
                     Assert.That(d1, Is.LessThanOrEqualTo(actual.UtcDateTime));
                     Assert.That(d2, Is.GreaterThanOrEqualTo(actual.UtcDateTime));
@@ -51,7 +51,7 @@
             List<Task<List<string>>> tasks = new List<Task<List<string>>>();
             const int cantidadTareas = 50;
             const int cantidadGenerados = 10000;
-            const ulong idEstacion = 1ul;
+            const ulong machineId = 1ul;
 
             DateTime d1;
             DateTime d2;
@@ -66,7 +66,7 @@
                         List<string> l = new List<string>();
                         for (int j = 0; j < cantidadGenerados; j++)
                         {
-                            l.Add(SnowflakeIDGenerator.GetCodeString(idEstacion));
+                            l.Add(SnowflakeIDGenerator.GetCodeString(machineId));
                         }
                         return l;
                     }));
@@ -106,7 +106,7 @@
                 {
                     Assert.That(d1, Is.LessThanOrEqualTo(snowflake.UtcDateTime));
                     Assert.That(d2, Is.GreaterThanOrEqualTo(snowflake.UtcDateTime));
-                    Assert.That(snowflake.MachineId, Is.EqualTo(idEstacion));
+                    Assert.That(snowflake.MachineId, Is.EqualTo(machineId));
                 });
             }
         }
@@ -116,28 +116,28 @@
         [TestCase(1025UL)]
         [TestCase(2025UL)]
         [TestCase(20025UL)]
-        public void EstacionErrorTest(ulong idEstacion)
+        public void EstacionErrorTest(ulong machineId)
         {
             Assert.Multiple(() =>
             {
                 Assert.Throws<ArgumentOutOfRangeException>(() =>
                 {
-                    SnowflakeIDGenerator.GetCode(idEstacion);
+                    SnowflakeIDGenerator.GetCode(machineId);
                 });
 
                 Assert.Throws<ArgumentOutOfRangeException>(() =>
                 {
-                    SnowflakeIDGenerator.GetCodeString(idEstacion);
+                    SnowflakeIDGenerator.GetCodeString(machineId);
                 });
 
                 Assert.Throws<ArgumentOutOfRangeException>(() =>
                 {
-                    new SnowflakeIDGenerator(idEstacion);
+                    new SnowflakeIDGenerator(machineId);
                 });
 
                 Assert.Throws<ArgumentOutOfRangeException>(() =>
                 {
-                    new SnowflakeIDGenerator((int)idEstacion);
+                    new SnowflakeIDGenerator((int)machineId);
                 });
             });
         }

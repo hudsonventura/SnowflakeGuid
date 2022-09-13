@@ -18,29 +18,29 @@
         [TestCase(33ul)]
         [TestCase(1021ul)]
         [TestCase(1023ul)]
-        public void ParseTest(ulong idEstacion)
+        public void ParseTest(ulong machineId)
         {
-            string s = SnowflakeIDGenerator.GetCodeString(idEstacion);
+            string s = SnowflakeIDGenerator.GetCodeString(machineId);
             Snowflake ss = Snowflake.Parse(s);
-            Assert.That(ss.Barcode, Is.EqualTo(s));
+            Assert.That(ss.Code, Is.EqualTo(s));
             Assert.Multiple(() =>
             {
-                Assert.That(ss.MachineId, Is.EqualTo(idEstacion));
+                Assert.That(ss.MachineId, Is.EqualTo(machineId));
                 Assert.That(ss.Id, Is.EqualTo(ulong.Parse(s)));
             });
-            ulong b = SnowflakeIDGenerator.GetCode(idEstacion);
+            ulong b = SnowflakeIDGenerator.GetCode(machineId);
             Snowflake bs = Snowflake.Parse(b);
             Assert.Multiple(() =>
             {
                 Assert.That(bs.Id, Is.EqualTo(b));
-                Assert.That(bs.MachineId, Is.EqualTo(idEstacion));
-                Assert.That(bs.Barcode, Is.EqualTo(b.ToString().PadLeft(Snowflake.CantidadDigitos, '0')));
+                Assert.That(bs.MachineId, Is.EqualTo(machineId));
+                Assert.That(bs.Code, Is.EqualTo(b.ToString().PadLeft(Snowflake.NumberOfDigits, '0')));
 
                 Assert.That(ss, Is.LessThan(bs));
                 Assert.LessOrEqual(ss.Timestamp, bs.Timestamp);
                 if (ss.Timestamp == bs.Timestamp)
                 {
-                    Assert.That(ss.Secuencia, Is.LessThan(bs.Secuencia));
+                    Assert.That(ss.Sequence, Is.LessThan(bs.Sequence));
                 }
             });
         }
@@ -49,7 +49,7 @@
         public void CantidadDigitosTest()
         {
             //Esto debería fallar si cambian algo que no corresponda, jeje.
-            Assert.That(Snowflake.CantidadDigitos, Is.EqualTo(20));
+            Assert.That(Snowflake.NumberOfDigits, Is.EqualTo(20));
         }
 
         [TestCase(true, true)]
@@ -77,7 +77,7 @@
                         snowflake = new Snowflake()
                         {
                             Timestamp = timestampActualMillis,
-                            Secuencia = (ulong)j,
+                            Sequence = (ulong)j,
                             MachineId = (ulong)i,
                         };
                     }
@@ -86,7 +86,7 @@
                         snowflake = new Snowflake()
                         {
                             UtcDateTime = d,
-                            Secuencia = (ulong)j,
+                            Sequence = (ulong)j,
                             MachineId = (ulong)i,
                         };
                     }
@@ -101,10 +101,10 @@
                         Assert.That(snowflake.UtcDateTime.Millisecond, Is.EqualTo(d.Millisecond));
                         Assert.That(snowflake.Timestamp, Is.EqualTo(timestampActualMillis));
                         Assert.That(snowflake.MachineId, Is.EqualTo(i));
-                        Assert.That(snowflake.Secuencia, Is.EqualTo(j));
+                        Assert.That(snowflake.Sequence, Is.EqualTo(j));
                     });
 
-                    Snowflake parsedSnowflake = Snowflake.Parse(snowflake.Barcode);
+                    Snowflake parsedSnowflake = Snowflake.Parse(snowflake.Code);
                     Assert.Multiple(() =>
                     {
                         Assert.That(parsedSnowflake.UtcDateTime.Year, Is.EqualTo(d.Year));
@@ -116,7 +116,7 @@
                         Assert.That(parsedSnowflake.UtcDateTime.Millisecond, Is.EqualTo(d.Millisecond));
                         Assert.That(parsedSnowflake.Timestamp, Is.EqualTo(timestampActualMillis));
                         Assert.That(parsedSnowflake.MachineId, Is.EqualTo(i));
-                        Assert.That(parsedSnowflake.Secuencia, Is.EqualTo(j));
+                        Assert.That(parsedSnowflake.Sequence, Is.EqualTo(j));
                     });
                 }
             }
@@ -129,15 +129,15 @@
         [TestCase(2024UL, 4596UL)]
         [TestCase(224UL, 4596UL)]
         [TestCase(2024UL, 456UL)]
-        public void CrearErrorTest(ulong terminal, ulong secuencia)
+        public void CrearErrorTest(ulong machine, ulong sequence)
         {
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 Snowflake snowflake = new Snowflake()
                 {
                     UtcDateTime = DateTime.UtcNow,
-                    MachineId = terminal,
-                    Secuencia = secuencia,
+                    MachineId = machine,
+                    Sequence = sequence,
                 };
             });
         }

@@ -24,7 +24,7 @@ namespace SnowflakeID
 
 
         private static readonly DateTime epoch = new DateTime(1970, 1, 1);
-        public static readonly int CantidadDigitos = ulong.MaxValue.ToString(CultureInfo.InvariantCulture).Length;
+        public static readonly int NumberOfDigits = ulong.MaxValue.ToString(CultureInfo.InvariantCulture).Length;
         #endregion
 
 
@@ -45,22 +45,22 @@ namespace SnowflakeID
             }
         }
         private ulong _MachineId;
-        public virtual ulong Secuencia
+        public virtual ulong Sequence
         {
-            get => _Secuencia;
+            get => _Sequence;
             set
             {
                 if (value >= MaxSequence)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(Secuencia), $"{nameof(Secuencia)} must be less than {MaxSequence}. Got: {value}.");
+                    throw new ArgumentOutOfRangeException(nameof(Sequence), $"{nameof(Sequence)} must be less than {MaxSequence}. Got: {value}.");
                 }
                 else
                 {
-                    _Secuencia = value;
+                    _Sequence = value;
                 }
             }
         }
-        private ulong _Secuencia;
+        private ulong _Sequence;
         public virtual ulong Timestamp
         {
             get
@@ -81,12 +81,12 @@ namespace SnowflakeID
                 return ((timestamp & MASK_DATETIMEMILLIS_RIGHT_ALIGNED) << BITS_SHIFT_DATETIMEMILLIS)
                                         | ((MachineId & MASK_ESTACION_RIGHT_ALIGNED) << BITS_SHIFT_ESTACION)
                                         //| ((APP_HASH & MASK_APP_HASH_RIGHT_ALIGNED) << BITS_SHIFT_HASH)
-                                        | ((Secuencia & MASK_SECUENCIA_RIGHT_ALIGNED) << BITS_SHIFT_SECUENCIA);
+                                        | ((Sequence & MASK_SECUENCIA_RIGHT_ALIGNED) << BITS_SHIFT_SECUENCIA);
             }
             private set
             {
                 ulong val = value >> BITS_SHIFT_SECUENCIA;
-                Secuencia = val & MASK_SECUENCIA_RIGHT_ALIGNED;
+                Sequence = val & MASK_SECUENCIA_RIGHT_ALIGNED;
                 val >>= BITS_SHIFT_ESTACION - BITS_SHIFT_SECUENCIA;
                 MachineId = val & MASK_ESTACION_RIGHT_ALIGNED;
                 val >>= BITS_SHIFT_DATETIMEMILLIS - BITS_SHIFT_ESTACION - BITS_SHIFT_SECUENCIA;
@@ -94,11 +94,11 @@ namespace SnowflakeID
             }
         }
 
-        public virtual string Barcode
+        public virtual string Code
         {
             get
             {
-                return Id.ToString(CultureInfo.InvariantCulture).PadLeft(CantidadDigitos, '0');
+                return Id.ToString(CultureInfo.InvariantCulture).PadLeft(NumberOfDigits, '0');
             }
             private set
             {
@@ -109,7 +109,7 @@ namespace SnowflakeID
 
         public static Snowflake Parse(string s)
         {
-            return new Snowflake() { Barcode = s };
+            return new Snowflake() { Code = s };
         }
 
         public static Snowflake Parse(ulong b)
@@ -121,7 +121,7 @@ namespace SnowflakeID
 
         public override string ToString()
         {
-            return Barcode;
+            return Code;
         }
 
         public override bool Equals(object obj)

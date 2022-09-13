@@ -9,10 +9,10 @@ namespace SnowflakeID
         private readonly ulong MACHINE_ID;
         //private readonly ulong APP_HASH;
 
-        private static ulong _Secuencia;
-        private static ulong Secuencia { get => _Secuencia; set => _Secuencia = value % Snowflake.MaxSequence; }
+        private static ulong _Sequence;
+        private static ulong Sequence { get => _Sequence; set => _Sequence = value % Snowflake.MaxSequence; }
 
-        public static readonly object lockObject = new();
+        private static readonly object lockObject = new();
         private static readonly DateTime epoch = new DateTime(1970, 1, 1);
 
         private static ulong ultimoTimestamp;
@@ -38,7 +38,7 @@ namespace SnowflakeID
             {
                 ulong timestampActualMillis = ((ulong)DateTime.UtcNow.Subtract(epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
 
-                if (Secuencia == 0 && timestampActualMillis == ultimoTimestamp)
+                if (Sequence == 0 && timestampActualMillis == ultimoTimestamp)
                 {
                     do
                     {
@@ -48,7 +48,7 @@ namespace SnowflakeID
                 }
                 else if (timestampActualMillis != ultimoTimestamp)
                 {
-                    Secuencia = 0;
+                    Sequence = 0;
                 }
                 ultimoTimestamp = timestampActualMillis;
 
@@ -56,10 +56,10 @@ namespace SnowflakeID
                 {
                     Timestamp = timestampActualMillis,
                     MachineId = MACHINE_ID,
-                    Secuencia = Secuencia,
+                    Sequence = Sequence,
                 };
 
-                Secuencia++;
+                Sequence++;
 
                 return snowflake;
             }
@@ -72,7 +72,7 @@ namespace SnowflakeID
 
         public string GetCodeString()
         {
-            return GetSnowflake().Barcode;
+            return GetSnowflake().Code;
         }
 
 
