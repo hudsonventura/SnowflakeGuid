@@ -1,9 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard1.3;net40;net46;net48;net35;net20</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard1.3;net40;net35;net20</TargetFrameworks>
     <GeneratePackageOnBuild>False</GeneratePackageOnBuild>
     <Title>Generate unique identifiers based on Twitter's Snowflake ID</Title>
+    <Description>Generate unique identifiers based on Twitter's Snowflake ID</Description>
     <Authors>Federico Seckel</Authors>
     <PackageTags>Id;Snowflake;SnowflakeId;Snowflake Id;</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -18,6 +19,7 @@
     <LangVersion>latest</LangVersion>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <PackageProjectUrl>https://www.nuget.org/packages/SnowflakeIDGenerator#readme-body-tab</PackageProjectUrl>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
@@ -51,6 +53,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+
     <PackageReference Include="System.Threading.Thread">
       <Version>4.3.0</Version>
     </PackageReference>
@@ -62,16 +65,5 @@
     </PackageReference>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(TargetFramework)' == 'net46'">
-    <PackageReference Include="System.Threading.Thread">
-      <Version>4.3.0</Version>
-    </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net48'">
-    <PackageReference Include="System.Threading.Thread">
-      <Version>4.3.0</Version>
-    </PackageReference>
-  </ItemGroup>
 
 </Project>
