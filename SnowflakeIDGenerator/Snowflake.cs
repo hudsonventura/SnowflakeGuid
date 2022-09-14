@@ -6,8 +6,8 @@ namespace SnowflakeID
     public class Snowflake : IEquatable<Snowflake>, IComparable<Snowflake>, IComparable
     {
         #region constants
-        public const ulong MaxSequence = 4096ul; //poner en 0 cuando se lleque a este valor. seq % MaxSequence
-        public const ulong MaxMachineId = 1024ul; //cantidad. Rango: [0..1024) = [0..1023]
+        public const long MaxSequence = 4096; //poner en 0 cuando se lleque a este valor. seq % MaxSequence
+        public const long MaxMachineId = 1024; //cantidad. Rango: [0..1024) = [0..1023]
 
 
         private const int BITS_SHIFT_DATETIMEMILLIS = 22;
@@ -29,6 +29,8 @@ namespace SnowflakeID
 
 
         public virtual DateTime UtcDateTime { get; set; }
+
+        [CLSCompliant(false)]
         public virtual ulong MachineId
         {
             get => _MachineId;
@@ -44,7 +46,19 @@ namespace SnowflakeID
                 }
             }
         }
+        public int MachineIdInt32
+        {
+            get => (int)MachineId;
+            set
+            {
+                if (value < 0) { throw new ArgumentOutOfRangeException(nameof(MachineIdInt32)); }
+                MachineId = (ulong)value;
+            }
+        }
         private ulong _MachineId;
+
+
+        [CLSCompliant(false)]
         public virtual ulong Sequence
         {
             get => _Sequence;
@@ -60,7 +74,19 @@ namespace SnowflakeID
                 }
             }
         }
+        public int SequenceInt32
+        {
+            get => (int)Sequence;
+            set
+            {
+                if (value < 0) { throw new ArgumentOutOfRangeException(nameof(SequenceInt32)); }
+                Sequence = (ulong)value;
+            }
+        }
         private ulong _Sequence;
+
+
+        [CLSCompliant(false)]
         public virtual ulong Timestamp
         {
             get
@@ -72,7 +98,19 @@ namespace SnowflakeID
                 UtcDateTime = DateTime.SpecifyKind(epoch.AddTicks((long)value * (TimeSpan.TicksPerMillisecond)), DateTimeKind.Utc);
             }
         }
+        public long TimestampInt64
+        {
+            get => (long)Timestamp;
+            set
+            {
+                if (value < 0) { throw new ArgumentOutOfRangeException(nameof(TimestampInt64)); }
+                ulong newVal = (ulong)value & MASK_DATETIMEMILLIS_RIGHT_ALIGNED;
+                if (newVal != (ulong)value) { throw new ArgumentOutOfRangeException(nameof(TimestampInt64)); }
+                Timestamp = newVal;
+            }
+        }
 
+        [CLSCompliant(false)]
         public virtual ulong Id
         {
             get
@@ -111,6 +149,7 @@ namespace SnowflakeID
             return new Snowflake() { Code = s };
         }
 
+        [CLSCompliant(false)]
         public static Snowflake Parse(ulong b)
         {
             return new Snowflake() { Id = b };

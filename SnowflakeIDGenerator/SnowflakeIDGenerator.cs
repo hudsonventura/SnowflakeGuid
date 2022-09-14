@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-[assembly: CLSCompliant(false)]
+[assembly: CLSCompliant(true)]
 namespace SnowflakeID
 {
     public class SnowflakeIDGenerator
@@ -25,6 +25,7 @@ namespace SnowflakeID
         /// </summary>
         /// <param name="machineId">Machine number</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
+        [CLSCompliant(false)]
         public SnowflakeIDGenerator(ulong machineId)
         {
             if (machineId >= Snowflake.MaxMachineId)
@@ -85,6 +86,7 @@ namespace SnowflakeID
         /// </summary>
         /// <returns></returns>
         /// <typeparam cref="ulong">ulong</typeparam>
+        [CLSCompliant(false)]
         public ulong GetCode()
         {
             return GetSnowflake().Id;
@@ -108,20 +110,28 @@ namespace SnowflakeID
         /// <returns></returns>
         /// <param name="machineId">Machine number</param>
         /// <typeparam cref="ulong">ulong</typeparam>
+        [CLSCompliant(false)]
         public static ulong GetCode(ulong machineId)
         {
             return new SnowflakeIDGenerator(machineId).GetCode();
         }
 
         /// <summary>
-        /// 
+        /// Gets next Snowlflake as <typeparamref cref="string">string</typeparamref> for a given <typeparamref cref="ulong"><paramref name="machineId"/></typeparamref>
         /// </summary>
         /// <param name="machineId"></param>
         /// <returns></returns>
+        [CLSCompliant(false)]
         public static string GetCodeString(ulong machineId)
         {
             return new SnowflakeIDGenerator(machineId).GetCodeString();
         }
 
+        /// <summary>
+        /// Gets next Snowlflake as <typeparamref cref="string">string</typeparamref> for a given <typeparamref cref="int"><paramref name="machineId"/></typeparamref>
+        /// </summary>
+        /// <param name="machineId"></param>
+        /// <returns></returns>
+        public static string GetCodeString(int machineId) => GetCodeString((ulong)machineId);
     }
 }
