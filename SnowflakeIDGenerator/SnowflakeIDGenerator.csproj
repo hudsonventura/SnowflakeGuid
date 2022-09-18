@@ -7,7 +7,7 @@
     <Description>Generate unique identifiers based on Twitter's Snowflake ID.
 Parse a Snowflake to get information about it's creation.</Description>
     <Authors>Federico Seckel</Authors>
-    <PackageTags>Id;Snowflake;SnowflakeId;Snowflake Id;</PackageTags>
+    <PackageTags>Id;Snowflake;SnowflakeId;</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
@@ -50,13 +50,6 @@ Parse a Snowflake to get information about it's creation.</Description>
     <PackageReference Include="Microsoft.SourceLink.AzureRepos.Git" Version="1.1.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
-
-    <PackageReference Include="System.Threading.Thread">
-      <Version>4.3.0</Version>
     </PackageReference>
   </ItemGroup>
 

@@ -1,7 +1,11 @@
-# Introduction 
+# Snowflake Id Generator
+
 Generate unique identifiers based on Twitter's Snowflake ID.
 
 Parse a Snowflake to get information about it's creation.
+
+![Nuget](https://img.shields.io/nuget/v/SnowflakeIDGenerator)
+[![Build status](https://dev.azure.com/fenase/SnowflakeIDGenerator/_apis/build/status/SnowflakeIDGenerator-CI-1.0.0)](https://dev.azure.com/fenase/SnowflakeIDGenerator/_build/latest?definitionId=7)
 
 # Usage
 
