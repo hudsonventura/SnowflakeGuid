@@ -243,6 +243,8 @@
                 Assert.That(snowflakeCLS.MachineId, Is.EqualTo(snowflake.MachineId));
                 Assert.That(snowflakeCLS.Sequence, Is.EqualTo(snowflake.Sequence));
                 Assert.That(snowflakeCLS.Timestamp, Is.EqualTo(snowflake.Timestamp));
+
+                Assert.That(SnowflakeIDGenerator.GetCode(123), Is.LessThan(ulong.Parse(SnowflakeIDGenerator.GetCodeString(123))));
             });
         }
 

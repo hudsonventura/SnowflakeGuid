@@ -5,6 +5,7 @@
         [SetUp]
         public void Setup()
         {
+            // Method intentionally left empty.
         }
 
         [TestCase(0ul)]
@@ -31,6 +32,8 @@
                 Assert.That(d1, Is.LessThanOrEqualTo(anterior.UtcDateTime));
                 Assert.That(d2, Is.GreaterThanOrEqualTo(anterior.UtcDateTime));
             });
+
+            Snowflake? prevSnowflake = null;
             while (generados.Count > 0)
             {
                 Snowflake actual = Snowflake.Parse(generados.Dequeue());
@@ -40,7 +43,18 @@
                     Assert.That(anterior, Is.LessThan(actual));
                     Assert.That(d1, Is.LessThanOrEqualTo(actual.UtcDateTime));
                     Assert.That(d2, Is.GreaterThanOrEqualTo(actual.UtcDateTime));
+
+                    if (prevSnowflake != null)
+                    {
+                        Assert.That(actual, Is.GreaterThanOrEqualTo(prevSnowflake));
+                        Assert.That(actual >= prevSnowflake, Is.True);
+                        Assert.That(actual > prevSnowflake, Is.True);
+                    }
+                    Assert.That(actual <= prevSnowflake, Is.False);
+                    Assert.That(actual < prevSnowflake, Is.False);
                 });
+
+                prevSnowflake = actual;
             }
         }
 
