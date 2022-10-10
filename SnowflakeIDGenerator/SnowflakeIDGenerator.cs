@@ -7,7 +7,6 @@ namespace SnowflakeID
     public class SnowflakeIDGenerator
     {
         private readonly ulong MACHINE_ID;
-        //private readonly ulong APP_HASH;
 
         private static ulong _Sequence;
         private static ulong Sequence { get => _Sequence; set => _Sequence = value % Snowflake.MaxSequence; }
@@ -15,7 +14,7 @@ namespace SnowflakeID
         private static readonly object lockObject = new();
         private static readonly DateTime epoch = new DateTime(1970, 1, 1);
 
-        private static ulong ultimoTimestamp;
+        private static ulong UltimoTimestamp { get; set; }
 
 
 
@@ -54,19 +53,19 @@ namespace SnowflakeID
             {
                 ulong timestampActualMillis = ((ulong)DateTime.UtcNow.Subtract(epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
 
-                if (Sequence == 0 && timestampActualMillis == ultimoTimestamp)
+                if (Sequence == 0 && timestampActualMillis == UltimoTimestamp)
                 {
                     do
                     {
                         Thread.Sleep(1);
                         timestampActualMillis = ((ulong)DateTime.UtcNow.Subtract(epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
-                    } while (timestampActualMillis == ultimoTimestamp);
+                    } while (timestampActualMillis == UltimoTimestamp);
                 }
-                else if (timestampActualMillis != ultimoTimestamp)
+                else if (timestampActualMillis != UltimoTimestamp)
                 {
                     Sequence = 0;
                 }
-                ultimoTimestamp = timestampActualMillis;
+                UltimoTimestamp = timestampActualMillis;
 
                 Snowflake snowflake = new Snowflake
                 {

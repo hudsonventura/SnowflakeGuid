@@ -8,6 +8,7 @@
         [SetUp]
         public void Setup()
         {
+            // Method intentionally left empty.
         }
 
 
@@ -192,6 +193,56 @@
                 Assert.That(snowflakeTimestamp.Id, Is.EqualTo(snowflakeDateTime.Id));
                 Assert.That(snowflakeTimestamp.Code, Is.EqualTo(snowflakeDateTime.Code));
                 Assert.That(snowflakeTimestamp, Is.EqualTo(snowflakeDateTime));
+            });
+        }
+
+
+        [Test]
+        public void UnsignedEqualsSigned()
+        {
+            DateTime d = DateTime.UtcNow;
+            ulong timestampActualMillis = ((ulong)d.Subtract(epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
+            ulong machineId = 123;
+            ulong sequence = 3468;
+            int machineIdInt32 = (int)machineId;
+            int sequenceInt32 = (int)sequence;
+            long timestampActualMillisInt64 = (long)timestampActualMillis;
+
+            Snowflake snowflake = new Snowflake()
+            {
+                Timestamp = timestampActualMillis,
+                MachineId = machineId,
+                Sequence = sequence,
+            };
+
+            Snowflake snowflakeCLS = new Snowflake()
+            {
+                TimestampInt64 = timestampActualMillisInt64,
+                MachineIdInt32 = machineIdInt32,
+                SequenceInt32 = sequenceInt32,
+            };
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(snowflake.MachineIdInt32, Is.EqualTo(snowflake.MachineId));
+                Assert.That(snowflake.SequenceInt32, Is.EqualTo(snowflake.Sequence));
+                Assert.That(snowflake.TimestampInt64, Is.EqualTo(snowflake.Timestamp));
+                Assert.That(ulong.Parse(snowflake.Code), Is.EqualTo(snowflake.Id));
+
+                Assert.That(snowflakeCLS.MachineIdInt32, Is.EqualTo(snowflakeCLS.MachineId));
+                Assert.That(snowflakeCLS.SequenceInt32, Is.EqualTo(snowflakeCLS.Sequence));
+                Assert.That(snowflakeCLS.TimestampInt64, Is.EqualTo(snowflakeCLS.Timestamp));
+                Assert.That(ulong.Parse(snowflakeCLS.Code), Is.EqualTo(snowflakeCLS.Id));
+
+                Assert.That(snowflakeCLS, Is.EqualTo(snowflake));
+                Assert.That(snowflakeCLS.Code, Is.EqualTo(snowflake.Code));
+                Assert.That(snowflakeCLS.Id, Is.EqualTo(snowflake.Id));
+                Assert.That(snowflakeCLS.MachineIdInt32, Is.EqualTo(snowflake.MachineIdInt32));
+                Assert.That(snowflakeCLS.SequenceInt32, Is.EqualTo(snowflake.SequenceInt32));
+                Assert.That(snowflakeCLS.TimestampInt64, Is.EqualTo(snowflake.TimestampInt64));
+                Assert.That(snowflakeCLS.MachineId, Is.EqualTo(snowflake.MachineId));
+                Assert.That(snowflakeCLS.Sequence, Is.EqualTo(snowflake.Sequence));
+                Assert.That(snowflakeCLS.Timestamp, Is.EqualTo(snowflake.Timestamp));
             });
         }
 

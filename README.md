@@ -6,6 +6,9 @@ Parse a Snowflake to get information about it's creation.
 
 [![Nuget](https://img.shields.io/nuget/v/SnowflakeIDGenerator)](https://www.nuget.org/packages/SnowflakeIDGenerator)
 [![Build status](https://dev.azure.com/fenase/SnowflakeIDGenerator/_apis/build/status/SnowflakeIDGenerator-CI-1.0.0)](https://dev.azure.com/fenase/SnowflakeIDGenerator/_build/latest?definitionId=7)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=fenase_SnowflakeIDGenerator&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=fenase_SnowflakeIDGenerator)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=fenase_SnowflakeIDGenerator&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=fenase_SnowflakeIDGenerator)
+
 
 # Usage
 

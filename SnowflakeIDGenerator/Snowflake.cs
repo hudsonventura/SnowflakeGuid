@@ -168,7 +168,7 @@ namespace SnowflakeID
             return Equals(other);
         }
 
-        public bool Equals(Snowflake other)
+        public virtual bool Equals(Snowflake other)
         {
             return other != null && Id == other.Id;
         }
@@ -208,10 +208,10 @@ namespace SnowflakeID
 
         public static bool operator !=(Snowflake s1, Snowflake s2) => !(s1 == s2);
 
-        public static bool operator >(Snowflake s1, Snowflake s2) => (!(s1 is null ^ s2 is null) && s1.CompareTo(s2) > 0);
+        public static bool operator >(Snowflake s1, Snowflake s2) => (!(s1 is null ^ s2 is null)) && s1 != s2 && s1.CompareTo(s2) > 0;
 
-        public static bool operator <(Snowflake s1, Snowflake s2) => (!(s1 is null ^ s2 is null) && s1.CompareTo(s2) < 0);
-        public static bool operator >=(Snowflake s1, Snowflake s2) => (!(s1 is null ^ s2 is null) && s1.CompareTo(s2) >= 0);
-        public static bool operator <=(Snowflake s1, Snowflake s2) => (!(s1 is null ^ s2 is null) && s1.CompareTo(s2) <= 0);
+        public static bool operator <(Snowflake s1, Snowflake s2) => (!(s1 is null ^ s2 is null)) && s1 != s2 && s1.CompareTo(s2) < 0;
+        public static bool operator >=(Snowflake s1, Snowflake s2) => s1 == s2 || s1 > s2;
+        public static bool operator <=(Snowflake s1, Snowflake s2) => s1 == s2 || s1 < s2;
     }
 }
