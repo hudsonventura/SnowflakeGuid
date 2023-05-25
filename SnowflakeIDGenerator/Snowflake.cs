@@ -6,13 +6,13 @@ namespace SnowflakeID
     public class Snowflake : IEquatable<Snowflake>, IComparable<Snowflake>, IComparable
     {
         #region constants
-        public const long MaxSequence = 4096; //poner en 0 cuando se lleque a este valor. seq % MaxSequence
-        public const long MaxMachineId = 1024; //cantidad. Rango: [0..1024) = [0..1023]
+        public const long MaxSequence = 4096; // Set to 0 then this value is reached. seq % MaxSequence
+        public const long MaxMachineId = 1024; //amount. Range: [0..1024) = [0..1023]
 
 
         private const int BITS_SHIFT_DATETIMEMILLIS = 22;
-        private const int BITS_SHIFT_ESTACION = 12;
-        private const int BITS_SHIFT_SECUENCIA = 0;
+        private const int BITS_SHIFT_MACHINE = 12;
+        private const int BITS_SHIFT_SEQUENCE = 0;
 
 
         private const ulong MASK_DATETIMEMILLIS_RIGHT_ALIGNED
@@ -23,7 +23,7 @@ namespace SnowflakeID
                                                 = 0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_1111_1111_1111;
 
 
-        private static readonly DateTime epoch = new DateTime(1970, 1, 1);
+        private static readonly DateTime epoch = new(1970, 1, 1);
         public static readonly int NumberOfDigits = ulong.MaxValue.ToString(CultureInfo.InvariantCulture).Length;
         #endregion
 
@@ -117,16 +117,16 @@ namespace SnowflakeID
             {
                 ulong timestamp = ((ulong)UtcDateTime.Subtract(epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
                 return ((timestamp & MASK_DATETIMEMILLIS_RIGHT_ALIGNED) << BITS_SHIFT_DATETIMEMILLIS)
-                                        | ((MachineId & MASK_ESTACION_RIGHT_ALIGNED) << BITS_SHIFT_ESTACION)
-                                        | ((Sequence & MASK_SECUENCIA_RIGHT_ALIGNED) << BITS_SHIFT_SECUENCIA);
+                                        | ((MachineId & MASK_ESTACION_RIGHT_ALIGNED) << BITS_SHIFT_MACHINE)
+                                        | ((Sequence & MASK_SECUENCIA_RIGHT_ALIGNED) << BITS_SHIFT_SEQUENCE);
             }
             private set
             {
-                ulong val = value >> BITS_SHIFT_SECUENCIA;
+                ulong val = value >> BITS_SHIFT_SEQUENCE;
                 Sequence = val & MASK_SECUENCIA_RIGHT_ALIGNED;
-                val >>= BITS_SHIFT_ESTACION - BITS_SHIFT_SECUENCIA;
+                val >>= BITS_SHIFT_MACHINE - BITS_SHIFT_SEQUENCE;
                 MachineId = val & MASK_ESTACION_RIGHT_ALIGNED;
-                val >>= BITS_SHIFT_DATETIMEMILLIS - BITS_SHIFT_ESTACION - BITS_SHIFT_SECUENCIA;
+                val >>= BITS_SHIFT_DATETIMEMILLIS - BITS_SHIFT_MACHINE - BITS_SHIFT_SEQUENCE;
                 Timestamp = val & MASK_DATETIMEMILLIS_RIGHT_ALIGNED;
             }
         }

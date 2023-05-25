@@ -15,46 +15,47 @@
         [TestCase(33ul)]
         [TestCase(1021ul)]
         [TestCase(1023ul)]
-        public void SecuenciaTest(ulong machineId)
+        public void SequenceTest(ulong machineId)
         {
-            Queue<string> generados = new Queue<string>();
+            Queue<string> generated = new();
             int cant = 100000;
             DateTime d1 = DateTimeUtcMillis();
             for (int i = 0; i < cant; i++)
             {
-                generados.Enqueue(SnowflakeIDGenerator.GetCodeString(machineId));
+                generated.Enqueue(SnowflakeIDGenerator.GetCodeString(machineId));
             }
             DateTime d2 = DateTimeUtcMillis();
-            Snowflake anterior = Snowflake.Parse(generados.Dequeue());
+            Snowflake previous = Snowflake.Parse(generated.Dequeue());
             Assert.Multiple(() =>
             {
-                Assert.That(anterior.MachineId, Is.EqualTo(machineId));
-                Assert.That(d1, Is.LessThanOrEqualTo(anterior.UtcDateTime));
-                Assert.That(d2, Is.GreaterThanOrEqualTo(anterior.UtcDateTime));
+                Assert.That(previous.MachineId, Is.EqualTo(machineId));
+                Assert.That(d1, Is.LessThanOrEqualTo(previous.UtcDateTime));
+                Assert.That(d2, Is.GreaterThanOrEqualTo(previous.UtcDateTime));
             });
 
             Snowflake? prevSnowflake = null;
-            while (generados.Count > 0)
+            while (generated.Count > 0)
             {
-                Snowflake actual = Snowflake.Parse(generados.Dequeue());
+                Snowflake current = Snowflake.Parse(generated.Dequeue());
                 Assert.Multiple(() =>
                 {
-                    Assert.That(actual.MachineId, Is.EqualTo(machineId));
-                    Assert.That(anterior, Is.LessThan(actual));
-                    Assert.That(d1, Is.LessThanOrEqualTo(actual.UtcDateTime));
-                    Assert.That(d2, Is.GreaterThanOrEqualTo(actual.UtcDateTime));
+                    Assert.That(current.MachineId, Is.EqualTo(machineId));
+                    Assert.That(previous, Is.LessThan(current));
+                    Assert.That(d1, Is.LessThanOrEqualTo(current.UtcDateTime));
+                    Assert.That(d2, Is.GreaterThanOrEqualTo(current.UtcDateTime));
 
                     if (prevSnowflake != null)
                     {
-                        Assert.That(actual, Is.GreaterThanOrEqualTo(prevSnowflake));
-                        Assert.That(actual >= prevSnowflake, Is.True);
-                        Assert.That(actual > prevSnowflake, Is.True);
+                        Assert.That(current, Is.GreaterThanOrEqualTo(prevSnowflake));
+                        Assert.That(current >= prevSnowflake, Is.True); // testing operators
+                        Assert.That(current, Is.GreaterThan(prevSnowflake));
+                        Assert.That(current > prevSnowflake, Is.True); // testing operators
                     }
-                    Assert.That(actual <= prevSnowflake, Is.False);
-                    Assert.That(actual < prevSnowflake, Is.False);
+                    Assert.That(current <= prevSnowflake, Is.False); // testing operators
+                    Assert.That(current < prevSnowflake, Is.False); // testing operators
                 });
 
-                prevSnowflake = actual;
+                prevSnowflake = current;
             }
         }
 
@@ -62,9 +63,9 @@
         [Test]
         public void ParallelTest()
         {
-            List<Task<List<string>>> tasks = new List<Task<List<string>>>();
-            const int cantidadTareas = 50;
-            const int cantidadGenerados = 10000;
+            List<Task<List<string>>> tasks = new();
+            const int TaskQuantity = 50;
+            const int GeneratedQuantity = 10000;
             const ulong machineId = 1ul;
 
             DateTime d1;
@@ -73,12 +74,12 @@
             try
             {
                 d1 = DateTimeUtcMillis();
-                for (int i = 0; i < cantidadTareas; i++)
+                for (int i = 0; i < TaskQuantity; i++)
                 {
                     tasks.Add(new Task<List<string>>(() =>
                     {
-                        List<string> l = new List<string>();
-                        for (int j = 0; j < cantidadGenerados; j++)
+                        List<string> l = new();
+                        for (int j = 0; j < GeneratedQuantity; j++)
                         {
                             l.Add(SnowflakeIDGenerator.GetCodeString(machineId));
                         }
@@ -106,14 +107,14 @@
                 throw;
             }
 
-            IEnumerable<string> combinado = tasks.SelectMany(t => t.Result);
+            IEnumerable<string> combined = tasks.SelectMany(t => t.Result);
 
             Assert.Multiple(() =>
             {
-                Assert.That(combinado.Count(), Is.EqualTo(cantidadTareas * cantidadGenerados));
-                Assert.That(combinado.Distinct().Count(), Is.EqualTo(combinado.Count()));
+                Assert.That(combined.Count(), Is.EqualTo(TaskQuantity * GeneratedQuantity));
+                Assert.That(combined.Distinct().Count(), Is.EqualTo(combined.Count()));
             });
-            foreach (string item in combinado)
+            foreach (string item in combined)
             {
                 Snowflake snowflake = Snowflake.Parse(item);
                 Assert.Multiple(() =>
@@ -130,7 +131,7 @@
         [TestCase(1025UL)]
         [TestCase(2025UL)]
         [TestCase(20025UL)]
-        public void EstacionErrorTest(ulong machineId)
+        public void MachineErrorTest(ulong machineId)
         {
             Assert.Multiple(() =>
             {
@@ -158,9 +159,9 @@
 
 
         [Test]
-        public void DatetimeMillisTest()
+        public void DateTimeMillisecondsTest()
         {
-            // Esto prueba la función auxiliar de más abajo, que trunca la hora hasta milisegundo
+            // This tests aux function bellow. It truncates time to a millisecond
             DateTime d1 = DateTime.UtcNow;
             DateTime d2 = DateTimeOnlyMillis(d1);
             Assert.Multiple(() =>
@@ -182,14 +183,14 @@
 
 
 
-        private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private static readonly DateTime UnixEpoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private static DateTime DateTimeUtcMillis()
         {
             return DateTimeOnlyMillis(DateTime.UtcNow);
         }
         private static DateTime DateTimeOnlyMillis(DateTime d)
         {
-            ulong ml = ((ulong)d.Subtract(UnixEpoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond); //equivalente a floor (división entera -> multiplicación)
+            ulong ml = ((ulong)d.Subtract(UnixEpoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond); // same as floor (integer division -> multiplication)
             return DateTime.SpecifyKind(UnixEpoch.AddTicks((long)ml * (TimeSpan.TicksPerMillisecond)), DateTimeKind.Utc);
         }
     }

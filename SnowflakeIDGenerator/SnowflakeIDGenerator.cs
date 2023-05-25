@@ -12,9 +12,9 @@ namespace SnowflakeID
         private static ulong Sequence { get => _Sequence; set => _Sequence = value % Snowflake.MaxSequence; }
 
         private static readonly object lockObject = new();
-        private static readonly DateTime epoch = new DateTime(1970, 1, 1);
+        private static readonly DateTime epoch = new(1970, 1, 1);
 
-        private static ulong UltimoTimestamp { get; set; }
+        private static ulong LastTimeStamp { get; set; }
 
 
 
@@ -51,25 +51,29 @@ namespace SnowflakeID
         {
             lock (lockObject)
             {
-                ulong timestampActualMillis = ((ulong)DateTime.UtcNow.Subtract(epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
+                ulong currentTimestampMillis = ((ulong)DateTime.UtcNow.Subtract(epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
 
-                if (Sequence == 0 && timestampActualMillis == UltimoTimestamp)
+                if (Sequence == 0 && currentTimestampMillis == LastTimeStamp)
                 {
                     do
                     {
                         Thread.Sleep(1);
-                        timestampActualMillis = ((ulong)DateTime.UtcNow.Subtract(epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
-                    } while (timestampActualMillis == UltimoTimestamp);
+                        currentTimestampMillis = ((ulong)DateTime.UtcNow.Subtract(epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
+                    } while (currentTimestampMillis == LastTimeStamp);
                 }
-                else if (timestampActualMillis != UltimoTimestamp)
+                else if (currentTimestampMillis < LastTimeStamp)
+                {
+                    throw new InvalidOperationException("Time moved backwards!");
+                }
+                else if (currentTimestampMillis > LastTimeStamp)
                 {
                     Sequence = 0;
                 }
-                UltimoTimestamp = timestampActualMillis;
+                LastTimeStamp = currentTimestampMillis;
 
-                Snowflake snowflake = new Snowflake
+                Snowflake snowflake = new()
                 {
-                    Timestamp = timestampActualMillis,
+                    Timestamp = currentTimestampMillis,
                     MachineId = MACHINE_ID,
                     Sequence = Sequence,
                 };

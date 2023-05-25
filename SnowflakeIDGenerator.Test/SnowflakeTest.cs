@@ -2,7 +2,7 @@
 {
     public class SnowflakeTest
     {
-        private static readonly DateTime epoch = new DateTime(1970, 1, 1);
+        private static readonly DateTime epoch = new(1970, 1, 1);
 
 
         [SetUp]
@@ -47,9 +47,9 @@
         }
 
         [Test]
-        public void CantidadDigitosTest()
+        public void DigitAmountTest()
         {
-            //Esto debería fallar si cambian algo que no corresponda, jeje.
+            //This should fail if someone touches something they shouldn't
             Assert.That(Snowflake.NumberOfDigits, Is.EqualTo(20));
         }
 
@@ -57,14 +57,14 @@
         [TestCase(true, false)]
         [TestCase(false, true)]
         [TestCase(false, false)]
-        public void CrearTest(bool usarTimestamp, bool desc)
+        public void CreationTest(bool useTimeStamp, bool desc)
         {
             DateTime d = DateTime.UtcNow;
             ulong timestampActualMillis = ((ulong)d.Subtract(epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
-            long i_ini = (long)(desc ? Snowflake.MaxMachineId - 1 : 0);
-            long i_fin = (long)(desc ? 0 : Snowflake.MaxMachineId - 1);
-            long j_ini = (long)(desc ? Snowflake.MaxSequence - 1 : 0);
-            long j_fin = (long)(desc ? 0 : Snowflake.MaxSequence - 1);
+            long i_ini = (desc ? Snowflake.MaxMachineId - 1 : 0);
+            long i_fin = (desc ? 0 : Snowflake.MaxMachineId - 1);
+            long j_ini = (desc ? Snowflake.MaxSequence - 1 : 0);
+            long j_fin = (desc ? 0 : Snowflake.MaxSequence - 1);
             long step = desc ? -10 : 10;
 
 
@@ -73,7 +73,7 @@
                 for (long j = j_ini; desc ? j >= j_fin : j <= j_fin; j += step)
                 {
                     Snowflake snowflake;
-                    if (usarTimestamp)
+                    if (useTimeStamp)
                     {
                         snowflake = new Snowflake()
                         {
@@ -130,11 +130,11 @@
         [TestCase(2024UL, 4596UL)]
         [TestCase(224UL, 4596UL)]
         [TestCase(2024UL, 456UL)]
-        public void CrearErrorTest(ulong machine, ulong sequence)
+        public void CreationErrorTest(ulong machine, ulong sequence)
         {
             Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
-                Snowflake snowflake = new Snowflake()
+                _ = new Snowflake()
                 {
                     UtcDateTime = DateTime.UtcNow,
                     MachineId = machine,
@@ -171,13 +171,13 @@
                 Assert.That(dMillis.Kind, Is.EqualTo(d.Kind));
             });
 
-            Snowflake snowflakeDateTime = new Snowflake()
+            Snowflake snowflakeDateTime = new()
             {
                 UtcDateTime = dMillis,
                 MachineId = machineId,
                 Sequence = sequence,
             };
-            Snowflake snowflakeTimestamp = new Snowflake()
+            Snowflake snowflakeTimestamp = new()
             {
                 Timestamp = timestampActualMillis,
                 MachineId = machineId,
@@ -208,14 +208,14 @@
             int sequenceInt32 = (int)sequence;
             long timestampActualMillisInt64 = (long)timestampActualMillis;
 
-            Snowflake snowflake = new Snowflake()
+            Snowflake snowflake = new()
             {
                 Timestamp = timestampActualMillis,
                 MachineId = machineId,
                 Sequence = sequence,
             };
 
-            Snowflake snowflakeCLS = new Snowflake()
+            Snowflake snowflakeCLS = new()
             {
                 TimestampInt64 = timestampActualMillisInt64,
                 MachineIdInt32 = machineIdInt32,
