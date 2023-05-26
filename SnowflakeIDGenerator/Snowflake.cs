@@ -67,13 +67,13 @@ namespace SnowflakeID
         /// <summary>
         /// Sets the timeStamp portion of the snowflake based on current time and selected epoch. Gets real time of the snowflake based on selected epoch.
         /// </summary>
-        public virtual DateTime UtcDateTime { get; set; }
+        public DateTime UtcDateTime { get; set; }
 
         /// <summary>
         /// Gets / Sets machine / server number
         /// </summary>
         [CLSCompliant(false)]
-        public virtual ulong MachineId
+        public ulong MachineId
         {
             get => _MachineId;
             set
@@ -107,7 +107,7 @@ namespace SnowflakeID
         /// Gets / Sets sequence
         /// </summary>
         [CLSCompliant(false)]
-        public virtual ulong Sequence
+        public ulong Sequence
         {
             get => _Sequence;
             set
@@ -141,7 +141,7 @@ namespace SnowflakeID
         /// Gets / Sets timeStamp as number of milliseconds since selected epoch
         /// </summary>
         [CLSCompliant(false)]
-        public virtual ulong Timestamp
+        public ulong Timestamp
         {
             get
             {
@@ -195,7 +195,7 @@ namespace SnowflakeID
         /// <summary>
         /// Gets snowflakeId from string
         /// </summary>
-        public virtual string Code
+        public string Code
         {
             get
             {
