@@ -2,7 +2,8 @@
 {
     public class SnowflakeTest
     {
-        private static readonly DateTime epoch = new(1970, 1, 1);
+        private static readonly DateTime defaultEpoch = new(1970, 1, 1);
+        private static readonly DateTime customEpoch = new(2023, 1, 1);
 
 
         [SetUp]
@@ -60,7 +61,7 @@
         public void CreationTest(bool useTimeStamp, bool desc)
         {
             DateTime d = DateTime.UtcNow;
-            ulong timestampActualMillis = ((ulong)d.Subtract(epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
+            ulong timestampActualMillis = ((ulong)d.Subtract(defaultEpoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
             long i_ini = (desc ? Snowflake.MaxMachineId - 1 : 0);
             long i_fin = (desc ? 0 : Snowflake.MaxMachineId - 1);
             long j_ini = (desc ? Snowflake.MaxSequence - 1 : 0);
@@ -143,6 +144,49 @@
             });
         }
 
+        [TestCase(1024, 4096)]
+        [TestCase(124, 4096)]
+        [TestCase(1024, 406)]
+        [TestCase(2024, 4596)]
+        [TestCase(224, 4596)]
+        [TestCase(2024, 456)]
+        [TestCase(124, -1)]
+        [TestCase(-1, 406)]
+        [TestCase(-2024, -4596)]
+        [TestCase(-1, -1)]
+        public void CreationErrorTest(int machine, int sequence)
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                _ = new Snowflake()
+                {
+                    UtcDateTime = DateTime.UtcNow,
+                    MachineIdInt32 = machine,
+                    SequenceInt32 = sequence,
+                };
+            });
+        }
+
+        [TestCase(-1)]
+        [TestCase(0b0000_0000_0000_0000_0000_0111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111)]
+        [TestCase(8796093022207)]
+        [TestCase(0b0000_0000_0000_0000_0000_0100_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000)]
+        [TestCase(4398046511104)]
+        [TestCase(0b0000_0000_0010_0000_0000_0000_0000_0000_0000_0000_0000_0010_0000_0000_0010_0000)]
+        [TestCase(9007199254872096)]
+        public void CreationErrorTest(long timestamp)
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                _ = new Snowflake()
+                {
+                    TimestampInt64 = timestamp,
+                    MachineIdInt32 = 123,
+                    SequenceInt32 = 123,
+                };
+            });
+        }
+
 
         [TestCase(0ul, 0ul)]
         [TestCase(0ul, 4095ul)]
@@ -155,8 +199,8 @@
         public void Date(ulong machineId, ulong sequence)
         {
             DateTime d = DateTime.UtcNow;
-            ulong timestampActualMillis = ((ulong)d.Subtract(epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
-            DateTime dMillis = DateTime.SpecifyKind(epoch.AddMilliseconds(timestampActualMillis), DateTimeKind.Utc);
+            ulong timestampActualMillis = ((ulong)d.Subtract(defaultEpoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
+            DateTime dMillis = DateTime.SpecifyKind(defaultEpoch.AddMilliseconds(timestampActualMillis), DateTimeKind.Utc);
 
             Assert.Multiple(() =>
             {
@@ -201,7 +245,7 @@
         public void UnsignedEqualsSigned()
         {
             DateTime d = DateTime.UtcNow;
-            ulong timestampActualMillis = ((ulong)d.Subtract(epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
+            ulong timestampActualMillis = ((ulong)d.Subtract(defaultEpoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
             ulong machineId = 123;
             ulong sequence = 3468;
             int machineIdInt32 = (int)machineId;
@@ -248,5 +292,76 @@
             });
         }
 
+        [Test]
+        public void DefaultEpochTest()
+        {
+            DateTime d = DateTime.UtcNow;
+
+            Snowflake snowflakeDefault = new()
+            {
+                UtcDateTime = d,
+                MachineId = 123,
+                Sequence = 456,
+            };
+
+            Snowflake snowflakeCustomEqualDefault = new(defaultEpoch)
+            {
+                UtcDateTime = d,
+                MachineId = 123,
+                Sequence = 456,
+            };
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(snowflakeDefault.Epoch, Is.EqualTo(defaultEpoch));
+                Assert.That(snowflakeDefault.Epoch, Is.Not.EqualTo(customEpoch));
+                Assert.That(snowflakeCustomEqualDefault.Epoch, Is.EqualTo(defaultEpoch));
+                Assert.That(snowflakeCustomEqualDefault.Epoch, Is.Not.EqualTo(customEpoch));
+                Assert.That(snowflakeDefault, Is.EqualTo(snowflakeCustomEqualDefault));
+                Assert.That(snowflakeDefault.Epoch, Is.EqualTo(snowflakeCustomEqualDefault.Epoch));
+                Assert.That(snowflakeDefault.MachineId, Is.EqualTo(snowflakeCustomEqualDefault.MachineId));
+                Assert.That(snowflakeDefault.Sequence, Is.EqualTo(snowflakeCustomEqualDefault.Sequence));
+                Assert.That(snowflakeDefault.Timestamp, Is.EqualTo(snowflakeCustomEqualDefault.Timestamp));
+                Assert.That(snowflakeDefault.UtcDateTime, Is.EqualTo(snowflakeCustomEqualDefault.UtcDateTime));
+                Assert.That(snowflakeDefault.Code, Is.EqualTo(snowflakeCustomEqualDefault.Code));
+                Assert.That(snowflakeDefault.ToString(), Is.EqualTo(snowflakeCustomEqualDefault.ToString()));
+            });
+        }
+
+        [Test]
+        public void CustomEpochTest()
+        {
+            DateTime d = DateTime.UtcNow;
+
+            Snowflake snowflakeDefault = new()
+            {
+                UtcDateTime = d,
+                MachineId = 123,
+                Sequence = 456,
+            };
+
+            Snowflake snowflakeCustomEqualDefault = new(customEpoch)
+            {
+                UtcDateTime = d,
+                MachineId = 123,
+                Sequence = 456,
+            };
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(snowflakeDefault.Epoch, Is.EqualTo(defaultEpoch));
+                Assert.That(snowflakeDefault.Epoch, Is.Not.EqualTo(customEpoch));
+                Assert.That(snowflakeCustomEqualDefault.Epoch, Is.Not.EqualTo(defaultEpoch));
+                Assert.That(snowflakeCustomEqualDefault.Epoch, Is.EqualTo(customEpoch));
+                Assert.That(snowflakeDefault, Is.Not.EqualTo(snowflakeCustomEqualDefault));
+                Assert.That(snowflakeDefault.Epoch, Is.Not.EqualTo(snowflakeCustomEqualDefault.Epoch));
+                Assert.That(snowflakeDefault.MachineId, Is.EqualTo(snowflakeCustomEqualDefault.MachineId));
+                Assert.That(snowflakeDefault.Sequence, Is.EqualTo(snowflakeCustomEqualDefault.Sequence));
+                Assert.That(snowflakeDefault.Timestamp, Is.Not.EqualTo(snowflakeCustomEqualDefault.Timestamp));
+                Assert.That(snowflakeDefault.UtcDateTime, Is.EqualTo(snowflakeCustomEqualDefault.UtcDateTime));
+                Assert.That(snowflakeDefault.Code, Is.Not.EqualTo(snowflakeCustomEqualDefault.Code));
+                Assert.That(snowflakeDefault.ToString(), Is.Not.EqualTo(snowflakeCustomEqualDefault.ToString()));
+            });
+        }
     }
 }

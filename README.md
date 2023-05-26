@@ -1,6 +1,6 @@
 # Snowflake Id Generator
 
-Generate unique identifiers based on Twitter's Snowflake ID.
+Generate unique identifiers based on Twitter's [Snowflake ID](https://en.wikipedia.org/wiki/Snowflake_ID).
 
 Parse a Snowflake to get information about it's creation.
 

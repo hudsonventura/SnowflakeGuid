@@ -159,6 +159,79 @@
 
 
         [Test]
+        public void DefaultEpochTest()
+        {
+            ulong code = SnowflakeIDGenerator.GetCode(123);
+            ulong codeDefaultEpochSetted = SnowflakeIDGenerator.GetCode(123, UnixEpoch);
+
+            Snowflake snowflake = Snowflake.Parse(code);
+            Snowflake snowflakeDefaultEpochSetted = Snowflake.Parse(codeDefaultEpochSetted, UnixEpoch);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(snowflake, Is.LessThan(snowflakeDefaultEpochSetted));
+                Assert.That(snowflake.Epoch, Is.EqualTo(snowflakeDefaultEpochSetted.Epoch));
+                Assert.That(snowflake.Timestamp, Is.LessThanOrEqualTo(snowflakeDefaultEpochSetted.Timestamp));
+            });
+        }
+
+        [Test]
+        public void CustomTest()
+        {
+            ulong code = SnowflakeIDGenerator.GetCode(123);
+            ulong codeDefaultEpochSetted = SnowflakeIDGenerator.GetCode(123, CustomEpoch);
+
+            Snowflake snowflake = Snowflake.Parse(code);
+            Snowflake snowflakeDefaultEpochSetted = Snowflake.Parse(codeDefaultEpochSetted, CustomEpoch);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(snowflake, Is.GreaterThan(snowflakeDefaultEpochSetted));
+                Assert.That(snowflake.Epoch, Is.Not.EqualTo(snowflakeDefaultEpochSetted.Epoch));
+                Assert.That(snowflake.Epoch, Is.EqualTo(UnixEpoch));
+                Assert.That(snowflakeDefaultEpochSetted.Epoch, Is.EqualTo(CustomEpoch));
+                Assert.That(snowflakeDefaultEpochSetted.Timestamp, Is.LessThan(snowflake.Timestamp));
+            });
+        }
+
+        [Test]
+        public void DefaultEpochStringTest()
+        {
+            string codeString = SnowflakeIDGenerator.GetCodeString(123);
+            string codeStringDefaultEpochSetted = SnowflakeIDGenerator.GetCodeString(123, UnixEpoch);
+
+            Snowflake snowflakeString = Snowflake.Parse(codeString);
+            Snowflake snowflakeStringDefaultEpochSetted = Snowflake.Parse(codeStringDefaultEpochSetted, UnixEpoch);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(snowflakeString, Is.LessThan(snowflakeStringDefaultEpochSetted));
+                Assert.That(snowflakeString.Epoch, Is.EqualTo(snowflakeStringDefaultEpochSetted.Epoch));
+                Assert.That(snowflakeString.Timestamp, Is.LessThanOrEqualTo(snowflakeStringDefaultEpochSetted.Timestamp));
+            });
+        }
+
+        [Test]
+        public void CustomStringTest()
+        {
+            string codeString = SnowflakeIDGenerator.GetCodeString(123);
+            string codeStringDefaultEpochSetted = SnowflakeIDGenerator.GetCodeString(123, CustomEpoch);
+
+            Snowflake snowflakeString = Snowflake.Parse(codeString);
+            Snowflake snowflakeStringDefaultEpochSetted = Snowflake.Parse(codeStringDefaultEpochSetted, CustomEpoch);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(snowflakeString, Is.GreaterThan(snowflakeStringDefaultEpochSetted));
+                Assert.That(snowflakeString.Epoch, Is.Not.EqualTo(snowflakeStringDefaultEpochSetted.Epoch));
+                Assert.That(snowflakeString.Epoch, Is.EqualTo(UnixEpoch));
+                Assert.That(snowflakeStringDefaultEpochSetted.Epoch, Is.EqualTo(CustomEpoch));
+                Assert.That(snowflakeStringDefaultEpochSetted.Timestamp, Is.LessThan(snowflakeString.Timestamp));
+            });
+        }
+
+
+        [Test]
         public void DateTimeMillisecondsTest()
         {
             // This tests aux function bellow. It truncates time to a millisecond
@@ -182,8 +255,8 @@
 
 
 
-
         private static readonly DateTime UnixEpoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+        private static readonly DateTime CustomEpoch = new(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private static DateTime DateTimeUtcMillis()
         {
             return DateTimeOnlyMillis(DateTime.UtcNow);
