@@ -286,7 +286,7 @@
         }
 
         [Test]
-        public void customEpochTest()
+        public void CustomEpochTest()
         {
             DateTime d = DateTime.UtcNow;
 
