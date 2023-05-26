@@ -194,6 +194,42 @@
             });
         }
 
+        [Test]
+        public void DefaultEpochStringTest()
+        {
+            string codeString = SnowflakeIDGenerator.GetCodeString(123);
+            string codeStringDefaultEpochSetted = SnowflakeIDGenerator.GetCodeString(123, UnixEpoch);
+
+            Snowflake snowflakeString = Snowflake.Parse(codeString);
+            Snowflake snowflakeStringDefaultEpochSetted = Snowflake.Parse(codeStringDefaultEpochSetted, UnixEpoch);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(snowflakeString, Is.LessThan(snowflakeStringDefaultEpochSetted));
+                Assert.That(snowflakeString.Epoch, Is.EqualTo(snowflakeStringDefaultEpochSetted.Epoch));
+                Assert.That(snowflakeString.Timestamp, Is.LessThanOrEqualTo(snowflakeStringDefaultEpochSetted.Timestamp));
+            });
+        }
+
+        [Test]
+        public void CustomStringTest()
+        {
+            string codeString = SnowflakeIDGenerator.GetCodeString(123);
+            string codeStringDefaultEpochSetted = SnowflakeIDGenerator.GetCodeString(123, CustomEpoch);
+
+            Snowflake snowflakeString = Snowflake.Parse(codeString);
+            Snowflake snowflakeStringDefaultEpochSetted = Snowflake.Parse(codeStringDefaultEpochSetted, CustomEpoch);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(snowflakeString, Is.GreaterThan(snowflakeStringDefaultEpochSetted));
+                Assert.That(snowflakeString.Epoch, Is.Not.EqualTo(snowflakeStringDefaultEpochSetted.Epoch));
+                Assert.That(snowflakeString.Epoch, Is.EqualTo(UnixEpoch));
+                Assert.That(snowflakeStringDefaultEpochSetted.Epoch, Is.EqualTo(CustomEpoch));
+                Assert.That(snowflakeStringDefaultEpochSetted.Timestamp, Is.LessThan(snowflakeString.Timestamp));
+            });
+        }
+
 
         [Test]
         public void DateTimeMillisecondsTest()
@@ -214,26 +250,6 @@
                 Assert.That(d2.Millisecond, Is.EqualTo(d1.Millisecond));
             });
         }
-
-        [Test]
-        public void TimestampMillisFromEpochTest()
-        {
-            DateTime d = DateTime.UtcNow;
-            ulong oldWay = ((ulong)d.Subtract(UnixEpoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
-            ulong newWay = SnowflakeIDGenerator.TimestampMillisFromEpoch(d, UnixEpoch);
-            Assert.That(newWay, Is.EqualTo(oldWay));
-        }
-
-        [Test]
-        public void DriftTest()
-        {
-            Assert.Multiple(() =>
-            {
-                Assert.That(SnowflakeIDGenerator.TimestampMillisFromEpoch(UnixEpoch, UnixEpoch), Is.EqualTo(0));
-                Assert.That(SnowflakeIDGenerator.TimestampMillisFromEpoch(CustomEpoch, UnixEpoch), Is.EqualTo(1577836800000));
-            });
-        }
-
 
 
 

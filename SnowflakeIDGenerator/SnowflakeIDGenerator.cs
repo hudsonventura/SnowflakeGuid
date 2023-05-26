@@ -26,10 +26,10 @@ namespace SnowflakeID
 
         private static void SetLastTimestampDriftCorrected(ulong timestamp, DateTime epoch)
         {
-            LastTimestampDriftCorrected = timestamp + TimestampMillisFromEpoch(epoch, defaultEpoch);
+            LastTimestampDriftCorrected = timestamp + DateTimeHelper.TimestampMillisFromEpoch(epoch, defaultEpoch);
         }
 
-        private ulong LastTimeStamp => LastTimestampDriftCorrected - TimestampMillisFromEpoch(configuredEpoch, defaultEpoch);
+        private ulong LastTimeStamp => LastTimestampDriftCorrected - DateTimeHelper.TimestampMillisFromEpoch(configuredEpoch, defaultEpoch);
         private static ulong LastTimestampDriftCorrected;
 
 
@@ -66,16 +66,14 @@ namespace SnowflakeID
         /// <param name="machineId">Machine number</param>
         /// <param name="customEpoch">Date to use as epoch</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
-        public SnowflakeIDGenerator(int machineId, DateTime customEpoch) : this((ulong)machineId, customEpoch)
-        { }
+        public SnowflakeIDGenerator(int machineId, DateTime customEpoch) : this((ulong)machineId, customEpoch) { }
 
         /// <summary>
         /// Creates a SnowflakeIDGenerator for a given machine number
         /// </summary>
         /// <param name="machineId">Machine number</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
-        public SnowflakeIDGenerator(int machineId) : this(machineId, defaultEpoch)
-        { }
+        public SnowflakeIDGenerator(int machineId) : this(machineId, defaultEpoch) { }
 
         /// <summary>
         /// Gets next Snowflake id
@@ -86,14 +84,14 @@ namespace SnowflakeID
         {
             lock (lockObject)
             {
-                ulong currentTimestampMillis = TimestampMillisFromEpoch(DateTime.UtcNow, configuredEpoch);
+                ulong currentTimestampMillis = DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, configuredEpoch);
 
                 if (Sequence == 0 && currentTimestampMillis == LastTimeStamp)
                 {
                     do
                     {
                         Thread.Sleep(1);
-                        currentTimestampMillis = TimestampMillisFromEpoch(DateTime.UtcNow, configuredEpoch);
+                        currentTimestampMillis = DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, configuredEpoch);
                     } while (currentTimestampMillis == LastTimeStamp);
                 }
                 else if (currentTimestampMillis < LastTimeStamp)
@@ -205,10 +203,5 @@ namespace SnowflakeID
         /// <param name="customEpoch">Date to use as epoch</param>
         /// <returns></returns>
         public static string GetCodeString(int machineId, DateTime customEpoch) => GetCodeString((ulong)machineId, customEpoch);
-
-        internal static ulong TimestampMillisFromEpoch(DateTime date, DateTime epoch)
-        {
-            return ((ulong)date.Subtract(epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
-        }
     }
 }

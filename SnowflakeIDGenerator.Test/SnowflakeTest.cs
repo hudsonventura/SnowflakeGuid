@@ -144,6 +144,49 @@
             });
         }
 
+        [TestCase(1024, 4096)]
+        [TestCase(124, 4096)]
+        [TestCase(1024, 406)]
+        [TestCase(2024, 4596)]
+        [TestCase(224, 4596)]
+        [TestCase(2024, 456)]
+        [TestCase(124, -1)]
+        [TestCase(-1, 406)]
+        [TestCase(-2024, -4596)]
+        [TestCase(-1, -1)]
+        public void CreationErrorTest(int machine, int sequence)
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                _ = new Snowflake()
+                {
+                    UtcDateTime = DateTime.UtcNow,
+                    MachineIdInt32 = machine,
+                    SequenceInt32 = sequence,
+                };
+            });
+        }
+
+        [TestCase(-1)]
+        [TestCase(0b0000_0000_0000_0000_0000_0111_1111_1111_1111_1111_1111_1111_1111_1111_1111_1111)]
+        [TestCase(8796093022207)]
+        [TestCase(0b0000_0000_0000_0000_0000_0100_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000)]
+        [TestCase(4398046511104)]
+        [TestCase(0b0000_0000_0010_0000_0000_0000_0000_0000_0000_0000_0000_0010_0000_0000_0010_0000)]
+        [TestCase(9007199254872096)]
+        public void CreationErrorTest(long timestamp)
+        {
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            {
+                _ = new Snowflake()
+                {
+                    TimestampInt64 = timestamp,
+                    MachineIdInt32 = 123,
+                    SequenceInt32 = 123,
+                };
+            });
+        }
+
 
         [TestCase(0ul, 0ul)]
         [TestCase(0ul, 4095ul)]
