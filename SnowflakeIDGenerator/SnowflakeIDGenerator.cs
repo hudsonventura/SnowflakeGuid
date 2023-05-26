@@ -1,9 +1,16 @@
-﻿using System;
+﻿// Copyright (c) Federico Seckel.
+// Licensed under the BSD 3-Clause License. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Threading;
 
 [assembly: CLSCompliant(true)]
 namespace SnowflakeID
 {
+    /// <summary>
+    /// Generator class for <see cref="SnowflakeID"/>.
+    /// <para>This keeps track of time, machine number and sequence.</para>
+    /// </summary>
     public class SnowflakeIDGenerator
     {
         private readonly ulong MACHINE_ID;
@@ -12,7 +19,8 @@ namespace SnowflakeID
         private static ulong Sequence { get => _Sequence; set => _Sequence = value % Snowflake.MaxSequence; }
 
         private static readonly object lockObject = new();
-        private static readonly DateTime epoch = new(1970, 1, 1);
+        private static readonly DateTime defaultEpoch = new(1970, 1, 1);
+        private readonly DateTime epoch;
 
         private static ulong LastTimeStamp { get; set; }
 
@@ -20,26 +28,45 @@ namespace SnowflakeID
 
 
         /// <summary>
-        /// Creates a SnowflakeIDGenerator for a given machine number
+        /// Creates a SnowflakeIDGenerator for a given machine number using a custom date as epoch
         /// </summary>
         /// <param name="machineId">Machine number</param>
+        /// <param name="customEpoch">Date to use as epoch</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
         [CLSCompliant(false)]
-        public SnowflakeIDGenerator(ulong machineId)
+        public SnowflakeIDGenerator(ulong machineId, DateTime customEpoch)
         {
             if (machineId >= Snowflake.MaxMachineId)
             {
                 throw new ArgumentOutOfRangeException(nameof(machineId), $"{nameof(machineId)} must be less than {Snowflake.MaxMachineId}. Got: {machineId}.");
             }
             MACHINE_ID = machineId;
+            epoch = customEpoch;
         }
 
         /// <summary>
         /// Creates a SnowflakeIDGenerator for a given machine number
         /// </summary>
-        /// <param name="machineId"></param>
+        /// <param name="machineId">Machine number</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
-        public SnowflakeIDGenerator(int machineId) : this((ulong)machineId)
+        [CLSCompliant(false)]
+        public SnowflakeIDGenerator(ulong machineId) : this(machineId, defaultEpoch) { }
+
+        /// <summary>
+        /// Creates a SnowflakeIDGenerator for a given machine number using a custom date as epoch
+        /// </summary>
+        /// <param name="machineId">Machine number</param>
+        /// <param name="customEpoch">Date to use as epoch</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
+        public SnowflakeIDGenerator(int machineId, DateTime customEpoch) : this((ulong)machineId, customEpoch)
+        { }
+
+        /// <summary>
+        /// Creates a SnowflakeIDGenerator for a given machine number
+        /// </summary>
+        /// <param name="machineId">Machine number</param>
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
+        public SnowflakeIDGenerator(int machineId) : this(machineId, defaultEpoch)
         { }
 
         /// <summary>
