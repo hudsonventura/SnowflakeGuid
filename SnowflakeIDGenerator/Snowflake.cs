@@ -1,5 +1,7 @@
-﻿// Copyright (c) Federico Seckel.
+﻿// Copyright (c) 2022, Federico Seckel.
 // Licensed under the BSD 3-Clause License. See LICENSE file in the project root for full license information.
+
+// Ignore Spelling: Rebase
 
 using System;
 using System.Globalization;
@@ -207,13 +209,19 @@ namespace SnowflakeID
             }
         }
 
-
+        /// <summary>
+        /// Rebase the Snowflake to a new epoch CHANGING THE GENERATED CODE but keeping the same date and time.
+        /// </summary>
+        /// <param name="newEpoch"></param>
         public void RebaseEpoch(DateTime newEpoch)
         {
             Epoch = newEpoch;
         }
 
-
+        /// <summary>
+        /// Changes the snowflake's epoch keeping the code intact. This changes the represented <see cref="UtcDateTime"/>.
+        /// </summary>
+        /// <param name="newEpoch"></param>
         public void ChangeEpoch(DateTime newEpoch)
         {
             UtcDateTime += newEpoch - Epoch;
@@ -388,5 +396,63 @@ namespace SnowflakeID
         /// <param name="s2"></param>
         /// <returns></returns>
         public static bool operator <=(Snowflake s1, Snowflake s2) => s1 == s2 || s1 < s2;
+
+
+        #region Implicit and explicit cast operator with alternative functions. This part might be partially redundant
+        /// <summary>
+        /// Explicit cast from <see cref="string"/>
+        /// </summary>
+        /// <param name="s"></param>
+        public static explicit operator Snowflake(string s) => Parse(s);
+
+
+        /// <summary>
+        /// Explicit cast from <see cref="string"/>
+        /// </summary>
+        /// <param name="s"></param>
+        public static Snowflake FromString(string s)
+        {
+            return (Snowflake)s;
+        }
+
+        /// <summary>
+        /// Explicit cast from <see cref="ulong"/>
+        /// </summary>
+        /// <param name="s"></param>
+        [CLSCompliant(false)]
+        public static explicit operator Snowflake(ulong s) => Parse(s);
+
+        /// <summary>
+        /// Explicit cast from <see cref="ulong"/>
+        /// </summary>
+        /// <param name="s"></param>
+        [CLSCompliant(false)]
+        public static Snowflake FromUInt64(ulong s)
+        {
+            return (Snowflake)s;
+        }
+
+        /// <summary>
+        /// Implicit cast to <see cref="string"/>
+        /// </summary>
+        /// <param name="s"></param>
+        public static implicit operator string(Snowflake s) => s?.ToString();
+
+        /// <summary>
+        /// Implicit cast to <see cref="ulong"/>
+        /// </summary>
+        /// <param name="s"></param>
+        [CLSCompliant(false)]
+        public static implicit operator ulong(Snowflake s) => s?.Id ?? default;
+
+        /// <summary>
+        /// Implicit cast to <see cref="ulong"/>
+        /// </summary>
+        [CLSCompliant(false)]
+        public ulong ToUInt64()
+        {
+            return this;
+        }
+        #endregion
     }
 }

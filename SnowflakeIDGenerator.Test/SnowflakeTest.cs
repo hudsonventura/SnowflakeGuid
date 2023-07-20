@@ -1,4 +1,6 @@
-﻿namespace SnowflakeID.Test
+﻿// Ignore Spelling: Rebase
+
+namespace SnowflakeID.Test
 {
     public class SnowflakeTest
     {
@@ -437,6 +439,92 @@
                 {
                     Assert.That(snowflake.Code, Is.Not.EqualTo(oldCode));
                 }
+            });
+        }
+
+        [Test]
+        public void CastOperators()
+        {
+            DateTime d = DateTime.UtcNow;
+            ulong timestampActualMillis = ((ulong)d.Subtract(defaultEpoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
+            DateTime dateTime = DateTime.SpecifyKind(defaultEpoch.AddMilliseconds(timestampActualMillis), DateTimeKind.Utc); // remove sub-millisecond precision
+            ulong seq = 12;
+            ulong machine = 65;
+
+            Snowflake snowflake = new()
+            {
+                UtcDateTime = dateTime,
+                Sequence = seq,
+                MachineId = machine,
+            };
+
+            ulong number = snowflake;
+            Assert.That(number, Is.EqualTo(snowflake.Id));
+
+            string code = snowflake;
+            Assert.That(code, Is.EqualTo(snowflake.Code));
+
+            Snowflake fromNumber = (Snowflake)number;
+            Assert.Multiple(() =>
+            {
+                Assert.That(fromNumber.Id, Is.EqualTo(number));
+                Assert.That(fromNumber, Is.EqualTo(snowflake));
+                Assert.That(fromNumber.UtcDateTime, Is.EqualTo(snowflake.UtcDateTime));
+                Assert.That(fromNumber.Sequence, Is.EqualTo(snowflake.Sequence));
+                Assert.That(fromNumber.MachineId, Is.EqualTo(snowflake.MachineId));
+            });
+
+            Snowflake fromCode = (Snowflake)code;
+            Assert.Multiple(() =>
+            {
+                Assert.That(fromCode.Code, Is.EqualTo(code));
+                Assert.That(fromCode, Is.EqualTo(snowflake));
+                Assert.That(fromCode.UtcDateTime, Is.EqualTo(snowflake.UtcDateTime));
+                Assert.That(fromCode.Sequence, Is.EqualTo(snowflake.Sequence));
+                Assert.That(fromCode.MachineId, Is.EqualTo(snowflake.MachineId));
+            });
+        }
+
+        [Test]
+        public void CastAlternativeOperators()
+        {
+            DateTime d = DateTime.UtcNow;
+            ulong timestampActualMillis = ((ulong)d.Subtract(defaultEpoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
+            DateTime dateTime = DateTime.SpecifyKind(defaultEpoch.AddMilliseconds(timestampActualMillis), DateTimeKind.Utc); // remove sub-millisecond precision
+            ulong seq = 12;
+            ulong machine = 65;
+
+            Snowflake snowflake = new()
+            {
+                UtcDateTime = dateTime,
+                Sequence = seq,
+                MachineId = machine,
+            };
+
+            ulong number = snowflake.ToUInt64();
+            Assert.That(number, Is.EqualTo(snowflake.Id));
+
+            string code = snowflake.ToString();
+            Assert.That(code, Is.EqualTo(snowflake.Code));
+
+            Snowflake fromNumber = Snowflake.FromUInt64(number);
+            Assert.Multiple(() =>
+            {
+                Assert.That(fromNumber.Id, Is.EqualTo(number));
+                Assert.That(fromNumber, Is.EqualTo(snowflake));
+                Assert.That(fromNumber.UtcDateTime, Is.EqualTo(snowflake.UtcDateTime));
+                Assert.That(fromNumber.Sequence, Is.EqualTo(snowflake.Sequence));
+                Assert.That(fromNumber.MachineId, Is.EqualTo(snowflake.MachineId));
+            });
+
+            Snowflake fromCode = Snowflake.FromString(code);
+            Assert.Multiple(() =>
+            {
+                Assert.That(fromCode.Code, Is.EqualTo(code));
+                Assert.That(fromCode, Is.EqualTo(snowflake));
+                Assert.That(fromCode.UtcDateTime, Is.EqualTo(snowflake.UtcDateTime));
+                Assert.That(fromCode.Sequence, Is.EqualTo(snowflake.Sequence));
+                Assert.That(fromCode.MachineId, Is.EqualTo(snowflake.MachineId));
             });
         }
     }
