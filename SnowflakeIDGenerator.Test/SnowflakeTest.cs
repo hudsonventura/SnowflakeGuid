@@ -363,5 +363,81 @@
                 Assert.That(snowflakeDefault.ToString(), Is.Not.EqualTo(snowflakeCustomEqualDefault.ToString()));
             });
         }
+
+
+        private static IEnumerable<TestCaseData> ChangeEpochTestCaseData()
+        {
+            yield return new TestCaseData(defaultEpoch, defaultEpoch);
+            yield return new TestCaseData(defaultEpoch, customEpoch);
+            yield return new TestCaseData(customEpoch, defaultEpoch);
+            yield return new TestCaseData(customEpoch, customEpoch);
+        }
+
+        [TestCaseSource(nameof(ChangeEpochTestCaseData))]
+        public void ChangeEpoch(DateTime oldEpoch, DateTime newEpoch)
+        {
+            DateTime dateTime = DateTime.UtcNow;
+            ulong seq = 12;
+            ulong machine = 65;
+
+            TimeSpan epochDifference = newEpoch - oldEpoch;
+
+            Snowflake snowflake = new(epoch: oldEpoch)
+            {
+                UtcDateTime = dateTime,
+                Sequence = seq,
+                MachineId = machine,
+            };
+            string oldCode = snowflake.Code;
+
+            Assert.That(snowflake.Epoch, Is.EqualTo(oldEpoch));
+
+            snowflake.ChangeEpoch(newEpoch);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(snowflake.UtcDateTime, Is.EqualTo(dateTime + epochDifference));
+                Assert.That(snowflake.Sequence, Is.EqualTo(seq));
+                Assert.That(snowflake.MachineId, Is.EqualTo(machine));
+                Assert.That(snowflake.Epoch, Is.EqualTo(newEpoch));
+                Assert.That(snowflake.Code, Is.EqualTo(oldCode));
+            });
+        }
+
+        [TestCaseSource(nameof(ChangeEpochTestCaseData))]
+        public void RebaseEpoch(DateTime oldEpoch, DateTime newEpoch)
+        {
+            DateTime dateTime = DateTime.UtcNow;
+            ulong seq = 12;
+            ulong machine = 65;
+
+            Snowflake snowflake = new(epoch: oldEpoch)
+            {
+                UtcDateTime = dateTime,
+                Sequence = seq,
+                MachineId = machine,
+            };
+            string oldCode = snowflake.Code;
+
+            Assert.That(snowflake.Epoch, Is.EqualTo(oldEpoch));
+
+            snowflake.RebaseEpoch(newEpoch);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(snowflake.UtcDateTime, Is.EqualTo(dateTime));
+                Assert.That(snowflake.Sequence, Is.EqualTo(seq));
+                Assert.That(snowflake.MachineId, Is.EqualTo(machine));
+                Assert.That(snowflake.Epoch, Is.EqualTo(newEpoch));
+                if (oldEpoch == newEpoch)
+                {
+                    Assert.That(snowflake.Code, Is.EqualTo(oldCode));
+                }
+                else
+                {
+                    Assert.That(snowflake.Code, Is.Not.EqualTo(oldCode));
+                }
+            });
+        }
     }
 }
