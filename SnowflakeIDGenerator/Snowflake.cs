@@ -37,7 +37,7 @@ namespace SnowflakeID
                                                 = 0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_1111_1111_1111;
 
 
-        private static readonly DateTime defaultEpoch = new(1970, 1, 1);
+        private static readonly DateTime defaultEpoch = new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
 
         /// <summary>
         /// Current epoch being used
@@ -206,6 +206,21 @@ namespace SnowflakeID
                 Id = ulong.Parse(value, CultureInfo.InvariantCulture);
             }
         }
+
+
+        public void RebaseEpoch(DateTime newEpoch)
+        {
+            Epoch = newEpoch;
+        }
+
+
+        public void ChangeEpoch(DateTime newEpoch)
+        {
+            UtcDateTime += newEpoch - Epoch;
+            Epoch = newEpoch;
+        }
+
+
 
         /// <summary>
         /// Creates a SnowflakeId object from a SnowflakeId code
