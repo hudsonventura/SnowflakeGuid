@@ -21,7 +21,7 @@ namespace SnowflakeID
         private static ulong Sequence { get => _Sequence; set => _Sequence = value % Snowflake.MaxSequence; }
 
         private static readonly object lockObject = new();
-        private static readonly DateTime defaultEpoch = new(1970, 1, 1);
+        private static readonly DateTime defaultEpoch = new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
         private readonly DateTime configuredEpoch;
 
         private static void SetLastTimestampDriftCorrected(ulong timestamp, DateTime epoch)
