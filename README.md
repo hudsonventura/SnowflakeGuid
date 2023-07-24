@@ -11,6 +11,12 @@ Parse a Snowflake to get information about it's creation.
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=fenase_SnowflakeIDGenerator2&metric=coverage)](https://sonarcloud.io/summary/overall?id=fenase_SnowflakeIDGenerator2)
 
 
+- [Usage](#usage)
+  - [Generate](#generate)
+  - [Parse](#parse)
+  - [Change Epoch on generated codes](#change-epoch-on-generated-codes)
+
+
 # Usage
 
 ## Generate
@@ -28,9 +34,9 @@ SnowflakeIDGenerator gen = new SnowflakeIDGenerator(machineId, CustomEpoch);
 ```
 
 2. Now you have 3 options:
-   1. Call `GetSnowflake` to get a `Snowflake` object
-   2. Call `GetCode` to get an Id in number (ulong) format
-   3. Call `GetCodeString` to get an Id in string format
+   1. Call `GetSnowflake()` to get a `Snowflake` object
+   2. Call `GetCode()` to get an Id in number (ulong) format
+   3. Call `GetCodeString()` to get an Id in string format
 
 
 Additionally, the `SnowflakeIDGenerator` class methods can be used as static.
@@ -57,6 +63,7 @@ var sequenceFromNumber = fromNumber.Sequence;       // 3911
 ```
 
 Additionally, starting on version 1.2.2023 you can cast a string or a number (ulong) directly into a Snowflake
+without using the `Parse()` method (only when using the default epoch).
 
 ```c#
 string s = "06975580616378931208";
@@ -73,3 +80,9 @@ var timestampFromNumber = fromNumber.Timestamp;     // 1663108067853
 var machineIdFromNumber = fromNumber.MachineId;     // 701
 var sequenceFromNumber = fromNumber.Sequence;       // 3911
 ```
+
+## Change Epoch on generated codes
+
+If you need to change the epoch on an already generated code,
+use `ChangeEpoch()` to change it keeping the same code but changing the represented date,
+or use `RebaseEpoch()` to keep the date but changing the final code.
