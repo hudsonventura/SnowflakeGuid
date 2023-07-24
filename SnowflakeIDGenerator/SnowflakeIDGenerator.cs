@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2022, Federico Seckel.
+﻿// Copyright (c) 2022-2023, Federico Seckel.
 // Licensed under the BSD 3-Clause License. See LICENSE file in the project root for full license information.
 
 using System;
@@ -31,9 +31,6 @@ namespace SnowflakeID
 
         private ulong LastTimeStamp => LastTimestampDriftCorrected - DateTimeHelper.TimestampMillisFromEpoch(configuredEpoch, defaultEpoch);
         private static ulong LastTimestampDriftCorrected;
-
-
-
 
         /// <summary>
         /// Creates a SnowflakeIDGenerator for a given machine number using a custom date as epoch
@@ -137,7 +134,6 @@ namespace SnowflakeID
         {
             return GetSnowflake().Code;
         }
-
 
         /// <summary>
         /// Static method

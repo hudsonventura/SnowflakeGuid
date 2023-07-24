@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2022, Federico Seckel.
+﻿// Copyright (c) 2022-2023, Federico Seckel.
 // Licensed under the BSD 3-Clause License. See LICENSE file in the project root for full license information.
 
 // Ignore Spelling: Rebase
@@ -228,8 +228,6 @@ namespace SnowflakeID
             Epoch = newEpoch;
         }
 
-
-
         /// <summary>
         /// Creates a SnowflakeId object from a SnowflakeId code
         /// </summary>
@@ -396,7 +394,6 @@ namespace SnowflakeID
         /// <param name="s2"></param>
         /// <returns></returns>
         public static bool operator <=(Snowflake s1, Snowflake s2) => s1 == s2 || s1 < s2;
-
 
         #region Implicit and explicit cast operator with alternative functions. This part might be partially redundant
         /// <summary>
