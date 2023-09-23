@@ -47,12 +47,16 @@
                     if (prevSnowflake != null)
                     {
                         Assert.That(current, Is.GreaterThanOrEqualTo(prevSnowflake));
-                        Assert.That(current >= prevSnowflake, Is.True); // testing operators
                         Assert.That(current, Is.GreaterThan(prevSnowflake));
+#pragma warning disable NUnit2043 // Use ComparisonConstraint for better assertion messages in case of failure. Justification: Specifically testing the operators.
+                        Assert.That(current >= prevSnowflake, Is.True); // testing operators
                         Assert.That(current > prevSnowflake, Is.True); // testing operators
+#pragma warning restore NUnit2043 // Use ComparisonConstraint for better assertion messages in case of failure.
                     }
+#pragma warning disable NUnit2043 // Use ComparisonConstraint for better assertion messages in case of failure. Justification: Specifically testing the operators.
                     Assert.That(current <= prevSnowflake, Is.False); // testing operators
                     Assert.That(current < prevSnowflake, Is.False); // testing operators
+#pragma warning restore NUnit2043 // Use ComparisonConstraint for better assertion messages in case of failure.
                 });
 
                 prevSnowflake = current;
@@ -255,8 +259,13 @@
 
 
 
-        private static readonly DateTime UnixEpoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        private static readonly DateTime CustomEpoch = new(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+        private static readonly DateTime UnixEpoch = DateTime.UnixEpoch;
+#else
+        // This should be DateTime.UnixEpoch. However, that constant is only available in .netCore and net5 or newer
+        private static readonly DateTime UnixEpoch = new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
+#endif
+        private static readonly DateTime CustomEpoch = new(year: 2020, month: 1, day: 1, hour: 0, minute: 0, second: 0, DateTimeKind.Utc);
         private static DateTime DateTimeUtcMillis()
         {
             return DateTimeOnlyMillis(DateTime.UtcNow);

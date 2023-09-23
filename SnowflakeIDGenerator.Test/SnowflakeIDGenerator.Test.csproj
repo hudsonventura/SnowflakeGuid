@@ -1,9 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFramework>net6.0</TargetFramework>
-		<ImplicitUsings>enable</ImplicitUsings>
+		<TargetFrameworks>net6.0;net40</TargetFrameworks>
 		<Nullable>enable</Nullable>
+		<Deterministic>True</Deterministic>
+		<LangVersion>latest</LangVersion>
+		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+		<EnableNETAnalyzers>True</EnableNETAnalyzers>
+		<AnalysisLevel>latest-all</AnalysisLevel>
 
 		<IsPackable>false</IsPackable>
 	</PropertyGroup>
