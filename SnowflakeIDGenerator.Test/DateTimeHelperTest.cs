@@ -48,9 +48,10 @@ namespace SnowflakeID.Test
 
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         private static readonly DateTime UnixEpochAsUnixEpoch = DateTime.UnixEpoch;
-#endif
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S6588:Use the \"UnixEpoch\" field instead of creating \"DateTime\" instances that point to the beginning of the Unix epoch",
                                                         Justification = "Using this since this is compatible with every version of the .net framework. A test case is created to assert that equality.")]
+#endif
         private static readonly DateTime UnixEpoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         private static readonly DateTime CustomEpoch = new(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
     }

@@ -69,7 +69,7 @@ namespace SnowflakeID.Test
         [Test]
         public void ParallelTest()
         {
-            List<Task<List<string>>> tasks = new();
+            List<Task<HashSet<Snowflake>>> tasks = new();
             const int TaskQuantity = 50;
             const int GeneratedQuantity = 10000;
             const ulong machineId = 1ul;
@@ -82,14 +82,14 @@ namespace SnowflakeID.Test
                 d1 = DateTimeUtcMillis();
                 for (int i = 0; i < TaskQuantity; i++)
                 {
-                    tasks.Add(new Task<List<string>>(() =>
+                    tasks.Add(new Task<HashSet<Snowflake>>(() =>
                     {
-                        List<string> l = new();
+                        HashSet<Snowflake> list = new();
                         for (int j = 0; j < GeneratedQuantity; j++)
                         {
-                            l.Add(SnowflakeIDGenerator.GetCodeString(machineId));
+                            list.Add((Snowflake)SnowflakeIDGenerator.GetCodeString(machineId));
                         }
-                        return l;
+                        return list;
                     }));
                 }
                 foreach (Task task in tasks)
@@ -113,16 +113,15 @@ namespace SnowflakeID.Test
                 throw;
             }
 
-            IEnumerable<string> combined = tasks.SelectMany(t => t.Result);
+            IEnumerable<Snowflake> combined = tasks.SelectMany(t => t.Result);
 
             Assert.Multiple(() =>
             {
                 Assert.That(combined.Count(), Is.EqualTo(TaskQuantity * GeneratedQuantity));
                 Assert.That(combined.Distinct().Count(), Is.EqualTo(combined.Count()));
             });
-            foreach (string item in combined)
+            foreach (Snowflake snowflake in combined)
             {
-                Snowflake snowflake = Snowflake.Parse(item);
                 Assert.Multiple(() =>
                 {
                     Assert.That(d1, Is.LessThanOrEqualTo(snowflake.UtcDateTime));
