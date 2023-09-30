@@ -5,7 +5,7 @@ namespace SnowflakeID.Exceptions
     /// <summary>
     /// When trying to compare Ids using different epochs
     /// </summary>
-#if NET35_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NET5_0_OR_GREATER
+#if NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NET5_0_OR_GREATER
     [Serializable]
 #endif
     public class SnowflakesUsingDifferentEpochsException : ArgumentException
@@ -34,7 +34,7 @@ namespace SnowflakeID.Exceptions
         {
         }
 
-#if NET35_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NET5_0_OR_GREATER
+#if NET20_OR_GREATER || NETSTANDARD2_0_OR_GREATER || NET5_0_OR_GREATER
         /// <summary>
         /// Constructor for SnowflakesUsingDifferentEpochsException
         /// </summary>
