@@ -373,7 +373,6 @@ namespace SnowflakeID.Test
             });
         }
 
-
         private static IEnumerable<TestCaseData> ChangeEpochTestCaseData()
         {
             yield return new TestCaseData(defaultEpoch, defaultEpoch);
@@ -446,6 +445,44 @@ namespace SnowflakeID.Test
                 {
                     Assert.That(snowflake.Code, Is.Not.EqualTo(oldCode));
                 }
+            });
+        }
+
+        [Test]
+        public void SameCodeDifferentSnowflakeTest()
+        {
+            DateTime d = DateTime.UtcNow;
+
+            Snowflake snowflakeDefault = new()
+            {
+                UtcDateTime = d,
+                MachineId = 123,
+                Sequence = 456,
+            };
+
+            Snowflake snowflakeCustomEqualDefault = new()
+            {
+                UtcDateTime = d,
+                MachineId = 123,
+                Sequence = 456,
+            };
+            snowflakeCustomEqualDefault.ChangeEpoch(customEpoch);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(snowflakeCustomEqualDefault, Is.Not.EqualTo(snowflakeDefault));
+                Assert.That(snowflakeDefault.Epoch, Is.EqualTo(defaultEpoch));
+                Assert.That(snowflakeDefault.Epoch, Is.Not.EqualTo(customEpoch));
+                Assert.That(snowflakeCustomEqualDefault.Epoch, Is.Not.EqualTo(defaultEpoch));
+                Assert.That(snowflakeCustomEqualDefault.Epoch, Is.EqualTo(customEpoch));
+                Assert.That(snowflakeDefault, Is.Not.EqualTo(snowflakeCustomEqualDefault));
+                Assert.That(snowflakeDefault.Epoch, Is.Not.EqualTo(snowflakeCustomEqualDefault.Epoch));
+                Assert.That(snowflakeDefault.MachineId, Is.EqualTo(snowflakeCustomEqualDefault.MachineId));
+                Assert.That(snowflakeDefault.Sequence, Is.EqualTo(snowflakeCustomEqualDefault.Sequence));
+                Assert.That(snowflakeDefault.Timestamp, Is.EqualTo(snowflakeCustomEqualDefault.Timestamp));
+                Assert.That(snowflakeDefault.UtcDateTime, Is.Not.EqualTo(snowflakeCustomEqualDefault.UtcDateTime));
+                Assert.That(snowflakeDefault.Code, Is.EqualTo(snowflakeCustomEqualDefault.Code));
+                Assert.That(snowflakeDefault.ToString(), Is.EqualTo(snowflakeCustomEqualDefault.ToString()));
             });
         }
 

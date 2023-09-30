@@ -3,6 +3,7 @@
 
 // Ignore Spelling: Rebase
 
+using SnowflakeID.Exceptions;
 using System;
 using System.Globalization;
 
@@ -304,7 +305,7 @@ namespace SnowflakeID
         /// <returns></returns>
         public virtual bool Equals(Snowflake other)
         {
-            return other != null && Id == other.Id;
+            return other != null && Id == other.Id && Epoch == other.Epoch;
         }
 
         /// <summary>
@@ -313,7 +314,13 @@ namespace SnowflakeID
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return (int)(Id >> 32);
+            unchecked
+            {
+                int hc = 3;
+                hc += 5 * Id.GetHashCode();
+                hc += 7 * Epoch.GetHashCode();
+                return hc;
+            }
         }
 
         /// <summary>
@@ -335,6 +342,7 @@ namespace SnowflakeID
         public int CompareTo(Snowflake other)
         {
             if (other == null) { return 1; }
+            if (Epoch != other.Epoch) { throw new SnowflakesUsingDifferentEpochsException(); }
             return Id.CompareTo(other.Id);
         }
 

@@ -1,4 +1,6 @@
-﻿namespace SnowflakeID.Test
+﻿using SnowflakeID.Helpers;
+
+namespace SnowflakeID.Test
 {
     public class DateTimeHelperTest
     {

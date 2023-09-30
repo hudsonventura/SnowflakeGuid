@@ -1,6 +1,7 @@
 ﻿// Copyright (c) 2022-2023, Federico Seckel.
 // Licensed under the BSD 3-Clause License. See LICENSE file in the project root for full license information.
 
+using SnowflakeID.Helpers;
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;

@@ -1,4 +1,6 @@
-﻿namespace SnowflakeID.Test
+﻿using SnowflakeID.Exceptions;
+
+namespace SnowflakeID.Test
 {
     public class SnowflakeIDGeneratorTest
     {
@@ -190,7 +192,13 @@
 
             Assert.Multiple(() =>
             {
-                Assert.That(snowflake, Is.GreaterThan(snowflakeDefaultEpochSetted));
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake > snowflakeDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake >= snowflakeDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake < snowflakeDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake <= snowflakeDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake.CompareTo(snowflakeDefaultEpochSetted));
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeDefaultEpochSetted.CompareTo(snowflake));
+                Assert.That(snowflake.Id, Is.GreaterThan(snowflakeDefaultEpochSetted.Id));
                 Assert.That(snowflake.Epoch, Is.Not.EqualTo(snowflakeDefaultEpochSetted.Epoch));
                 Assert.That(snowflake.Epoch, Is.EqualTo(UnixEpoch));
                 Assert.That(snowflakeDefaultEpochSetted.Epoch, Is.EqualTo(CustomEpoch));
@@ -226,7 +234,13 @@
 
             Assert.Multiple(() =>
             {
-                Assert.That(snowflakeString, Is.GreaterThan(snowflakeStringDefaultEpochSetted));
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString > snowflakeStringDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString >= snowflakeStringDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString < snowflakeStringDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString <= snowflakeStringDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString.CompareTo(snowflakeStringDefaultEpochSetted));
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeStringDefaultEpochSetted.CompareTo(snowflakeString));
+                Assert.That(snowflakeString.Id, Is.GreaterThan(snowflakeStringDefaultEpochSetted.Id));
                 Assert.That(snowflakeString.Epoch, Is.Not.EqualTo(snowflakeStringDefaultEpochSetted.Epoch));
                 Assert.That(snowflakeString.Epoch, Is.EqualTo(UnixEpoch));
                 Assert.That(snowflakeStringDefaultEpochSetted.Epoch, Is.EqualTo(CustomEpoch));
