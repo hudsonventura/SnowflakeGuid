@@ -181,7 +181,7 @@ namespace SnowflakeID.Test
         }
 
         [Test]
-        public void CustomTest()
+        public void CustomTestFromString()
         {
             ulong code = SnowflakeIDGenerator.GetCode(123);
             ulong codeDefaultEpochSetted = SnowflakeIDGenerator.GetCode(123, CustomEpoch);
@@ -202,6 +202,30 @@ namespace SnowflakeID.Test
                 Assert.That(snowflake.Epoch, Is.EqualTo(UnixEpoch));
                 Assert.That(snowflakeDefaultEpochSetted.Epoch, Is.EqualTo(CustomEpoch));
                 Assert.That(snowflakeDefaultEpochSetted.Timestamp, Is.LessThan(snowflake.Timestamp));
+                Assert.That(snowflakeDefaultEpochSetted.UtcDateTime, Is.EqualTo(snowflake.UtcDateTime).Within(1).Seconds);
+            });
+        }
+
+        [Test]
+        public void CustomTest()
+        {
+            Snowflake snowflake = SnowflakeIDGenerator.GetSnowflake(123);
+            Snowflake snowflakeDefaultEpochSetted = SnowflakeIDGenerator.GetSnowflake(123, CustomEpoch);
+
+            Assert.Multiple(() =>
+            {
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake > snowflakeDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake >= snowflakeDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake < snowflakeDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake <= snowflakeDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake.CompareTo(snowflakeDefaultEpochSetted));
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeDefaultEpochSetted.CompareTo(snowflake));
+                Assert.That(snowflake.Id, Is.GreaterThan(snowflakeDefaultEpochSetted.Id));
+                Assert.That(snowflake.Epoch, Is.Not.EqualTo(snowflakeDefaultEpochSetted.Epoch));
+                Assert.That(snowflake.Epoch, Is.EqualTo(UnixEpoch));
+                Assert.That(snowflakeDefaultEpochSetted.Epoch, Is.EqualTo(CustomEpoch));
+                Assert.That(snowflakeDefaultEpochSetted.Timestamp, Is.LessThan(snowflake.Timestamp));
+                Assert.That(snowflakeDefaultEpochSetted.UtcDateTime, Is.EqualTo(snowflake.UtcDateTime).Within(1).Seconds);
             });
         }
 
@@ -265,6 +289,41 @@ namespace SnowflakeID.Test
                 Assert.That(d2.Minute, Is.EqualTo(d1.Minute));
                 Assert.That(d2.Second, Is.EqualTo(d1.Second));
                 Assert.That(d2.Millisecond, Is.EqualTo(d1.Millisecond));
+            });
+        }
+
+        [TestCase(true)]
+        [TestCase(false)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "Cryptographically secure randomness not needed")]
+        public void SnowflakeAsStaticTest(bool useCustomEpoch)
+        {
+            DateTime epoch = useCustomEpoch ? CustomEpoch : UnixEpoch;
+            ulong machine = (ulong)new Random().Next(0, (int)Snowflake.MaxMachineId);
+
+            SnowflakeIDGenerator generator = new(machine, epoch);
+
+            Snowflake sStatic = SnowflakeIDGenerator.GetSnowflake(machine, epoch);
+            Snowflake sGenerator = generator.GetSnowflake();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(sStatic.Epoch, Is.EqualTo(epoch));
+                Assert.That(sGenerator.Epoch, Is.EqualTo(epoch));
+
+                Assert.That(sStatic.UtcDateTime, Is.EqualTo(sGenerator.UtcDateTime).Within(1).Seconds);
+
+                Assert.That(sStatic.MachineId, Is.EqualTo(machine));
+                Assert.That(sGenerator.MachineId, Is.EqualTo(machine));
+
+                if (sStatic.Timestamp == sGenerator.Timestamp)
+                {
+                    Assert.That(sStatic.Sequence, Is.EqualTo(sGenerator.Sequence - 1));
+                }
+                else
+                {
+                    Assert.That(sGenerator.Sequence, Is.EqualTo(0));
+                    Assert.That(sStatic.Sequence, Is.EqualTo(0));
+                }
             });
         }
 

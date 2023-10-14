@@ -1,6 +1,7 @@
 ﻿# Changelog
 
 ## 1.3.2023
+- Solved an issue that caused the custom epoch sometimes not being saved to the snowflake object. This does not affects the generated codes, but could make them to return the wrong date when parsed
 - Comparisons should be between snowflakes using the same epoch
 - Equality comparer returns false if the snowflakes being compared use different epochs
 

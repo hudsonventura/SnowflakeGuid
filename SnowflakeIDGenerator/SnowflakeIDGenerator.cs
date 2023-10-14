@@ -55,6 +55,9 @@ namespace SnowflakeID
             }
             MACHINE_ID = machineId;
             configuredEpoch = customEpoch;
+
+            // to prevent a weird overflow bug, set last timestamp as the previous millisecond when first creating the generator
+            if (LastTimestampDriftCorrected == default) { SetLastTimestampDriftCorrected(DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, configuredEpoch) - 1, customEpoch); }
         }
 
         /// <summary>
@@ -108,7 +111,7 @@ namespace SnowflakeID
                 }
                 SetLastTimestampDriftCorrected(currentTimestampMillis, configuredEpoch);
 
-                Snowflake snowflake = new()
+                Snowflake snowflake = new(configuredEpoch)
                 {
                     Timestamp = currentTimestampMillis,
                     MachineId = MACHINE_ID,
