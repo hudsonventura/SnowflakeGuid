@@ -84,7 +84,6 @@ namespace SnowflakeID
         /// Gets next Snowflake id
         /// </summary>
         /// <returns><typeparamref cref="Snowflake">Snowflake</typeparamref></returns>
-        /// <typeparam cref="Snowflake"/>
         public Snowflake GetSnowflake()
         {
             lock (lockObject)
@@ -142,6 +141,48 @@ namespace SnowflakeID
         {
             return GetSnowflake().Code;
         }
+
+        /// <summary>
+        /// Static method
+        /// Gets next Snowflake id for a given <typeparamref cref="ulong"><paramref name="machineId"/></typeparamref>
+        /// </summary>
+        /// <returns><typeparamref cref="Snowflake">Snowflake</typeparamref></returns>
+        /// <param name="machineId">Machine number</param>
+        [CLSCompliant(false)]
+        public static Snowflake GetSnowflake(ulong machineId)
+        {
+            return new SnowflakeIDGenerator(machineId).GetSnowflake();
+        }
+
+        /// <summary>
+        /// Static method
+        /// Gets next Snowflake id for a given <typeparamref cref="ulong"><paramref name="machineId"/></typeparamref> using a custom date as epoch
+        /// </summary>
+        /// <returns><typeparamref cref="Snowflake">Snowflake</typeparamref></returns>
+        /// <param name="machineId">Machine number</param>
+        /// <param name="customEpoch">Date to use as epoch</param>
+        [CLSCompliant(false)]
+        public static Snowflake GetSnowflake(ulong machineId, DateTime customEpoch)
+        {
+            return new SnowflakeIDGenerator(machineId, customEpoch).GetSnowflake();
+        }
+
+        /// <summary>
+        /// Static method
+        /// Gets next Snowflake id for a given <typeparamref cref="int"><paramref name="machineId"/></typeparamref>
+        /// </summary>
+        /// <returns><typeparamref cref="Snowflake">Snowflake</typeparamref></returns>
+        /// <param name="machineId">Machine number</param>
+        public static Snowflake GetSnowflake(int machineId) => GetSnowflake((ulong)machineId);
+
+        /// <summary>
+        /// Static method
+        /// Gets next Snowflake id for a given <typeparamref cref="int"><paramref name="machineId"/></typeparamref> using a custom date as epoch
+        /// </summary>
+        /// <returns><typeparamref cref="Snowflake">Snowflake</typeparamref></returns>
+        /// <param name="machineId">Machine number</param>
+        /// <param name="customEpoch">Date to use as epoch</param>
+        public static Snowflake GetSnowflake(int machineId, DateTime customEpoch) => GetSnowflake((ulong)machineId, customEpoch);
 
         /// <summary>
         /// Static method
