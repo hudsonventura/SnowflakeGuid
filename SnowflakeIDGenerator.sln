@@ -5,7 +5,7 @@ VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnowflakeIDGenerator", "SnowflakeIDGenerator\SnowflakeIDGenerator.csproj", "{DBCAA729-09DE-4D2F-9124-998B097E98D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnowflakeIDGenerator.Test", "SnowflakeIDGenerator.Test\SnowflakeIDGenerator.Test.csproj", "{08678513-A462-40BF-9195-BC6DE14DDE50}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnowflakeIDGenerator.Test", "SnowflakeIDGenerator.Test\SnowflakeIDGenerator.Test.csproj", "{08678513-A462-40BF-9195-BC6DE14DDE50}"
 	ProjectSection(ProjectDependencies) = postProject
 		{DBCAA729-09DE-4D2F-9124-998B097E98D3} = {DBCAA729-09DE-4D2F-9124-998B097E98D3}
 	EndProjectSection

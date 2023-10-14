@@ -1,4 +1,6 @@
-﻿namespace SnowflakeID.Test
+﻿using SnowflakeID.Exceptions;
+
+namespace SnowflakeID.Test
 {
     public class SnowflakeIDGeneratorTest
     {
@@ -47,12 +49,16 @@
                     if (prevSnowflake != null)
                     {
                         Assert.That(current, Is.GreaterThanOrEqualTo(prevSnowflake));
-                        Assert.That(current >= prevSnowflake, Is.True); // testing operators
                         Assert.That(current, Is.GreaterThan(prevSnowflake));
+#pragma warning disable NUnit2043 // Use ComparisonConstraint for better assertion messages in case of failure. Justification: Specifically testing the operators.
+                        Assert.That(current >= prevSnowflake, Is.True); // testing operators
                         Assert.That(current > prevSnowflake, Is.True); // testing operators
+#pragma warning restore NUnit2043 // Use ComparisonConstraint for better assertion messages in case of failure.
                     }
+#pragma warning disable NUnit2043 // Use ComparisonConstraint for better assertion messages in case of failure. Justification: Specifically testing the operators.
                     Assert.That(current <= prevSnowflake, Is.False); // testing operators
                     Assert.That(current < prevSnowflake, Is.False); // testing operators
+#pragma warning restore NUnit2043 // Use ComparisonConstraint for better assertion messages in case of failure.
                 });
 
                 prevSnowflake = current;
@@ -63,7 +69,7 @@
         [Test]
         public void ParallelTest()
         {
-            List<Task<List<string>>> tasks = new();
+            List<Task<HashSet<Snowflake>>> tasks = new();
             const int TaskQuantity = 50;
             const int GeneratedQuantity = 10000;
             const ulong machineId = 1ul;
@@ -76,14 +82,14 @@
                 d1 = DateTimeUtcMillis();
                 for (int i = 0; i < TaskQuantity; i++)
                 {
-                    tasks.Add(new Task<List<string>>(() =>
+                    tasks.Add(new Task<HashSet<Snowflake>>(() =>
                     {
-                        List<string> l = new();
+                        HashSet<Snowflake> list = new();
                         for (int j = 0; j < GeneratedQuantity; j++)
                         {
-                            l.Add(SnowflakeIDGenerator.GetCodeString(machineId));
+                            list.Add((Snowflake)SnowflakeIDGenerator.GetCodeString(machineId));
                         }
-                        return l;
+                        return list;
                     }));
                 }
                 foreach (Task task in tasks)
@@ -107,16 +113,15 @@
                 throw;
             }
 
-            IEnumerable<string> combined = tasks.SelectMany(t => t.Result);
+            IEnumerable<Snowflake> combined = tasks.SelectMany(t => t.Result);
 
             Assert.Multiple(() =>
             {
                 Assert.That(combined.Count(), Is.EqualTo(TaskQuantity * GeneratedQuantity));
                 Assert.That(combined.Distinct().Count(), Is.EqualTo(combined.Count()));
             });
-            foreach (string item in combined)
+            foreach (Snowflake snowflake in combined)
             {
-                Snowflake snowflake = Snowflake.Parse(item);
                 Assert.Multiple(() =>
                 {
                     Assert.That(d1, Is.LessThanOrEqualTo(snowflake.UtcDateTime));
@@ -176,7 +181,7 @@
         }
 
         [Test]
-        public void CustomTest()
+        public void CustomTestFromString()
         {
             ulong code = SnowflakeIDGenerator.GetCode(123);
             ulong codeDefaultEpochSetted = SnowflakeIDGenerator.GetCode(123, CustomEpoch);
@@ -186,11 +191,41 @@
 
             Assert.Multiple(() =>
             {
-                Assert.That(snowflake, Is.GreaterThan(snowflakeDefaultEpochSetted));
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake > snowflakeDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake >= snowflakeDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake < snowflakeDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake <= snowflakeDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake.CompareTo(snowflakeDefaultEpochSetted));
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeDefaultEpochSetted.CompareTo(snowflake));
+                Assert.That(snowflake.Id, Is.GreaterThan(snowflakeDefaultEpochSetted.Id));
                 Assert.That(snowflake.Epoch, Is.Not.EqualTo(snowflakeDefaultEpochSetted.Epoch));
                 Assert.That(snowflake.Epoch, Is.EqualTo(UnixEpoch));
                 Assert.That(snowflakeDefaultEpochSetted.Epoch, Is.EqualTo(CustomEpoch));
                 Assert.That(snowflakeDefaultEpochSetted.Timestamp, Is.LessThan(snowflake.Timestamp));
+                Assert.That(snowflakeDefaultEpochSetted.UtcDateTime, Is.EqualTo(snowflake.UtcDateTime).Within(1).Seconds);
+            });
+        }
+
+        [Test]
+        public void CustomTest()
+        {
+            Snowflake snowflake = SnowflakeIDGenerator.GetSnowflake(123);
+            Snowflake snowflakeDefaultEpochSetted = SnowflakeIDGenerator.GetSnowflake(123, CustomEpoch);
+
+            Assert.Multiple(() =>
+            {
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake > snowflakeDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake >= snowflakeDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake < snowflakeDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake <= snowflakeDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake.CompareTo(snowflakeDefaultEpochSetted));
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeDefaultEpochSetted.CompareTo(snowflake));
+                Assert.That(snowflake.Id, Is.GreaterThan(snowflakeDefaultEpochSetted.Id));
+                Assert.That(snowflake.Epoch, Is.Not.EqualTo(snowflakeDefaultEpochSetted.Epoch));
+                Assert.That(snowflake.Epoch, Is.EqualTo(UnixEpoch));
+                Assert.That(snowflakeDefaultEpochSetted.Epoch, Is.EqualTo(CustomEpoch));
+                Assert.That(snowflakeDefaultEpochSetted.Timestamp, Is.LessThan(snowflake.Timestamp));
+                Assert.That(snowflakeDefaultEpochSetted.UtcDateTime, Is.EqualTo(snowflake.UtcDateTime).Within(1).Seconds);
             });
         }
 
@@ -222,7 +257,13 @@
 
             Assert.Multiple(() =>
             {
-                Assert.That(snowflakeString, Is.GreaterThan(snowflakeStringDefaultEpochSetted));
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString > snowflakeStringDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString >= snowflakeStringDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString < snowflakeStringDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString <= snowflakeStringDefaultEpochSetted);
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString.CompareTo(snowflakeStringDefaultEpochSetted));
+                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeStringDefaultEpochSetted.CompareTo(snowflakeString));
+                Assert.That(snowflakeString.Id, Is.GreaterThan(snowflakeStringDefaultEpochSetted.Id));
                 Assert.That(snowflakeString.Epoch, Is.Not.EqualTo(snowflakeStringDefaultEpochSetted.Epoch));
                 Assert.That(snowflakeString.Epoch, Is.EqualTo(UnixEpoch));
                 Assert.That(snowflakeStringDefaultEpochSetted.Epoch, Is.EqualTo(CustomEpoch));
@@ -251,12 +292,52 @@
             });
         }
 
+        [TestCase(true)]
+        [TestCase(false)]
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "Cryptographically secure randomness not needed")]
+        public void SnowflakeAsStaticTest(bool useCustomEpoch)
+        {
+            DateTime epoch = useCustomEpoch ? CustomEpoch : UnixEpoch;
+            ulong machine = (ulong)new Random().Next(0, (int)Snowflake.MaxMachineId);
+
+            SnowflakeIDGenerator generator = new(machine, epoch);
+
+            Snowflake sStatic = SnowflakeIDGenerator.GetSnowflake(machine, epoch);
+            Snowflake sGenerator = generator.GetSnowflake();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(sStatic.Epoch, Is.EqualTo(epoch));
+                Assert.That(sGenerator.Epoch, Is.EqualTo(epoch));
+
+                Assert.That(sStatic.UtcDateTime, Is.EqualTo(sGenerator.UtcDateTime).Within(1).Seconds);
+
+                Assert.That(sStatic.MachineId, Is.EqualTo(machine));
+                Assert.That(sGenerator.MachineId, Is.EqualTo(machine));
+
+                if (sStatic.Timestamp == sGenerator.Timestamp)
+                {
+                    Assert.That(sStatic.Sequence, Is.EqualTo(sGenerator.Sequence - 1));
+                }
+                else
+                {
+                    Assert.That(sGenerator.Sequence, Is.EqualTo(0));
+                    Assert.That(sStatic.Sequence, Is.EqualTo(0));
+                }
+            });
+        }
 
 
 
 
-        private static readonly DateTime UnixEpoch = new(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        private static readonly DateTime CustomEpoch = new(2020, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+        private static readonly DateTime UnixEpoch = DateTime.UnixEpoch;
+#else
+        // This should be DateTime.UnixEpoch. However, that constant is only available in .netCore and net5 or newer
+        private static readonly DateTime UnixEpoch = new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
+#endif
+        private static readonly DateTime CustomEpoch = new(year: 2020, month: 1, day: 1, hour: 0, minute: 0, second: 0, DateTimeKind.Utc);
         private static DateTime DateTimeUtcMillis()
         {
             return DateTimeOnlyMillis(DateTime.UtcNow);

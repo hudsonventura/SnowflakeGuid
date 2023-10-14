@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;netstandard1.3;net40;net35;net20</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;netstandard1.3;net6.0;net40;net35;net20</TargetFrameworks>
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Title>Generate unique identifiers based on Twitter's Snowflake ID. Parse a Snowflake to get information about it's creation.</Title>
 		<Description>Generate unique identifiers based on Twitter's Snowflake ID.
@@ -13,8 +13,8 @@ Parse a Snowflake to get information about it's creation.
 		<EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
 		<EnableNETAnalyzers>True</EnableNETAnalyzers>
 		<AnalysisLevel>latest-all</AnalysisLevel>
-		<VersionSuffix>1.2.$([System.DateTime]::UtcNow.ToString(yyyy)).$([System.DateTime]::UtcNow.DayOfYear.ToString())</VersionSuffix>
-		<Version Condition=" '$(VersionSuffix)' == '' ">1.2.0.0</Version>
+		<VersionSuffix>1.3.$([System.DateTime]::UtcNow.ToString(yyyy)).$([System.DateTime]::UtcNow.DayOfYear.ToString())-beta01</VersionSuffix>
+		<Version Condition=" '$(VersionSuffix)' == '' ">1.3.0.0</Version>
 		<Version Condition=" '$(VersionSuffix)' != '' ">$(VersionSuffix)</Version>
 		<PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
 		<Deterministic>True</Deterministic>

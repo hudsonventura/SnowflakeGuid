@@ -1,8 +1,9 @@
-﻿// Copyright (c) 2022, Federico Seckel.
+﻿// Copyright (c) 2022-2023, Federico Seckel.
 // Licensed under the BSD 3-Clause License. See LICENSE file in the project root for full license information.
 
 // Ignore Spelling: Rebase
 
+using SnowflakeID.Exceptions;
 using System;
 using System.Globalization;
 
@@ -39,7 +40,12 @@ namespace SnowflakeID
                                                 = 0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_1111_1111_1111;
 
 
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+        private static readonly DateTime defaultEpoch = DateTime.UnixEpoch;
+#else
+        // This should be DateTime.UnixEpoch. However, that constant is only available in .netCore and net5 or newer
         private static readonly DateTime defaultEpoch = new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
+#endif
 
         /// <summary>
         /// Current epoch being used
@@ -228,8 +234,6 @@ namespace SnowflakeID
             Epoch = newEpoch;
         }
 
-
-
         /// <summary>
         /// Creates a SnowflakeId object from a SnowflakeId code
         /// </summary>
@@ -301,7 +305,7 @@ namespace SnowflakeID
         /// <returns></returns>
         public virtual bool Equals(Snowflake other)
         {
-            return other != null && Id == other.Id;
+            return other != null && Id == other.Id && Epoch == other.Epoch;
         }
 
         /// <summary>
@@ -310,7 +314,13 @@ namespace SnowflakeID
         /// <returns></returns>
         public override int GetHashCode()
         {
-            return (int)(Id >> 32);
+            unchecked
+            {
+                int hc = 3;
+                hc += 5 * Id.GetHashCode();
+                hc += 7 * Epoch.GetHashCode();
+                return hc;
+            }
         }
 
         /// <summary>
@@ -318,6 +328,7 @@ namespace SnowflakeID
         /// </summary>
         /// <param name="obj"></param>
         /// <returns></returns>
+        /// <exception cref="SnowflakesUsingDifferentEpochsException">When comparing ids generated using different epochs, since there's not an order in that case</exception>
         public int CompareTo(object obj)
         {
             if (obj is not Snowflake other) { return 1; }
@@ -329,9 +340,11 @@ namespace SnowflakeID
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
+        /// <exception cref="SnowflakesUsingDifferentEpochsException">When comparing ids generated using different epochs, since there's not an order in that case</exception>
         public int CompareTo(Snowflake other)
         {
             if (other == null) { return 1; }
+            if (Epoch != other.Epoch) { throw new SnowflakesUsingDifferentEpochsException(); }
             return Id.CompareTo(other.Id);
         }
 
@@ -371,6 +384,7 @@ namespace SnowflakeID
         /// <param name="s1"></param>
         /// <param name="s2"></param>
         /// <returns></returns>
+        /// <exception cref="SnowflakesUsingDifferentEpochsException">When comparing ids generated using different epochs, since there's not an order in that case</exception>
         public static bool operator >(Snowflake s1, Snowflake s2) => (!(s1 is null ^ s2 is null)) && s1 != s2 && s1.CompareTo(s2) > 0;
 
         /// <summary>
@@ -379,6 +393,7 @@ namespace SnowflakeID
         /// <param name="s1"></param>
         /// <param name="s2"></param>
         /// <returns></returns>
+        /// <exception cref="SnowflakesUsingDifferentEpochsException">When comparing ids generated using different epochs, since there's not an order in that case</exception>
         public static bool operator <(Snowflake s1, Snowflake s2) => (!(s1 is null ^ s2 is null)) && s1 != s2 && s1.CompareTo(s2) < 0;
 
         /// <summary>
@@ -387,6 +402,7 @@ namespace SnowflakeID
         /// <param name="s1"></param>
         /// <param name="s2"></param>
         /// <returns></returns>
+        /// <exception cref="SnowflakesUsingDifferentEpochsException">When comparing ids generated using different epochs, since there's not an order in that case</exception>
         public static bool operator >=(Snowflake s1, Snowflake s2) => s1 == s2 || s1 > s2;
 
         /// <summary>
@@ -395,8 +411,8 @@ namespace SnowflakeID
         /// <param name="s1"></param>
         /// <param name="s2"></param>
         /// <returns></returns>
+        /// <exception cref="SnowflakesUsingDifferentEpochsException">When comparing ids generated using different epochs, since there's not an order in that case</exception>
         public static bool operator <=(Snowflake s1, Snowflake s2) => s1 == s2 || s1 < s2;
-
 
         #region Implicit and explicit cast operator with alternative functions. This part might be partially redundant
         /// <summary>

@@ -1,11 +1,18 @@
 ﻿// Ignore Spelling: Rebase
 
+using System.Globalization;
+
 namespace SnowflakeID.Test
 {
     public class SnowflakeTest
     {
-        private static readonly DateTime defaultEpoch = new(1970, 1, 1);
-        private static readonly DateTime customEpoch = new(2023, 1, 1);
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+        private static readonly DateTime defaultEpoch = DateTime.UnixEpoch;
+#else
+        // This should be DateTime.UnixEpoch. However, that constant is only available in .netCore and net5 or newer
+        private static readonly DateTime defaultEpoch = new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
+#endif
+        private static readonly DateTime customEpoch = new(year: 2023, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
 
 
         [SetUp]
@@ -30,7 +37,7 @@ namespace SnowflakeID.Test
             {
                 Assert.That(ss.Code, Is.EqualTo(s));
                 Assert.That(ss.MachineId, Is.EqualTo(machineId));
-                Assert.That(ss.Id, Is.EqualTo(ulong.Parse(s)));
+                Assert.That(ss.Id, Is.EqualTo(ulong.Parse(s, CultureInfo.InvariantCulture)));
             });
             ulong b = SnowflakeIDGenerator.GetCode(machineId);
             Snowflake bs = Snowflake.Parse(b);
@@ -38,7 +45,7 @@ namespace SnowflakeID.Test
             {
                 Assert.That(bs.Id, Is.EqualTo(b));
                 Assert.That(bs.MachineId, Is.EqualTo(machineId));
-                Assert.That(bs.Code, Is.EqualTo(b.ToString().PadLeft(Snowflake.NumberOfDigits, '0')));
+                Assert.That(bs.Code, Is.EqualTo(b.ToString(CultureInfo.InvariantCulture).PadLeft(Snowflake.NumberOfDigits, '0')));
 
                 Assert.That(ss, Is.LessThan(bs));
                 Assert.That(ss.Timestamp, Is.LessThanOrEqualTo(bs.Timestamp));
@@ -273,12 +280,12 @@ namespace SnowflakeID.Test
                 Assert.That(snowflake.MachineIdInt32, Is.EqualTo(snowflake.MachineId));
                 Assert.That(snowflake.SequenceInt32, Is.EqualTo(snowflake.Sequence));
                 Assert.That(snowflake.TimestampInt64, Is.EqualTo(snowflake.Timestamp));
-                Assert.That(ulong.Parse(snowflake.Code), Is.EqualTo(snowflake.Id));
+                Assert.That(ulong.Parse(snowflake.Code, CultureInfo.InvariantCulture), Is.EqualTo(snowflake.Id));
 
                 Assert.That(snowflakeCLS.MachineIdInt32, Is.EqualTo(snowflakeCLS.MachineId));
                 Assert.That(snowflakeCLS.SequenceInt32, Is.EqualTo(snowflakeCLS.Sequence));
                 Assert.That(snowflakeCLS.TimestampInt64, Is.EqualTo(snowflakeCLS.Timestamp));
-                Assert.That(ulong.Parse(snowflakeCLS.Code), Is.EqualTo(snowflakeCLS.Id));
+                Assert.That(ulong.Parse(snowflakeCLS.Code, CultureInfo.InvariantCulture), Is.EqualTo(snowflakeCLS.Id));
 
                 Assert.That(snowflakeCLS, Is.EqualTo(snowflake));
                 Assert.That(snowflakeCLS.Code, Is.EqualTo(snowflake.Code));
@@ -290,7 +297,7 @@ namespace SnowflakeID.Test
                 Assert.That(snowflakeCLS.Sequence, Is.EqualTo(snowflake.Sequence));
                 Assert.That(snowflakeCLS.Timestamp, Is.EqualTo(snowflake.Timestamp));
 
-                Assert.That(SnowflakeIDGenerator.GetCode(123), Is.LessThan(ulong.Parse(SnowflakeIDGenerator.GetCodeString(123))));
+                Assert.That(SnowflakeIDGenerator.GetCode(123), Is.LessThan(ulong.Parse(SnowflakeIDGenerator.GetCodeString(123), CultureInfo.InvariantCulture)));
             });
         }
 
@@ -366,7 +373,6 @@ namespace SnowflakeID.Test
             });
         }
 
-
         private static IEnumerable<TestCaseData> ChangeEpochTestCaseData()
         {
             yield return new TestCaseData(defaultEpoch, defaultEpoch);
@@ -439,6 +445,44 @@ namespace SnowflakeID.Test
                 {
                     Assert.That(snowflake.Code, Is.Not.EqualTo(oldCode));
                 }
+            });
+        }
+
+        [Test]
+        public void SameCodeDifferentSnowflakeTest()
+        {
+            DateTime d = DateTime.UtcNow;
+
+            Snowflake snowflakeDefault = new()
+            {
+                UtcDateTime = d,
+                MachineId = 123,
+                Sequence = 456,
+            };
+
+            Snowflake snowflakeCustomEqualDefault = new()
+            {
+                UtcDateTime = d,
+                MachineId = 123,
+                Sequence = 456,
+            };
+            snowflakeCustomEqualDefault.ChangeEpoch(customEpoch);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(snowflakeCustomEqualDefault, Is.Not.EqualTo(snowflakeDefault));
+                Assert.That(snowflakeDefault.Epoch, Is.EqualTo(defaultEpoch));
+                Assert.That(snowflakeDefault.Epoch, Is.Not.EqualTo(customEpoch));
+                Assert.That(snowflakeCustomEqualDefault.Epoch, Is.Not.EqualTo(defaultEpoch));
+                Assert.That(snowflakeCustomEqualDefault.Epoch, Is.EqualTo(customEpoch));
+                Assert.That(snowflakeDefault, Is.Not.EqualTo(snowflakeCustomEqualDefault));
+                Assert.That(snowflakeDefault.Epoch, Is.Not.EqualTo(snowflakeCustomEqualDefault.Epoch));
+                Assert.That(snowflakeDefault.MachineId, Is.EqualTo(snowflakeCustomEqualDefault.MachineId));
+                Assert.That(snowflakeDefault.Sequence, Is.EqualTo(snowflakeCustomEqualDefault.Sequence));
+                Assert.That(snowflakeDefault.Timestamp, Is.EqualTo(snowflakeCustomEqualDefault.Timestamp));
+                Assert.That(snowflakeDefault.UtcDateTime, Is.Not.EqualTo(snowflakeCustomEqualDefault.UtcDateTime));
+                Assert.That(snowflakeDefault.Code, Is.EqualTo(snowflakeCustomEqualDefault.Code));
+                Assert.That(snowflakeDefault.ToString(), Is.EqualTo(snowflakeCustomEqualDefault.ToString()));
             });
         }
 

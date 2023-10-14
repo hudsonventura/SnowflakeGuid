@@ -1,6 +1,7 @@
-﻿// Copyright (c) 2022, Federico Seckel.
+﻿// Copyright (c) 2022-2023, Federico Seckel.
 // Licensed under the BSD 3-Clause License. See LICENSE file in the project root for full license information.
 
+using SnowflakeID.Helpers;
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -21,7 +22,14 @@ namespace SnowflakeID
         private static ulong Sequence { get => _Sequence; set => _Sequence = value % Snowflake.MaxSequence; }
 
         private static readonly object lockObject = new();
-        private static readonly DateTime defaultEpoch = new(1970, 1, 1);
+
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+        private static readonly DateTime defaultEpoch = DateTime.UnixEpoch;
+#else
+        // This should be DateTime.UnixEpoch. However, that constant is only available in .netCore and net5 or newer
+        private static readonly DateTime defaultEpoch = new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
+#endif
+
         private readonly DateTime configuredEpoch;
 
         private static void SetLastTimestampDriftCorrected(ulong timestamp, DateTime epoch)
@@ -31,9 +39,6 @@ namespace SnowflakeID
 
         private ulong LastTimeStamp => LastTimestampDriftCorrected - DateTimeHelper.TimestampMillisFromEpoch(configuredEpoch, defaultEpoch);
         private static ulong LastTimestampDriftCorrected;
-
-
-
 
         /// <summary>
         /// Creates a SnowflakeIDGenerator for a given machine number using a custom date as epoch
@@ -50,6 +55,9 @@ namespace SnowflakeID
             }
             MACHINE_ID = machineId;
             configuredEpoch = customEpoch;
+
+            // to prevent a weird overflow bug, set last timestamp as the previous millisecond when first creating the generator
+            if (LastTimestampDriftCorrected == default) { SetLastTimestampDriftCorrected(DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, configuredEpoch) - 1, customEpoch); }
         }
 
         /// <summary>
@@ -79,7 +87,6 @@ namespace SnowflakeID
         /// Gets next Snowflake id
         /// </summary>
         /// <returns><typeparamref cref="Snowflake">Snowflake</typeparamref></returns>
-        /// <typeparam cref="Snowflake"/>
         public Snowflake GetSnowflake()
         {
             lock (lockObject)
@@ -104,7 +111,7 @@ namespace SnowflakeID
                 }
                 SetLastTimestampDriftCorrected(currentTimestampMillis, configuredEpoch);
 
-                Snowflake snowflake = new()
+                Snowflake snowflake = new(configuredEpoch)
                 {
                     Timestamp = currentTimestampMillis,
                     MachineId = MACHINE_ID,
@@ -138,6 +145,47 @@ namespace SnowflakeID
             return GetSnowflake().Code;
         }
 
+        /// <summary>
+        /// Static method
+        /// Gets next Snowflake id for a given <typeparamref cref="ulong"><paramref name="machineId"/></typeparamref>
+        /// </summary>
+        /// <returns><typeparamref cref="Snowflake">Snowflake</typeparamref></returns>
+        /// <param name="machineId">Machine number</param>
+        [CLSCompliant(false)]
+        public static Snowflake GetSnowflake(ulong machineId)
+        {
+            return new SnowflakeIDGenerator(machineId).GetSnowflake();
+        }
+
+        /// <summary>
+        /// Static method
+        /// Gets next Snowflake id for a given <typeparamref cref="ulong"><paramref name="machineId"/></typeparamref> using a custom date as epoch
+        /// </summary>
+        /// <returns><typeparamref cref="Snowflake">Snowflake</typeparamref></returns>
+        /// <param name="machineId">Machine number</param>
+        /// <param name="customEpoch">Date to use as epoch</param>
+        [CLSCompliant(false)]
+        public static Snowflake GetSnowflake(ulong machineId, DateTime customEpoch)
+        {
+            return new SnowflakeIDGenerator(machineId, customEpoch).GetSnowflake();
+        }
+
+        /// <summary>
+        /// Static method
+        /// Gets next Snowflake id for a given <typeparamref cref="int"><paramref name="machineId"/></typeparamref>
+        /// </summary>
+        /// <returns><typeparamref cref="Snowflake">Snowflake</typeparamref></returns>
+        /// <param name="machineId">Machine number</param>
+        public static Snowflake GetSnowflake(int machineId) => GetSnowflake((ulong)machineId);
+
+        /// <summary>
+        /// Static method
+        /// Gets next Snowflake id for a given <typeparamref cref="int"><paramref name="machineId"/></typeparamref> using a custom date as epoch
+        /// </summary>
+        /// <returns><typeparamref cref="Snowflake">Snowflake</typeparamref></returns>
+        /// <param name="machineId">Machine number</param>
+        /// <param name="customEpoch">Date to use as epoch</param>
+        public static Snowflake GetSnowflake(int machineId, DateTime customEpoch) => GetSnowflake((ulong)machineId, customEpoch);
 
         /// <summary>
         /// Static method
