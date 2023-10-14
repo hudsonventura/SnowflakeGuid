@@ -4,11 +4,6 @@ Generate unique identifiers based on Twitter's [Snowflake ID](https://en.wikiped
 Parse a Snowflake to get information about it's creation.
 
 
-| ![SnowflakeId components](https://raw.githubusercontent.com/fenase/SnowflakeIDGenerator/master/ReadmeImages/SnowflakeId-Wikipedia.png) |
-|:--| 
-| *Image Source & credit available in [wikimedia](https://commons.wikimedia.org/wiki/File:Snowflake-identifier.png)* <br>"instance" in this image replaces machineId in the library / package |
-
-
 [![Nuget](https://img.shields.io/nuget/v/SnowflakeIDGenerator)](https://www.nuget.org/packages/SnowflakeIDGenerator)
 [![Build status](https://dev.azure.com/fenase/SnowflakeIDGenerator/_apis/build/status/SnowflakeIDGenerator-CI-1.0.0)](https://dev.azure.com/fenase/SnowflakeIDGenerator/_build/latest?definitionId=7)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=fenase_SnowflakeIDGenerator2&metric=alert_status)](https://sonarcloud.io/summary/overall?id=fenase_SnowflakeIDGenerator2)
@@ -16,13 +11,29 @@ Parse a Snowflake to get information about it's creation.
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=fenase_SnowflakeIDGenerator2&metric=coverage)](https://sonarcloud.io/summary/overall?id=fenase_SnowflakeIDGenerator2)
 
 
+- [Snowflakes](#snowflakes)
 - [Usage](#usage)
   - [Generate](#generate)
     - [Using the `SnowflakeIDGenerator` class](#using-the-snowflakeidgenerator-class)
     - [Using the `SnowflakeIDGenerator` class as static](#using-the-snowflakeidgenerator-class-as-static)
     - [Using a non-standard date as epoch](#using-a-non-standard-date-as-epoch)
   - [Parsing an Id](#parsing-an-id)
-  - [Change Epoch on generated codes](#change-epoch-on-generated-codes)
+  - [The Snowflake object](#the-snowflake-object)
+  - [Changing Epoch on generated codes](#changing-epoch-on-generated-codes)
+
+
+# Snowflakes
+
+Snowflakes (or SnoflakeIds) are a form of generating identifiers used in distributed computing that, when used properly,
+guarantees uniqueness between systems, since one of it's components refers to the system creating the ID.
+
+The other components refer to the current date and time, in order not to keep track of a long running sequencer
+(for example, a sequence in a database),
+and a short (in memory) sequence, to allow the generation of several codes in a short amount of time.
+
+| ![SnowflakeId components](https://raw.githubusercontent.com/fenase/SnowflakeIDGenerator/master/ReadmeImages/SnowflakeId-Wikipedia.png) |
+|:--| 
+| *Image Source & credit available in [wikimedia](https://commons.wikimedia.org/wiki/File:Snowflake-identifier.png). "instance" in this image replaces machineId in the library / package* |
 
 
 # Usage
@@ -125,7 +136,23 @@ var machineIdFromNumber = fromNumber.MachineId;     // 701
 var sequenceFromNumber = fromNumber.Sequence;       // 3911
 ```
 
-## Change Epoch on generated codes
+## The Snowflake object
+
+While the `SnowflakeIDGenerator` class keeps track of time, machine and sequence,
+a `Snowflake` object keeps track of the meaning of the code, and allows to extract information about said code.
+
+For example, as seen on the [parsing an Id](#parsing-an-id) section, when working with a `Snowflake` object
+(either parsed or just generated), you can see some information. The available fields are:
+
+* `UtcDateTime`: The creation date (UTC format)
+* `Timestamp` and `TimestampInt64` The timestamp component of the code. Amount of milliseconds since the configured epoch
+* `MachineId` and `MachineIdInt32`: the machine / terminal / server that created the id
+* `Sequence` and `SequenceInt32`: The sequencer. If greater than 0, multiple ids where generated withing the same millisecond
+* `Id`: The Snowflake id in `ulong` format
+* `Code`: The Snowflake id as `String`
+
+
+## Changing Epoch on generated codes
 
 If you need to change the epoch on an already generated code,
 use `ChangeEpoch()` to change it keeping the same code but changing the represented date,
