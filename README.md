@@ -4,7 +4,7 @@ Generate unique identifiers based on Twitter's [Snowflake ID](https://en.wikiped
 Parse a Snowflake to get information about it's creation.
 
 
-| ![SnowflakeId components](./ReadmeImages/SnowflakeId-Wikipedia.png) |
+| ![SnowflakeId components](https://raw.githubusercontent.com/fenase/SnowflakeIDGenerator/master/ReadmeImages/SnowflakeId-Wikipedia.png) |
 |:--| 
 | *Image Source & credit available in [wikimedia](https://commons.wikimedia.org/wiki/File:Snowflake-identifier.png)* <br>"instance" in this image replaces machineId in the library / package |
 
