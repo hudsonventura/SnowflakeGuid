@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2022-2023, Federico Seckel.
+﻿// Copyright (c) 2022-2024, Federico Seckel.
 // Licensed under the BSD 3-Clause License. See LICENSE file in the project root for full license information.
 
 // Ignore Spelling: Rebase
@@ -80,6 +80,7 @@ namespace SnowflakeID
         /// <summary>
         /// Gets / Sets machine / server number
         /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         [CLSCompliant(false)]
         public ulong MachineId
         {
@@ -100,12 +101,17 @@ namespace SnowflakeID
         /// <summary>
         /// Gets / Sets machine / server number
         /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public int MachineIdInt32
         {
             get => (int)MachineId;
             set
             {
+#if NET8_0_OR_GREATER
+                ArgumentOutOfRangeException.ThrowIfNegative(value);
+#else
                 if (value < 0) { throw new ArgumentOutOfRangeException(nameof(MachineIdInt32)); }
+#endif
                 MachineId = (ulong)value;
             }
         }
@@ -114,6 +120,7 @@ namespace SnowflakeID
         /// <summary>
         /// Gets / Sets sequence
         /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         [CLSCompliant(false)]
         public ulong Sequence
         {
@@ -134,12 +141,17 @@ namespace SnowflakeID
         /// <summary>
         /// Gets / Sets machine / server number
         /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public int SequenceInt32
         {
             get => (int)Sequence;
             set
             {
+#if NET8_0_OR_GREATER
+                ArgumentOutOfRangeException.ThrowIfNegative(value);
+#else
                 if (value < 0) { throw new ArgumentOutOfRangeException(nameof(SequenceInt32)); }
+#endif
                 Sequence = (ulong)value;
             }
         }
@@ -164,12 +176,17 @@ namespace SnowflakeID
         /// <summary>
         /// Gets / Sets timeStamp as number of milliseconds since selected epoch
         /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
         public long TimestampInt64
         {
             get => (long)Timestamp;
             set
             {
+#if NET8_0_OR_GREATER
+                ArgumentOutOfRangeException.ThrowIfNegative(value);
+#else
                 if (value < 0) { throw new ArgumentOutOfRangeException(nameof(TimestampInt64)); }
+#endif
                 ulong newVal = (ulong)value & MASK_DATETIMEMILLIS_RIGHT_ALIGNED;
                 if (newVal != (ulong)value) { throw new ArgumentOutOfRangeException(nameof(TimestampInt64)); }
                 Timestamp = newVal;
@@ -344,7 +361,7 @@ namespace SnowflakeID
         public int CompareTo(Snowflake other)
         {
             if (other == null) { return 1; }
-            if (Epoch != other.Epoch) { throw new SnowflakesUsingDifferentEpochsException(); }
+            if (Epoch != other.Epoch) { throw new SnowflakesUsingDifferentEpochsException(SnowflakesUsingDifferentEpochsException.DefaultMessage, nameof(other)); }
             return Id.CompareTo(other.Id);
         }
 
@@ -420,7 +437,6 @@ namespace SnowflakeID
         /// </summary>
         /// <param name="s"></param>
         public static explicit operator Snowflake(string s) => Parse(s);
-
 
         /// <summary>
         /// Explicit cast from <see cref="string"/>

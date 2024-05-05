@@ -1,13 +1,10 @@
-﻿// Copyright (c) 2022-2023, Federico Seckel.
+﻿// Copyright (c) 2022-2024, Federico Seckel.
 // Licensed under the BSD 3-Clause License. See LICENSE file in the project root for full license information.
 
 using SnowflakeID.Helpers;
 using System;
-using System.Runtime.CompilerServices;
 using System.Threading;
 
-[assembly: CLSCompliant(true)]
-[assembly: InternalsVisibleTo("SnowflakeIDGenerator.Test")]
 namespace SnowflakeID
 {
     /// <summary>
@@ -23,21 +20,24 @@ namespace SnowflakeID
 
         private static readonly object lockObject = new();
 
+        /// <summary>
+        /// Default date used as epoch if not configured
+        /// </summary>
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-        private static readonly DateTime defaultEpoch = DateTime.UnixEpoch;
+        public static readonly DateTime DefaultEpoch = DateTime.UnixEpoch;
 #else
         // This should be DateTime.UnixEpoch. However, that constant is only available in .netCore and net5 or newer
-        private static readonly DateTime defaultEpoch = new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
+        public static readonly DateTime DefaultEpoch = new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
 #endif
 
         private readonly DateTime configuredEpoch;
 
         private static void SetLastTimestampDriftCorrected(ulong timestamp, DateTime epoch)
         {
-            LastTimestampDriftCorrected = timestamp + DateTimeHelper.TimestampMillisFromEpoch(epoch, defaultEpoch);
+            LastTimestampDriftCorrected = timestamp + DateTimeHelper.TimestampMillisFromEpoch(epoch, DefaultEpoch);
         }
 
-        private ulong LastTimeStamp => LastTimestampDriftCorrected - DateTimeHelper.TimestampMillisFromEpoch(configuredEpoch, defaultEpoch);
+        private ulong LastTimeStamp => LastTimestampDriftCorrected - DateTimeHelper.TimestampMillisFromEpoch(configuredEpoch, DefaultEpoch);
         private static ulong LastTimestampDriftCorrected;
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace SnowflakeID
         /// <param name="machineId">Machine number</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
         [CLSCompliant(false)]
-        public SnowflakeIDGenerator(ulong machineId) : this(machineId, defaultEpoch) { }
+        public SnowflakeIDGenerator(ulong machineId) : this(machineId, DefaultEpoch) { }
 
         /// <summary>
         /// Creates a SnowflakeIDGenerator for a given machine number using a custom date as epoch
@@ -81,7 +81,7 @@ namespace SnowflakeID
         /// </summary>
         /// <param name="machineId">Machine number</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
-        public SnowflakeIDGenerator(int machineId) : this(machineId, defaultEpoch) { }
+        public SnowflakeIDGenerator(int machineId) : this(machineId, DefaultEpoch) { }
 
         /// <summary>
         /// Gets next Snowflake id

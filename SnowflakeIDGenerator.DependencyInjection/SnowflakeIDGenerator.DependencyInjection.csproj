@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;netstandard1.3;net8.0;net6.0;net40;net35;net20</TargetFrameworks>
+		<TargetFrameworks>netstandard2.0;net8.0;net6.0;</TargetFrameworks>
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
 		<Title>Generate unique identifiers based on Twitter's Snowflake ID. Parse a Snowflake to get information about it's creation.</Title>
 		<Description>Generate unique identifiers based on Twitter's Snowflake ID.
@@ -26,50 +26,13 @@ Parse a Snowflake to get information about it's creation.
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
-		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
-		<DebugType>embedded</DebugType>
-	</PropertyGroup>
+	<ItemGroup  Condition="'$(TargetFramework)' != 'netstandard1.3'">
+		<PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+	</ItemGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-		<TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-		<DebugType>embedded</DebugType>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-		<TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-		<DebugType>embedded</DebugType>
-	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="..\README.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-		<None Include="..\CHANGELOG.md">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
-		<None Include="..\LICENSE">
-			<Pack>True</Pack>
-			<PackagePath>\</PackagePath>
-		</None>
+		<ProjectReference Include="..\SnowflakeIDGenerator\SnowflakeIDGenerator.csproj" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
-	</ItemGroup>
-
-	<ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.3'">
-		<PackageReference Include="System.Threading.Thread">
-			<Version>4.3.0</Version>
-		</PackageReference>
-	</ItemGroup>
-
 
 </Project>
