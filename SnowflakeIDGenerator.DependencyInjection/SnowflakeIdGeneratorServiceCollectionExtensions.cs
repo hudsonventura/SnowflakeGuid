@@ -18,11 +18,7 @@ namespace SnowflakeID.DependencyInjection
         /// <param name="serviceCollection">The <see cref="IServiceCollection" /> to add services to.</param>
         /// <returns></returns>
         public static IServiceCollection AddSnowflakeIdGeneratorService(
-        this IServiceCollection serviceCollection)
-        {
-            serviceCollection.TryAddSingleton(typeof(ISnowflakeIDGenerator), typeof(SnowflakeIDGenerator));
-            return serviceCollection;
-        }
+        this IServiceCollection serviceCollection) => serviceCollection.AddSnowflakeIdGeneratorService(new SnowflakeIdGeneratorOptions());
 
         /// <summary>
         /// Registers a <see cref="SnowflakeIDGenerator"/> in <see cref="ISnowflakeIDGenerator"/>

@@ -26,8 +26,15 @@ Parse a Snowflake to get information about it's creation.
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>
 
-	<ItemGroup  Condition="'$(TargetFramework)' != 'netstandard1.3'">
+	<ItemGroup Condition="'$(TargetFramework)' != 'netstandard1.3'">
 		<PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Include="..\README.md" Link="README.md">
+	    <PackagePath>\</PackagePath>
+	    <Pack>True</Pack>
+	  </None>
 	</ItemGroup>
 
 

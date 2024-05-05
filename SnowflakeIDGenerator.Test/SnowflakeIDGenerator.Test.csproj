@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>net8.0;net6.0;net40</TargetFrameworks>
@@ -43,6 +43,14 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\SnowflakeIDGenerator\SnowflakeIDGenerator.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' != 'net40'">
+		<ProjectReference Include="..\SnowflakeIDGenerator.DependencyInjection\SnowflakeIDGenerator.DependencyInjection.csproj" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' != 'net40'">
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
 	</ItemGroup>
 
 </Project>

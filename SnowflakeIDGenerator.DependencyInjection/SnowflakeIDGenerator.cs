@@ -2,7 +2,7 @@
 // Licensed under the BSD 3-Clause License. See LICENSE file in the project root for full license information.
 
 using Microsoft.Extensions.Options;
-using SIdG = SnowflakeID;
+using SnowflakeIDBase = SnowflakeID;
 
 namespace SnowflakeID.DependencyInjection
 {
@@ -10,7 +10,8 @@ namespace SnowflakeID.DependencyInjection
     /// Generator class for <see cref="SnowflakeID"/>.
     /// <para>This keeps track of time, machine number and sequence.</para>
     /// </summary>
-    public class SnowflakeIDGenerator(IOptions<SnowflakeIdGeneratorOptions> snkOptions) : SIdG.SnowflakeIDGenerator((ulong)snkOptions.Value.MachineId, snkOptions.Value.Epoch), ISnowflakeIDGenerator
+    public class SnowflakeIDGenerator(IOptions<SnowflakeIdGeneratorOptions> SnowflakeIdGeneratorOptions)
+        : SnowflakeIDBase.SnowflakeIDGenerator((ulong)SnowflakeIdGeneratorOptions.Value.MachineId, SnowflakeIdGeneratorOptions.Value.Epoch), ISnowflakeIDGenerator
     {
     }
 }
