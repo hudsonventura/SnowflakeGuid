@@ -10,7 +10,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnowflakeIDGenerator.Test",
 		{DBCAA729-09DE-4D2F-9124-998B097E98D3} = {DBCAA729-09DE-4D2F-9124-998B097E98D3}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnowflakeIDGenerator.DependencyInjection", "SnowflakeIDGenerator.DependencyInjection\SnowflakeIDGenerator.DependencyInjection.csproj", "{D6F39F80-9B9D-421A-B247-5131CA7DFB34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnowflakeIDGenerator.DependencyInjection", "SnowflakeIDGenerator.DependencyInjection\SnowflakeIDGenerator.DependencyInjection.csproj", "{D6F39F80-9B9D-421A-B247-5131CA7DFB34}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnowflakeIDGenerator.Example.Web", "SnowflakeIDGenerator.Example.Web\SnowflakeIDGenerator.Example.Web.csproj", "{17F860F2-1D98-4CDD-BD62-5DE922F90732}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +32,10 @@ Global
 		{D6F39F80-9B9D-421A-B247-5131CA7DFB34}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6F39F80-9B9D-421A-B247-5131CA7DFB34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6F39F80-9B9D-421A-B247-5131CA7DFB34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{17F860F2-1D98-4CDD-BD62-5DE922F90732}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{17F860F2-1D98-4CDD-BD62-5DE922F90732}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{17F860F2-1D98-4CDD-BD62-5DE922F90732}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{17F860F2-1D98-4CDD-BD62-5DE922F90732}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

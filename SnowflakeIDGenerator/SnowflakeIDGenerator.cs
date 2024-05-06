@@ -30,14 +30,22 @@ namespace SnowflakeID
         public static readonly DateTime DefaultEpoch = new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
 #endif
 
-        private readonly DateTime configuredEpoch;
+        /// <summary>
+        /// Date configured as epoch for the generator
+        /// </summary>
+        public DateTime ConfiguredEpoch { get; }
+
+        /// <summary>
+        /// Configured instance id for the generator
+        /// </summary>
+        public int ConfiguredMachineId { get => (int)MACHINE_ID; }
 
         private static void SetLastTimestampDriftCorrected(ulong timestamp, DateTime epoch)
         {
             LastTimestampDriftCorrected = timestamp + DateTimeHelper.TimestampMillisFromEpoch(epoch, DefaultEpoch);
         }
 
-        private ulong LastTimeStamp => LastTimestampDriftCorrected - DateTimeHelper.TimestampMillisFromEpoch(configuredEpoch, DefaultEpoch);
+        private ulong LastTimeStamp => LastTimestampDriftCorrected - DateTimeHelper.TimestampMillisFromEpoch(ConfiguredEpoch, DefaultEpoch);
         private static ulong LastTimestampDriftCorrected;
 
         /// <summary>
@@ -54,10 +62,10 @@ namespace SnowflakeID
                 throw new ArgumentOutOfRangeException(nameof(machineId), $"{nameof(machineId)} must be less than {Snowflake.MaxMachineId}. Got: {machineId}.");
             }
             MACHINE_ID = machineId;
-            configuredEpoch = customEpoch;
+            ConfiguredEpoch = customEpoch;
 
             // to prevent a weird overflow bug, set last timestamp as the previous millisecond when first creating the generator
-            if (LastTimestampDriftCorrected == default) { SetLastTimestampDriftCorrected(DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, configuredEpoch) - 1, customEpoch); }
+            if (LastTimestampDriftCorrected == default) { SetLastTimestampDriftCorrected(DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, ConfiguredEpoch) - 1, customEpoch); }
         }
 
         /// <summary>
@@ -91,14 +99,14 @@ namespace SnowflakeID
         {
             lock (lockObject)
             {
-                ulong currentTimestampMillis = DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, configuredEpoch);
+                ulong currentTimestampMillis = DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, ConfiguredEpoch);
 
                 if (Sequence == 0 && currentTimestampMillis == LastTimeStamp)
                 {
                     do
                     {
                         Thread.Sleep(1);
-                        currentTimestampMillis = DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, configuredEpoch);
+                        currentTimestampMillis = DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, ConfiguredEpoch);
                     } while (currentTimestampMillis == LastTimeStamp);
                 }
                 else if (currentTimestampMillis < LastTimeStamp)
@@ -109,9 +117,9 @@ namespace SnowflakeID
                 {
                     Sequence = 0;
                 }
-                SetLastTimestampDriftCorrected(currentTimestampMillis, configuredEpoch);
+                SetLastTimestampDriftCorrected(currentTimestampMillis, ConfiguredEpoch);
 
-                Snowflake snowflake = new(configuredEpoch)
+                Snowflake snowflake = new(ConfiguredEpoch)
                 {
                     Timestamp = currentTimestampMillis,
                     MachineId = MACHINE_ID,

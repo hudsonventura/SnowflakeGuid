@@ -46,7 +46,6 @@ namespace SnowflakeID.DependencyInjection
         /// <param name="machineId">Machine number</param>
         /// <param name="customEpoch">Date to use as epoch</param>
         /// <returns></returns>
-        [CLSCompliant(false)]
         public static IServiceCollection AddSnowflakeIdGeneratorService(this IServiceCollection serviceCollection, ulong machineId, DateTime customEpoch) => serviceCollection.AddSnowflakeIdGeneratorService((long)machineId, customEpoch);
 
         /// <summary>
@@ -55,7 +54,6 @@ namespace SnowflakeID.DependencyInjection
         /// <param name="serviceCollection">The <see cref="IServiceCollection" /> to add services to.</param>
         /// <param name="machineId">Machine number</param>
         /// <returns></returns>
-        [CLSCompliant(false)]
         public static IServiceCollection AddSnowflakeIdGeneratorService(this IServiceCollection serviceCollection, ulong machineId) => serviceCollection.AddSnowflakeIdGeneratorService(machineId, SnowflakeIDGenerator.DefaultEpoch);
 
         /// <summary>
