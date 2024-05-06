@@ -3,6 +3,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using SnowflakeID.Helpers;
 using System;
 
 namespace SnowflakeID.DependencyInjection
@@ -28,11 +29,11 @@ namespace SnowflakeID.DependencyInjection
         /// <param name="customEpoch">Date to use as epoch</param>
         /// <returns></returns>
         public static IServiceCollection AddSnowflakeIdGeneratorService(
-        this IServiceCollection serviceCollection, long machineId, DateTime customEpoch)
+        this IServiceCollection serviceCollection, ulong machineId, DateTime customEpoch)
         {
             serviceCollection.Configure<SnowflakeIdGeneratorOptions>((o) =>
             {
-                o.Epoch = customEpoch;
+                o.EpochObject = customEpoch;
                 o.MachineId = machineId;
             });
             serviceCollection.TryAddSingleton(typeof(ISnowflakeIDGenerator), typeof(SnowflakeIDGenerator));
@@ -46,7 +47,7 @@ namespace SnowflakeID.DependencyInjection
         /// <param name="machineId">Machine number</param>
         /// <param name="customEpoch">Date to use as epoch</param>
         /// <returns></returns>
-        public static IServiceCollection AddSnowflakeIdGeneratorService(this IServiceCollection serviceCollection, ulong machineId, DateTime customEpoch) => serviceCollection.AddSnowflakeIdGeneratorService((long)machineId, customEpoch);
+        public static IServiceCollection AddSnowflakeIdGeneratorService(this IServiceCollection serviceCollection, long machineId, DateTime customEpoch) => serviceCollection.AddSnowflakeIdGeneratorService((ulong)machineId, customEpoch);
 
         /// <summary>
         /// Registers a <see cref="SnowflakeIDGenerator"/> in <see cref="ISnowflakeIDGenerator"/>
@@ -54,7 +55,7 @@ namespace SnowflakeID.DependencyInjection
         /// <param name="serviceCollection">The <see cref="IServiceCollection" /> to add services to.</param>
         /// <param name="machineId">Machine number</param>
         /// <returns></returns>
-        public static IServiceCollection AddSnowflakeIdGeneratorService(this IServiceCollection serviceCollection, ulong machineId) => serviceCollection.AddSnowflakeIdGeneratorService(machineId, SnowflakeIDGenerator.DefaultEpoch);
+        public static IServiceCollection AddSnowflakeIdGeneratorService(this IServiceCollection serviceCollection, ulong machineId) => serviceCollection.AddSnowflakeIdGeneratorService(machineId, GlobalConstants.DefaultEpoch);
 
         /// <summary>
         /// Registers a <see cref="SnowflakeIDGenerator"/> in <see cref="ISnowflakeIDGenerator"/>
@@ -71,7 +72,7 @@ namespace SnowflakeID.DependencyInjection
         /// <param name="serviceCollection">The <see cref="IServiceCollection" /> to add services to.</param>
         /// <param name="machineId">Machine number</param>
         /// <returns></returns>
-        public static IServiceCollection AddSnowflakeIdGeneratorService(this IServiceCollection serviceCollection, int machineId) => serviceCollection.AddSnowflakeIdGeneratorService(machineId, SnowflakeIDGenerator.DefaultEpoch);
+        public static IServiceCollection AddSnowflakeIdGeneratorService(this IServiceCollection serviceCollection, int machineId) => serviceCollection.AddSnowflakeIdGeneratorService(machineId, GlobalConstants.DefaultEpoch);
 
         /// <summary>
         /// Registers a <see cref="SnowflakeIDGenerator"/> in <see cref="ISnowflakeIDGenerator"/>
@@ -83,7 +84,7 @@ namespace SnowflakeID.DependencyInjection
         this IServiceCollection serviceCollection, SnowflakeIdGeneratorOptions options)
         {
             options ??= new SnowflakeIdGeneratorOptions();
-            return serviceCollection.AddSnowflakeIdGeneratorService(options.MachineId, options.Epoch);
+            return serviceCollection.AddSnowflakeIdGeneratorService(options.MachineId, options.EpochObject);
         }
     }
 }

@@ -9,7 +9,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSnowflakeIdGeneratorService();
+builder.Services.AddSnowflakeIdGeneratorService(builder.Configuration.GetSection(nameof(SnowflakeIdGeneratorOptions)).Get<SnowflakeIdGeneratorOptions>());
 
 var app = builder.Build();
 

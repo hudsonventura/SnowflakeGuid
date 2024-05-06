@@ -11,7 +11,7 @@ namespace SnowflakeID.DependencyInjection
     /// <para>This keeps track of time, machine number and sequence.</para>
     /// </summary>
     public class SnowflakeIDGenerator(IOptions<SnowflakeIdGeneratorOptions> SnowflakeIdGeneratorOptions)
-        : SnowflakeIDBase.SnowflakeIDGenerator((ulong)SnowflakeIdGeneratorOptions.Value.MachineId, SnowflakeIdGeneratorOptions.Value.Epoch), ISnowflakeIDGenerator
+        : SnowflakeIDBase.SnowflakeIDGenerator(SnowflakeIdGeneratorOptions.Value.MachineId, SnowflakeIdGeneratorOptions.Value.EpochObject), ISnowflakeIDGenerator
     {
     }
 }

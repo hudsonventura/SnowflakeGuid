@@ -4,6 +4,7 @@
 // Ignore Spelling: Rebase
 
 using SnowflakeID.Exceptions;
+using SnowflakeID.Helpers;
 using System;
 using System.Globalization;
 
@@ -39,14 +40,6 @@ namespace SnowflakeID
         private const ulong MASK_SECUENCIA_RIGHT_ALIGNED
                                                 = 0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_1111_1111_1111;
 
-
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-        private static readonly DateTime defaultEpoch = DateTime.UnixEpoch;
-#else
-        // This should be DateTime.UnixEpoch. However, that constant is only available in .netCore and net5 or newer
-        private static readonly DateTime defaultEpoch = new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
-#endif
-
         /// <summary>
         /// Current epoch being used
         /// </summary>
@@ -61,7 +54,7 @@ namespace SnowflakeID
         /// <summary>
         /// Class constructor using default epoch (UNIX time 1-1-1970)
         /// </summary>
-        public Snowflake() : this(defaultEpoch) { }
+        public Snowflake() : this(GlobalConstants.DefaultEpoch) { }
 
         /// <summary>
         /// Class constructor using a custom date as epoch.

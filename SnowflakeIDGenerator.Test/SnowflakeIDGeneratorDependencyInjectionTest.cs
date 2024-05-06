@@ -44,7 +44,12 @@ namespace SnowflakeID.Test
             Assert.That(serviceProvider, Is.Not.Null);
 
             var generator = serviceProvider!.GetService<ISnowflakeIDGenerator>();
-            Assert.That(generator, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(generator, Is.Not.Null);
+                Assert.That(generator!.ConfiguredEpoch, Is.EqualTo(DateTime.UnixEpoch));
+                Assert.That(generator!.ConfiguredMachineId, Is.EqualTo(1));
+            });
 
             Snowflake snowflake = generator.GetSnowflake();
             Assert.Multiple(() =>
@@ -71,7 +76,12 @@ namespace SnowflakeID.Test
             Assert.That(serviceProvider, Is.Not.Null);
 
             ISnowflakeIDGenerator? generator = serviceProvider!.GetService<ISnowflakeIDGenerator>();
-            Assert.That(generator, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(generator, Is.Not.Null);
+                Assert.That(generator!.ConfiguredEpoch, Is.EqualTo(epoch));
+                Assert.That(generator!.ConfiguredMachineId, Is.EqualTo(machineId));
+            });
 
             Snowflake snowflake = generator.GetSnowflake();
             Assert.Multiple(() =>

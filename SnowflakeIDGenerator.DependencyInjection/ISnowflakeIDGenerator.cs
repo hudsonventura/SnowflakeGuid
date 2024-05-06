@@ -16,7 +16,6 @@ namespace SnowflakeID.DependencyInjection
         /// </summary>
         DateTime ConfiguredEpoch { get; }
 
-
         /// <summary>
         /// Configured instance id for the generator
         /// </summary>

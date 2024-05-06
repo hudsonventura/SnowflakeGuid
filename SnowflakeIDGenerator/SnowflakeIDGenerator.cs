@@ -21,16 +21,6 @@ namespace SnowflakeID
         private static readonly object lockObject = new();
 
         /// <summary>
-        /// Default date used as epoch if not configured
-        /// </summary>
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-        public static readonly DateTime DefaultEpoch = DateTime.UnixEpoch;
-#else
-        // This should be DateTime.UnixEpoch. However, that constant is only available in .netCore and net5 or newer
-        public static readonly DateTime DefaultEpoch = new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
-#endif
-
-        /// <summary>
         /// Date configured as epoch for the generator
         /// </summary>
         public DateTime ConfiguredEpoch { get; }
@@ -42,10 +32,10 @@ namespace SnowflakeID
 
         private static void SetLastTimestampDriftCorrected(ulong timestamp, DateTime epoch)
         {
-            LastTimestampDriftCorrected = timestamp + DateTimeHelper.TimestampMillisFromEpoch(epoch, DefaultEpoch);
+            LastTimestampDriftCorrected = timestamp + DateTimeHelper.TimestampMillisFromEpoch(epoch, GlobalConstants.DefaultEpoch);
         }
 
-        private ulong LastTimeStamp => LastTimestampDriftCorrected - DateTimeHelper.TimestampMillisFromEpoch(ConfiguredEpoch, DefaultEpoch);
+        private ulong LastTimeStamp => LastTimestampDriftCorrected - DateTimeHelper.TimestampMillisFromEpoch(ConfiguredEpoch, GlobalConstants.DefaultEpoch);
         private static ulong LastTimestampDriftCorrected;
 
         /// <summary>
@@ -74,7 +64,7 @@ namespace SnowflakeID
         /// <param name="machineId">Machine number</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
         [CLSCompliant(false)]
-        public SnowflakeIDGenerator(ulong machineId) : this(machineId, DefaultEpoch) { }
+        public SnowflakeIDGenerator(ulong machineId) : this(machineId, GlobalConstants.DefaultEpoch) { }
 
         /// <summary>
         /// Creates a SnowflakeIDGenerator for a given machine number using a custom date as epoch
@@ -89,7 +79,7 @@ namespace SnowflakeID
         /// </summary>
         /// <param name="machineId">Machine number</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
-        public SnowflakeIDGenerator(int machineId) : this(machineId, DefaultEpoch) { }
+        public SnowflakeIDGenerator(int machineId) : this(machineId, GlobalConstants.DefaultEpoch) { }
 
         /// <summary>
         /// Gets next Snowflake id

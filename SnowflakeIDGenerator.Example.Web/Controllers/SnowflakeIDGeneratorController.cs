@@ -9,13 +9,10 @@ namespace SnowflakeIDGenerator.Example.Web.Controllers
     [Route("[controller]")]
     public class SnowflakeIDGeneratorController : ControllerBase
     {
-        private readonly ILogger<SnowflakeIDGeneratorController> _logger;
         private readonly ISnowflakeIDGenerator _snowflakeIDGenerator;
 
-        public SnowflakeIDGeneratorController(ILogger<SnowflakeIDGeneratorController> logger,
-            ISnowflakeIDGenerator snowflakeIDGenerator)
+        public SnowflakeIDGeneratorController(ISnowflakeIDGenerator snowflakeIDGenerator)
         {
-            _logger = logger;
             _snowflakeIDGenerator = snowflakeIDGenerator;
         }
 
@@ -48,6 +45,17 @@ namespace SnowflakeIDGenerator.Example.Web.Controllers
             {
                 yield return _snowflakeIDGenerator.GetSnowflake();
             }
+        }
+
+        [HttpGet]
+        [Route("[action]")]
+        public object GetConfiguration()
+        {
+            return new
+            {
+                _snowflakeIDGenerator.ConfiguredMachineId,
+                _snowflakeIDGenerator.ConfiguredEpoch,
+            };
         }
     }
 }
