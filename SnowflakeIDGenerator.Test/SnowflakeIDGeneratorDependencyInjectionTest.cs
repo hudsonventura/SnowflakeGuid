@@ -65,6 +65,12 @@ namespace SnowflakeID.Test
         [TestCase(6ul, "1970-01-01 00:00:00")]
         [TestCase(1ul, "1970-01-01 00:00:00")]
         [TestCase(1ul, "2020-04-19 00:25:00")]
+        [TestCase(4ul, "1970-01-01")]
+        [TestCase(0ul, "1970-01-01")]
+        [TestCase(10ul, "2000-01-01")]
+        [TestCase(6ul, "1970-01-01")]
+        [TestCase(1ul, "1970-01-01")]
+        [TestCase(1ul, "2020-04-19")]
         public void ServiceCustomParametersTest(ulong machineId, string epochString)
         {
             DateTime epoch = DateTime.Parse(epochString, CultureInfo.InvariantCulture);
