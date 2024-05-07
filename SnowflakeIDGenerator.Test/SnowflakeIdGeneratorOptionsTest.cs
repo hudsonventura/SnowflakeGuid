@@ -39,7 +39,7 @@ namespace SnowflakeID.Test
         [TestCase(6ul, "1970-01-01")]
         [TestCase(1ul, "1970-01-01")]
         [TestCase(null, "2020-04-19")]
-        public void CustomValuesTest(ulong? mId, string epoch)
+        public void CustomValuesTest(ulong? mId, string? epoch)
         {
             SnowflakeIdGeneratorOptions obj = new();
             if (mId != null) { obj.MachineId = mId.Value; }
