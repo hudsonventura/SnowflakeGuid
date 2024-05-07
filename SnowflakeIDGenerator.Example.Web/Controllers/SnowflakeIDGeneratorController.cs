@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using SnowflakeID;
 using SnowflakeID.DependencyInjection;
 
-namespace SnowflakeIDGenerator.Example.Web.Controllers
+namespace SnowflakeID.Example.Web.Controllers
 {
     [ApiController]
     [Route("[controller]")]
