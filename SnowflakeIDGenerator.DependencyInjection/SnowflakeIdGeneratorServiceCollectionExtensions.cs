@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using SnowflakeID.Helpers;
 using System;
 
-namespace SnowflakeID.DependencyInjection
+namespace SnowflakeID
 {
     /// <summary>
     ///Extension method to register  <see cref="SnowflakeIDGenerator"/>
@@ -31,12 +31,8 @@ namespace SnowflakeID.DependencyInjection
         public static IServiceCollection AddSnowflakeIdGeneratorService(
         this IServiceCollection serviceCollection, ulong machineId, DateTime customEpoch)
         {
-            serviceCollection.Configure<SnowflakeIdGeneratorOptions>((o) =>
-            {
-                o.EpochObject = customEpoch;
-                o.MachineId = machineId;
-            });
-            serviceCollection.TryAddSingleton(typeof(ISnowflakeIDGenerator), typeof(SnowflakeIDGenerator));
+            serviceCollection.TryAddSingleton<ISnowflakeIDGenerator>(sp => new SnowflakeIDGenerator(machineId, customEpoch));
+
             return serviceCollection;
         }
 

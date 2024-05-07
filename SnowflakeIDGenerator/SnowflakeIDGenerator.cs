@@ -11,7 +11,7 @@ namespace SnowflakeID
     /// Generator class for <see cref="SnowflakeID"/>.
     /// <para>This keeps track of time, machine number and sequence.</para>
     /// </summary>
-    public class SnowflakeIDGenerator
+    public class SnowflakeIDGenerator : ISnowflakeIDGenerator, ISnowflakeIDGeneratorClsCompliant
     {
         private readonly ulong MACHINE_ID;
 

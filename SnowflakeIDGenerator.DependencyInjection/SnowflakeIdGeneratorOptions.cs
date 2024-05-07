@@ -5,7 +5,7 @@ using SnowflakeID.Helpers;
 using System;
 using System.Globalization;
 
-namespace SnowflakeID.DependencyInjection
+namespace SnowflakeID
 {
     /// <summary>
     /// Option object for <see cref="SnowflakeIDGenerator"/>
@@ -15,7 +15,7 @@ namespace SnowflakeID.DependencyInjection
         /// <summary>
         /// Machine number
         /// </summary>
-        public ulong MachineId { get; set; } = 1;
+        public int MachineId { get; set; } = 1;
 
         internal DateTime EpochObject { get; set; } = GlobalConstants.DefaultEpoch;
 

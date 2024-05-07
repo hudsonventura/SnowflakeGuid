@@ -3,12 +3,13 @@
 
 using System;
 
-namespace SnowflakeID.DependencyInjection
+namespace SnowflakeID
 {
     /// <summary>
-    /// Generator class for <see cref="SnowflakeID"/>.
+    /// Generator class for <see cref="Snowflake"/>.
     /// <para>This keeps track of time, machine number and sequence.</para>
     /// </summary>
+    [CLSCompliant(false)]
     public interface ISnowflakeIDGenerator
     {
         /// <summary>

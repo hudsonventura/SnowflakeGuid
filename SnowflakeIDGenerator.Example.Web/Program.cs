@@ -1,4 +1,4 @@
-using SnowflakeID.DependencyInjection;
+using SnowflakeID;
 
 var builder = WebApplication.CreateBuilder(args);
 

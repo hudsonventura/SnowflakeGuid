@@ -1,6 +1,5 @@
 ﻿#if NET6_0_OR_GREATER
 using Microsoft.Extensions.DependencyInjection;
-using SnowflakeID.DependencyInjection;
 using System.Globalization;
 
 namespace SnowflakeID.Test
@@ -26,10 +25,11 @@ namespace SnowflakeID.Test
             //after
             Assert.Multiple(() =>
             {
+
+
                 Assert.That(services, Is.Not.Empty);
                 Assert.That(services, Has.Count.GreaterThanOrEqualTo(1));
-                Assert.That(services.Any(x => x.ServiceType.Name == nameof(ISnowflakeIDGenerator)), Is.True);
-                Assert.That(services.Any(x => x.ImplementationType?.Name == nameof(SnowflakeIDGenerator)), Is.True);
+                Assert.That(services.Any(x => x.ServiceType == typeof(ISnowflakeIDGenerator)), Is.True);
             });
         }
 

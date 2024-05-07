@@ -1,6 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using SnowflakeID.DependencyInjection;
 
 namespace SnowflakeID.Example.Web.Controllers
 {
