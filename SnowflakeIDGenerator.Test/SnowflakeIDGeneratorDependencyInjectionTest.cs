@@ -48,13 +48,13 @@ namespace SnowflakeID.Test
             {
                 Assert.That(generator, Is.Not.Null);
                 Assert.That(generator!.ConfiguredEpoch, Is.EqualTo(DateTime.UnixEpoch));
-                Assert.That(generator!.ConfiguredMachineId, Is.EqualTo(1));
+                Assert.That(generator!.ConfiguredMachineId, Is.EqualTo(0));
             });
 
             Snowflake snowflake = generator.GetSnowflake();
             Assert.Multiple(() =>
             {
-                Assert.That(snowflake.MachineId, Is.EqualTo(1));
+                Assert.That(snowflake.MachineId, Is.EqualTo(0));
                 Assert.That(snowflake.Epoch, Is.EqualTo(DateTime.UnixEpoch));
             });
         }
