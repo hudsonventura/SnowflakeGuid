@@ -22,7 +22,6 @@
 		<PackageProjectUrl>https://www.nuget.org/packages/SnowflakeIDGenerator.DependencyInjection#readme-body-tab</PackageProjectUrl>
 		<PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/../CHANGELOG.md"))</PackageReleaseNotes>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Configurations>Debug;Release;pipeline</Configurations>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
@@ -40,12 +39,6 @@
 		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
 		<TreatWarningsAsErrors>False</TreatWarningsAsErrors>
 		<DebugType>embedded</DebugType>
-	</PropertyGroup>
-
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='pipeline|AnyCPU'">
-	  <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
-	  <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
-	  <DebugType>embedded</DebugType>
 	</PropertyGroup>
 
 	<ItemGroup>
