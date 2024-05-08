@@ -4,8 +4,8 @@ Generate unique identifiers based on Twitter's [Snowflake ID](https://en.wikiped
 Parse a Snowflake to get information about it's creation.
 
 
-[![Nuget](https://img.shields.io/nuget/v/SnowflakeIDGenerator)](https://www.nuget.org/packages/SnowflakeIDGenerator)
-[![Build status](https://dev.azure.com/fenase/SnowflakeIDGenerator/_apis/build/status/SnowflakeIDGenerator-CI-1.0.0)](https://dev.azure.com/fenase/SnowflakeIDGenerator/_build/latest?definitionId=7)
+[![Nuget](https://img.shields.io/nuget/v/SnowflakeIDGenerator?logo=nuget)](https://www.nuget.org/packages/SnowflakeIDGenerator)
+[![Build Status](https://dev.azure.com/fenase/SnowflakeIDGenerator/_apis/build/status%2FSnowflakeIDGenerator-CI?branchName=master)](https://dev.azure.com/fenase/SnowflakeIDGenerator/_build/latest?definitionId=21)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=fenase_SnowflakeIDGenerator2&metric=alert_status)](https://sonarcloud.io/summary/overall?id=fenase_SnowflakeIDGenerator2)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=fenase_SnowflakeIDGenerator2&metric=ncloc)](https://sonarcloud.io/summary/overall?id=fenase_SnowflakeIDGenerator2)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=fenase_SnowflakeIDGenerator2&metric=coverage)](https://sonarcloud.io/summary/overall?id=fenase_SnowflakeIDGenerator2)

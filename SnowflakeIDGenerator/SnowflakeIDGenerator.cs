@@ -1,20 +1,17 @@
-﻿// Copyright (c) 2022-2023, Federico Seckel.
+﻿// Copyright (c) 2022-2024, Federico Seckel.
 // Licensed under the BSD 3-Clause License. See LICENSE file in the project root for full license information.
 
 using SnowflakeID.Helpers;
 using System;
-using System.Runtime.CompilerServices;
 using System.Threading;
 
-[assembly: CLSCompliant(true)]
-[assembly: InternalsVisibleTo("SnowflakeIDGenerator.Test")]
 namespace SnowflakeID
 {
     /// <summary>
     /// Generator class for <see cref="SnowflakeID"/>.
     /// <para>This keeps track of time, machine number and sequence.</para>
     /// </summary>
-    public class SnowflakeIDGenerator
+    public class SnowflakeIDGenerator : ISnowflakeIDGenerator, ISnowflakeIDGeneratorClsCompliant
     {
         private readonly ulong MACHINE_ID;
 
@@ -23,21 +20,22 @@ namespace SnowflakeID
 
         private static readonly object lockObject = new();
 
-#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-        private static readonly DateTime defaultEpoch = DateTime.UnixEpoch;
-#else
-        // This should be DateTime.UnixEpoch. However, that constant is only available in .netCore and net5 or newer
-        private static readonly DateTime defaultEpoch = new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
-#endif
+        /// <summary>
+        /// Date configured as epoch for the generator
+        /// </summary>
+        public DateTime ConfiguredEpoch { get; }
 
-        private readonly DateTime configuredEpoch;
+        /// <summary>
+        /// Configured instance id for the generator
+        /// </summary>
+        public int ConfiguredMachineId { get => (int)MACHINE_ID; }
 
         private static void SetLastTimestampDriftCorrected(ulong timestamp, DateTime epoch)
         {
-            LastTimestampDriftCorrected = timestamp + DateTimeHelper.TimestampMillisFromEpoch(epoch, defaultEpoch);
+            LastTimestampDriftCorrected = timestamp + DateTimeHelper.TimestampMillisFromEpoch(epoch, GlobalConstants.DefaultEpoch);
         }
 
-        private ulong LastTimeStamp => LastTimestampDriftCorrected - DateTimeHelper.TimestampMillisFromEpoch(configuredEpoch, defaultEpoch);
+        private ulong LastTimeStamp => LastTimestampDriftCorrected - DateTimeHelper.TimestampMillisFromEpoch(ConfiguredEpoch, GlobalConstants.DefaultEpoch);
         private static ulong LastTimestampDriftCorrected;
 
         /// <summary>
@@ -54,10 +52,10 @@ namespace SnowflakeID
                 throw new ArgumentOutOfRangeException(nameof(machineId), $"{nameof(machineId)} must be less than {Snowflake.MaxMachineId}. Got: {machineId}.");
             }
             MACHINE_ID = machineId;
-            configuredEpoch = customEpoch;
+            ConfiguredEpoch = customEpoch;
 
             // to prevent a weird overflow bug, set last timestamp as the previous millisecond when first creating the generator
-            if (LastTimestampDriftCorrected == default) { SetLastTimestampDriftCorrected(DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, configuredEpoch) - 1, customEpoch); }
+            if (LastTimestampDriftCorrected == default) { SetLastTimestampDriftCorrected(DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, ConfiguredEpoch) - 1, customEpoch); }
         }
 
         /// <summary>
@@ -66,7 +64,7 @@ namespace SnowflakeID
         /// <param name="machineId">Machine number</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
         [CLSCompliant(false)]
-        public SnowflakeIDGenerator(ulong machineId) : this(machineId, defaultEpoch) { }
+        public SnowflakeIDGenerator(ulong machineId) : this(machineId, GlobalConstants.DefaultEpoch) { }
 
         /// <summary>
         /// Creates a SnowflakeIDGenerator for a given machine number using a custom date as epoch
@@ -81,7 +79,7 @@ namespace SnowflakeID
         /// </summary>
         /// <param name="machineId">Machine number</param>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
-        public SnowflakeIDGenerator(int machineId) : this(machineId, defaultEpoch) { }
+        public SnowflakeIDGenerator(int machineId) : this(machineId, GlobalConstants.DefaultEpoch) { }
 
         /// <summary>
         /// Gets next Snowflake id
@@ -91,14 +89,14 @@ namespace SnowflakeID
         {
             lock (lockObject)
             {
-                ulong currentTimestampMillis = DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, configuredEpoch);
+                ulong currentTimestampMillis = DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, ConfiguredEpoch);
 
                 if (Sequence == 0 && currentTimestampMillis == LastTimeStamp)
                 {
                     do
                     {
                         Thread.Sleep(1);
-                        currentTimestampMillis = DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, configuredEpoch);
+                        currentTimestampMillis = DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, ConfiguredEpoch);
                     } while (currentTimestampMillis == LastTimeStamp);
                 }
                 else if (currentTimestampMillis < LastTimeStamp)
@@ -109,9 +107,9 @@ namespace SnowflakeID
                 {
                     Sequence = 0;
                 }
-                SetLastTimestampDriftCorrected(currentTimestampMillis, configuredEpoch);
+                SetLastTimestampDriftCorrected(currentTimestampMillis, ConfiguredEpoch);
 
-                Snowflake snowflake = new(configuredEpoch)
+                Snowflake snowflake = new(ConfiguredEpoch)
                 {
                     Timestamp = currentTimestampMillis,
                     MachineId = MACHINE_ID,

@@ -1,5 +1,10 @@
 ﻿# Changelog
 
+## 1.4
+- Added dependency injection helpers using Microsoft.Extensions.DependencyInjection.
+  - To avoid package dependency bloating, this was added to package SnowflakeIDGenerator.DependencyInjection
+- Added class SnowflakeIdGeneratorOptions to Microsoft.Extensions.DependencyInjection to help with automatic initialization from configuration.
+
 ## 1.3.2023
 - Solved an issue that caused the custom epoch sometimes not being saved to the snowflake object. This does not affects the generated codes, but could make them to return the wrong date when parsed
 - Comparisons should be between snowflakes using the same epoch
