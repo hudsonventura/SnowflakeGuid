@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace SnowflakeID.Test
 {
-    internal class SnowflakeIdGeneratorOptionsTest
+    public class SnowflakeIdGeneratorOptionsTest
     {
         [SetUp]
         public void Setup()
