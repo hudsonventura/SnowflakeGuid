@@ -83,11 +83,11 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\SnowflakeIDGenerator.DependencyInjection\SnowflakeIDGenerator.DependencyInjection.csproj">
+    <ProjectReference Include="..\..\SnowflakeIDGenerator.DependencyInjection\SnowflakeIDGenerator.DependencyInjection.csproj">
       <Project>{d6f39f80-9b9d-421a-b247-5131ca7dfb34}</Project>
       <Name>SnowflakeIDGenerator.DependencyInjection</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SnowflakeIDGenerator\SnowflakeIDGenerator.csproj">
+    <ProjectReference Include="..\..\SnowflakeIDGenerator\SnowflakeIDGenerator.csproj">
       <Project>{DBCAA729-09DE-4D2F-9124-998B097E98D3}</Project>
       <Name>SnowflakeIDGenerator</Name>
     </ProjectReference>

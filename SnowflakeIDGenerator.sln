@@ -12,9 +12,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnowflakeIDGenerator.Test",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnowflakeIDGenerator.DependencyInjection", "SnowflakeIDGenerator.DependencyInjection\SnowflakeIDGenerator.DependencyInjection.csproj", "{D6F39F80-9B9D-421A-B247-5131CA7DFB34}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnowflakeIDGenerator.Example.Web", "SnowflakeIDGenerator.Example.Web\SnowflakeIDGenerator.Example.Web.csproj", "{17F860F2-1D98-4CDD-BD62-5DE922F90732}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnowflakeIDGenerator.Example.Web", "Examples\SnowflakeIDGenerator.Example.Web\SnowflakeIDGenerator.Example.Web.csproj", "{17F860F2-1D98-4CDD-BD62-5DE922F90732}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnowflakeIDGenerator.Example.NetFramework", "SnowflakeIDGenerator.Example.NetFramework\SnowflakeIDGenerator.Example.NetFramework.csproj", "{505F48C5-52DC-4BEB-BF7C-1618A83A16F3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnowflakeIDGenerator.Example.NetFramework", "Examples\SnowflakeIDGenerator.Example.NetFramework\SnowflakeIDGenerator.Example.NetFramework.csproj", "{505F48C5-52DC-4BEB-BF7C-1618A83A16F3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{B2E96FFF-3210-4354-BB4F-FDB158D1D9D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{17F860F2-1D98-4CDD-BD62-5DE922F90732} = {B2E96FFF-3210-4354-BB4F-FDB158D1D9D7}
+		{505F48C5-52DC-4BEB-BF7C-1618A83A16F3} = {B2E96FFF-3210-4354-BB4F-FDB158D1D9D7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BB960EAB-A96F-427E-95AD-CB22351DA611}
