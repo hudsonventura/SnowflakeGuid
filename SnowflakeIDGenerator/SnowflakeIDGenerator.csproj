@@ -24,6 +24,7 @@ Parse a Snowflake to get information about it's creation.
 		<PackageProjectUrl>https://www.nuget.org/packages/SnowflakeIDGenerator#readme-body-tab</PackageProjectUrl>
 		<PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/../CHANGELOG.md"))</PackageReleaseNotes>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<Configurations>Debug;Release;Pipeline</Configurations>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
@@ -41,6 +42,12 @@ Parse a Snowflake to get information about it's creation.
 		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
 		<TreatWarningsAsErrors>False</TreatWarningsAsErrors>
 		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Pipeline|AnyCPU'">
+	  <CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+	  <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+	  <DebugType>embedded</DebugType>
 	</PropertyGroup>
 
 	<ItemGroup>
