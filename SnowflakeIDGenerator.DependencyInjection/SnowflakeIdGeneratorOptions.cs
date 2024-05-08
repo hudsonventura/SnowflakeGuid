@@ -15,7 +15,7 @@ namespace SnowflakeID
         /// <summary>
         /// Machine number
         /// </summary>
-        public int MachineId { get; set; } = 1;
+        public int MachineId { get; set; }
 
         internal DateTime EpochObject { get; set; } = GlobalConstants.DefaultEpoch;
 

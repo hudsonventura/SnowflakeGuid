@@ -3,10 +3,8 @@
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;net8.0;net6.0;</TargetFrameworks>
 		<GeneratePackageOnBuild>False</GeneratePackageOnBuild>
-		<Title>Generate unique identifiers based on Twitter's Snowflake ID. Parse a Snowflake to get information about it's creation.</Title>
-		<Description>Generate unique identifiers based on Twitter's Snowflake ID.
-Parse a Snowflake to get information about it's creation.
-		</Description>
+		<Title>Generate unique identifiers based on Twitter's Snowflake ID. Dependency injection extension package.</Title>
+		<Description>Extends package SnowflakeIDGenerator to help in configuring the snowflakeId generator using dependency injection</Description>
 		<Authors>Federico Seckel</Authors>
 		<PackageTags>Id;Snowflake;SnowflakeId;</PackageTags>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -15,15 +13,32 @@ Parse a Snowflake to get information about it's creation.
 		<AnalysisLevel>latest-all</AnalysisLevel>
 		<VersionPrefix>1.4</VersionPrefix>
 		<VersionSuffix>$([System.DateTime]::UtcNow.ToString(yyyy)).$([System.DateTime]::UtcNow.DayOfYear.ToString())</VersionSuffix>
-		<Version>$(VersionPrefix).$(VersionSuffix)</Version>
+		<Version>$(VersionPrefix).$(VersionSuffix)-prerelease1</Version>
 		<PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
 		<Deterministic>True</Deterministic>
 		<LangVersion>latest</LangVersion>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
-		<PackageProjectUrl>https://www.nuget.org/packages/SnowflakeIDGenerator#readme-body-tab</PackageProjectUrl>
+		<PackageProjectUrl>https://www.nuget.org/packages/SnowflakeIDGenerator.DependencyInjection#readme-body-tab</PackageProjectUrl>
 		<PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/../CHANGELOG.md"))</PackageReleaseNotes>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(TF_BUILD)' == 'true'">
+		<ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+		<TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+		<DebugType>embedded</DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<CheckForOverflowUnderflow>True</CheckForOverflowUnderflow>
+		<TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+		<DebugType>embedded</DebugType>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -31,12 +46,19 @@ Parse a Snowflake to get information about it's creation.
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Include="..\README.md" Link="README.md">
-	    <PackagePath>\</PackagePath>
-	    <Pack>True</Pack>
-	  </None>
+		<None Include="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\CHANGELOG.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+		<None Include="..\LICENSE">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
 	</ItemGroup>
-
 
 	<ItemGroup>
 		<ProjectReference Include="..\SnowflakeIDGenerator\SnowflakeIDGenerator.csproj" />
