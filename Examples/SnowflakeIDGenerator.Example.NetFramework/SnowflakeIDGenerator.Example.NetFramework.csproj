@@ -52,10 +52,10 @@
       <HintPath>..\packages\Microsoft.Extensions.Primitives.8.0.0\lib\net462\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="SnowflakeIDGenerator, Version=1.4.2024.129, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SnowflakeIDGenerator.1.4.2024.129-prerelease1\lib\net40\SnowflakeIDGenerator.dll</HintPath>
+      <HintPath>..\packages\SnowflakeIDGenerator.1.4.2024.130\lib\net40\SnowflakeIDGenerator.dll</HintPath>
     </Reference>
     <Reference Include="SnowflakeIDGenerator.DependencyInjection, Version=1.4.2024.129, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SnowflakeIDGenerator.DependencyInjection.1.4.2024.129-prerelease1\lib\netstandard2.0\SnowflakeIDGenerator.DependencyInjection.dll</HintPath>
+      <HintPath>..\packages\SnowflakeIDGenerator.DependencyInjection.1.4.2024.130\lib\netstandard2.0\SnowflakeIDGenerator.DependencyInjection.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">

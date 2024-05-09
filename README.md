@@ -45,6 +45,9 @@ There are 2 ways of using the generator:
 Useful when generating a single code to avoid dealing with constructors and the scope of the generator object.
 * Instantiating the `SnowflakeIDGenerator` class. 
 Recommended if you plan to generate more than a few codes at the same time.
+  > On version 1.4.2024 and up you can use the interface `ISnowflakeIDGenerator`.
+  > If you prefer to use dependency injection, the package [SnowflakeIDGenerator.DependencyInjection](https://www.nuget.org/packages/SnowflakeIDGenerator.DependencyInjection)
+  > might be helpful.
 
 ### Using the `SnowflakeIDGenerator` class
 
