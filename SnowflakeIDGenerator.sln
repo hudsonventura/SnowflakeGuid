@@ -12,54 +12,27 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnowflakeIDGenerator.Test",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnowflakeIDGenerator.DependencyInjection", "SnowflakeIDGenerator.DependencyInjection\SnowflakeIDGenerator.DependencyInjection.csproj", "{D6F39F80-9B9D-421A-B247-5131CA7DFB34}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SnowflakeIDGenerator.Example.Web", "Examples\SnowflakeIDGenerator.Example.Web\SnowflakeIDGenerator.Example.Web.csproj", "{17F860F2-1D98-4CDD-BD62-5DE922F90732}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnowflakeIDGenerator.Example.NetFramework", "Examples\SnowflakeIDGenerator.Example.NetFramework\SnowflakeIDGenerator.Example.NetFramework.csproj", "{505F48C5-52DC-4BEB-BF7C-1618A83A16F3}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Examples", "Examples", "{B2E96FFF-3210-4354-BB4F-FDB158D1D9D7}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
-		Pipeline|Any CPU = Pipeline|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{DBCAA729-09DE-4D2F-9124-998B097E98D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{DBCAA729-09DE-4D2F-9124-998B097E98D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DBCAA729-09DE-4D2F-9124-998B097E98D3}.Pipeline|Any CPU.ActiveCfg = Pipeline|Any CPU
-		{DBCAA729-09DE-4D2F-9124-998B097E98D3}.Pipeline|Any CPU.Build.0 = Pipeline|Any CPU
 		{DBCAA729-09DE-4D2F-9124-998B097E98D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DBCAA729-09DE-4D2F-9124-998B097E98D3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{08678513-A462-40BF-9195-BC6DE14DDE50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{08678513-A462-40BF-9195-BC6DE14DDE50}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{08678513-A462-40BF-9195-BC6DE14DDE50}.Pipeline|Any CPU.ActiveCfg = Pipeline|Any CPU
-		{08678513-A462-40BF-9195-BC6DE14DDE50}.Pipeline|Any CPU.Build.0 = Pipeline|Any CPU
 		{08678513-A462-40BF-9195-BC6DE14DDE50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{08678513-A462-40BF-9195-BC6DE14DDE50}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D6F39F80-9B9D-421A-B247-5131CA7DFB34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D6F39F80-9B9D-421A-B247-5131CA7DFB34}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D6F39F80-9B9D-421A-B247-5131CA7DFB34}.Pipeline|Any CPU.ActiveCfg = Pipeline|Any CPU
-		{D6F39F80-9B9D-421A-B247-5131CA7DFB34}.Pipeline|Any CPU.Build.0 = Pipeline|Any CPU
 		{D6F39F80-9B9D-421A-B247-5131CA7DFB34}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6F39F80-9B9D-421A-B247-5131CA7DFB34}.Release|Any CPU.Build.0 = Release|Any CPU
-		{17F860F2-1D98-4CDD-BD62-5DE922F90732}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{17F860F2-1D98-4CDD-BD62-5DE922F90732}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{17F860F2-1D98-4CDD-BD62-5DE922F90732}.Pipeline|Any CPU.ActiveCfg = Pipeline|Any CPU
-		{17F860F2-1D98-4CDD-BD62-5DE922F90732}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{17F860F2-1D98-4CDD-BD62-5DE922F90732}.Release|Any CPU.Build.0 = Release|Any CPU
-		{505F48C5-52DC-4BEB-BF7C-1618A83A16F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{505F48C5-52DC-4BEB-BF7C-1618A83A16F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{505F48C5-52DC-4BEB-BF7C-1618A83A16F3}.Pipeline|Any CPU.ActiveCfg = pipeline|Any CPU
-		{505F48C5-52DC-4BEB-BF7C-1618A83A16F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{505F48C5-52DC-4BEB-BF7C-1618A83A16F3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{17F860F2-1D98-4CDD-BD62-5DE922F90732} = {B2E96FFF-3210-4354-BB4F-FDB158D1D9D7}
-		{505F48C5-52DC-4BEB-BF7C-1618A83A16F3} = {B2E96FFF-3210-4354-BB4F-FDB158D1D9D7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {BB960EAB-A96F-427E-95AD-CB22351DA611}

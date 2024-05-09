@@ -10,8 +10,6 @@
 		<AnalysisLevel>latest-all</AnalysisLevel>
 
 		<IsPackable>false</IsPackable>
-
-		<Configurations>Debug;Release;Pipeline</Configurations>
 	</PropertyGroup>
 
 	<ItemGroup Condition="'$(TargetFramework)' != 'net40' ">

@@ -4,7 +4,7 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Configurations>Debug;Release;Pipeline</Configurations>
+		<Configurations>Debug;Release</Configurations>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -12,7 +12,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\SnowflakeIDGenerator.DependencyInjection\SnowflakeIDGenerator.DependencyInjection.csproj" />
+		<PackageReference Include="SnowflakeIDGenerator.DependencyInjection" Version="*-*" />
 	</ItemGroup>
 
 </Project>
