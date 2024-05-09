@@ -34,16 +34,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=8.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Autofac.8.0.0\lib\netstandard2.0\Autofac.dll</HintPath>
+      <HintPath>..\packages\Autofac.8.0.0\lib\netstandard2.0\Autofac.dll</HintPath>
     </Reference>
     <Reference Include="Autofac.Extensions.DependencyInjection, Version=9.0.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Autofac.Extensions.DependencyInjection.9.0.0\lib\netstandard2.0\Autofac.Extensions.DependencyInjection.dll</HintPath>
+      <HintPath>..\packages\Autofac.Extensions.DependencyInjection.9.0.0\lib\netstandard2.0\Autofac.Extensions.DependencyInjection.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=8.0.0.1, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.8.0.1\lib\net462\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
+    <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.8.0.0\lib\net462\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Extensions.Options, Version=8.0.0.2, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Options.8.0.2\lib\net462\Microsoft.Extensions.Options.dll</HintPath>
@@ -51,10 +51,10 @@
     <Reference Include="Microsoft.Extensions.Primitives, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.Primitives.8.0.0\lib\net462\Microsoft.Extensions.Primitives.dll</HintPath>
     </Reference>
-    <Reference Include="SnowflakeIDGenerator, Version=1.4.2024.129, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SnowflakeIDGenerator, Version=1.4.2024.130, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SnowflakeIDGenerator.1.4.2024.130\lib\net40\SnowflakeIDGenerator.dll</HintPath>
     </Reference>
-    <Reference Include="SnowflakeIDGenerator.DependencyInjection, Version=1.4.2024.129, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="SnowflakeIDGenerator.DependencyInjection, Version=1.4.2024.130, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\SnowflakeIDGenerator.DependencyInjection.1.4.2024.130\lib\netstandard2.0\SnowflakeIDGenerator.DependencyInjection.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -63,8 +63,8 @@
     </Reference>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Diagnostics.DiagnosticSource, Version=8.0.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\System.Diagnostics.DiagnosticSource.8.0.1\lib\net462\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=7.0.0.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.7.0.2\lib\net462\System.Diagnostics.DiagnosticSource.dll</HintPath>
     </Reference>
     <Reference Include="System.Memory, Version=4.0.1.2, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Memory.4.5.5\lib\net461\System.Memory.dll</HintPath>
