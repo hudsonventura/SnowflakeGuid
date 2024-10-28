@@ -1,0 +1,51 @@
+{
+  "metadata": [
+    {
+      "src": [
+        {
+          "src": "./SnowflakeIDGenerator",
+          "files": [
+            "**/*.csproj"
+          ]
+        },
+        {
+          "src": "./SnowflakeIDGenerator.DependencyInjection",
+          "files": [
+            "**/*.csproj"
+          ]
+        }
+      ],
+      "dest": "api"
+    }
+  ],
+  "build": {
+    "content": [
+      {
+        "files": [
+          "**/*.{md,yml}"
+        ],
+        "exclude": [
+          "_site/**"
+        ]
+      }
+    ],
+    "resource": [
+      {
+        "files": [
+          "images/**"
+        ]
+      }
+    ],
+    "output": "_site",
+    "template": [
+      "default",
+      "modern"
+    ],
+    "globalMetadata": {
+      "_appName": "SnowflakeIDGenerator",
+      "_appTitle": "SnowflakeIDGenerator",
+      "_enableSearch": true,
+      "pdf": true
+    }
+  }
+}
