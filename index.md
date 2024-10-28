@@ -11,5 +11,5 @@ Parse a Snowflake to get information about it's creation.
 
 [Get on NuGet](https://www.nuget.org/packages/SnowflakeIDGenerator/)
 
-[API](/api/SnowflakeIDGenerator.html)
+[API](/api/SnowflakeID.html)
 
