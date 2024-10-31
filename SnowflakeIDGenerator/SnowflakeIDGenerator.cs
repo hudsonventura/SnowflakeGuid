@@ -8,7 +8,7 @@ using System.Threading;
 namespace SnowflakeID
 {
     /// <summary>
-    /// Generator class for <see cref="SnowflakeID"/>.
+    /// Generator class for <see cref="Snowflake"/>.
     /// <para>This keeps track of time, machine number and sequence.</para>
     /// </summary>
     public class SnowflakeIDGenerator : ISnowflakeIDGenerator, ISnowflakeIDGeneratorClsCompliant
@@ -191,6 +191,9 @@ namespace SnowflakeID
         /// </summary>
         /// <param name="machineId">The machine ID as a <see cref="ulong"/>.</param>
         /// <returns>A <see cref="Snowflake"/> object containing the generated ID.</returns>
+        /// <remarks>
+        /// This method generates a new Snowflake ID and returns it as a <see cref="Snowflake"/> object.
+        /// </remarks>
         [CLSCompliant(false)]
         public static Snowflake GetSnowflake(ulong machineId)
         {
