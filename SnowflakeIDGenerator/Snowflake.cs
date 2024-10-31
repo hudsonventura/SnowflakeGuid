@@ -18,7 +18,8 @@ namespace SnowflakeID
     {
         #region constants
         /// <summary>
-        /// The amount of codes generated per millisecond. Sequence value is set to 0 when this value is reached.
+        /// The maximum sequence number that can be generated per millisecond.
+        /// When this value is reached, the sequence is reset to 0.
         /// </summary>
         public const long MaxSequence = 4096; // Set to 0 then this value is reached. seq % MaxSequence
 
@@ -46,39 +47,48 @@ namespace SnowflakeID
                                                 = 0b0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_0000_1111_1111_1111;
 
         /// <summary>
-        /// Current epoch being used
+        /// Gets the current epoch being used.
         /// </summary>
+        /// <value>
+        /// A <see cref="DateTime"/> representing the current epoch.
+        /// </value>
         public DateTime Epoch { get; private set; }
 
         /// <summary>
-        /// Total number of digits for the generated code
+        /// Total number of digits for the generated code.
         /// </summary>
+        /// <value>
+        /// An <see cref="int"/> representing the number of digits.
+        /// </value>
         public static readonly int NumberOfDigits = ulong.MaxValue.ToString(CultureInfo.InvariantCulture).Length;
         #endregion
 
         /// <summary>
-        /// Class constructor using default epoch (UNIX time 1-1-1970)
+        /// Initializes a new instance of the <see cref="Snowflake"/> class using the default epoch (UNIX time 1-1-1970).
         /// </summary>
         public Snowflake() : this(GlobalConstants.DefaultEpoch) { }
 
         /// <summary>
-        /// Class constructor using a custom date as epoch.
+        /// Initializes a new instance of the <see cref="Snowflake"/> class using a custom date as epoch.
         /// </summary>
-        /// <param name="epoch">Date to use as epoch</param>
+        /// <param name="epoch">The date to use as the epoch.</param>
         public Snowflake(DateTime epoch)
         {
             this.Epoch = epoch;
         }
 
         /// <summary>
-        /// Sets the timeStamp portion of the snowflake based on current time and selected epoch. Gets real time of the snowflake based on selected epoch.
+        /// Sets the timeStamp portion of the snowflake based on current time and selected epoch.
+        /// Gets real time of the snowflake based on selected epoch.
         /// </summary>
         public DateTime UtcDateTime { get; set; }
 
         /// <summary>
-        /// Gets / Sets machine / server number
+        /// Gets or sets the machine/server number.
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the value is greater than or equal to <see cref="MaxMachineId"/>.
+        /// </exception>
         [CLSCompliant(false)]
         public ulong MachineId
         {
@@ -97,9 +107,11 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Gets / Sets machine / server number
+        /// Gets or sets the machine/server number as an integer.
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the value is negative or greater than or equal to <see cref="MaxMachineId"/>.
+        /// </exception>
         public int MachineIdInt32
         {
             get => (int)MachineId;
@@ -116,9 +128,11 @@ namespace SnowflakeID
         private ulong _MachineId;
 
         /// <summary>
-        /// Gets / Sets sequence
+        /// Gets or sets the sequence number.
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the value is greater than or equal to <see cref="MaxSequence"/>.
+        /// </exception>
         [CLSCompliant(false)]
         public ulong Sequence
         {
@@ -137,9 +151,11 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Gets / Sets machine / server number
+        /// Gets or sets the sequence number as an integer.
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the value is negative or greater than or equal to <see cref="MaxSequence"/>.
+        /// </exception>
         public int SequenceInt32
         {
             get => (int)Sequence;
@@ -156,9 +172,11 @@ namespace SnowflakeID
         private ulong _Sequence;
 
         /// <summary>
-        /// Gets / Sets timeStamp as number of milliseconds since selected epoch
+        /// Gets or sets the timestamp as the number of milliseconds since the selected epoch.
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">When Timestamp is greater than or equal to <see cref="MaxTimestamp"/></exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the value is greater than or equal to <see cref="MaxTimestamp"/>.
+        /// </exception>
         [CLSCompliant(false)]
         public ulong Timestamp
         {
@@ -177,9 +195,11 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Gets / Sets timeStamp as number of milliseconds since selected epoch
+        /// Gets or sets the timestamp as the number of milliseconds since the selected epoch.
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException">When TimestampInt64 is less than 0 or TimestampInt64 is greater than or equal to <see cref="MaxTimestamp"/></exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when the value is less than 0 or greater than or equal to <see cref="MaxTimestamp"/>.
+        /// </exception>
         public long TimestampInt64
         {
             get => (long)Timestamp;
@@ -199,8 +219,11 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Gets snowflakeId.
+        /// Gets the Snowflake ID.
         /// </summary>
+        /// <value>
+        /// A <see cref="ulong"/> representing the Snowflake ID.
+        /// </value>
         [CLSCompliant(false)]
         public virtual ulong Id
         {
@@ -221,8 +244,11 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Gets snowflakeId from string
+        /// Gets the Snowflake ID as a string.
         /// </summary>
+        /// <value>
+        /// A <see cref="string"/> representing the Snowflake ID.
+        /// </value>
         public string Code
         {
             get
@@ -238,16 +264,17 @@ namespace SnowflakeID
         /// <summary>
         /// Rebase the Snowflake to a new epoch CHANGING THE GENERATED CODE but keeping the same date and time.
         /// </summary>
-        /// <param name="newEpoch"></param>
+        /// <param name="newEpoch">The new epoch to set.</param>
         public void RebaseEpoch(DateTime newEpoch)
         {
             Epoch = newEpoch;
         }
 
         /// <summary>
-        /// Changes the snowflake's epoch keeping the code intact. This changes the represented <see cref="UtcDateTime"/>.
+        /// Changes the snowflake's epoch keeping the code intact.
+        /// This will adjust the represented <see cref="UtcDateTime"/> to match the new epoch.
         /// </summary>
-        /// <param name="newEpoch"></param>
+        /// <param name="newEpoch">The new epoch to set.</param>
         public void ChangeEpoch(DateTime newEpoch)
         {
             UtcDateTime += newEpoch - Epoch;
@@ -255,31 +282,31 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Creates a SnowflakeId object from a SnowflakeId code
+        /// Creates a SnowflakeId object from a SnowflakeId code.
         /// </summary>
-        /// <param name="s">Code</param>
-        /// <returns></returns>
+        /// <param name="s">The SnowflakeId code as a string.</param>
+        /// <returns>A new instance of the <see cref="Snowflake"/> class.</returns>
         public static Snowflake Parse(string s)
         {
             return new Snowflake() { Code = s };
         }
 
         /// <summary>
-        /// Creates a SnowflakeId object from a SnowflakeId code using a custom epoch
+        /// Creates a SnowflakeId object from a SnowflakeId code using a custom epoch.
         /// </summary>
-        /// <param name="s">Code</param>
-        /// <param name="customEpoch">Date to use as epoch</param>
-        /// <returns></returns>
+        /// <param name="s">The SnowflakeId code as a string.</param>
+        /// <param name="customEpoch">The custom date to use as the epoch.</param>
+        /// <returns>A new instance of the <see cref="Snowflake"/> class.</returns>
         public static Snowflake Parse(string s, DateTime customEpoch)
         {
             return new Snowflake(customEpoch) { Code = s };
         }
 
         /// <summary>
-        /// Creates a SnowflakeId object from a SnowflakeId code
+        /// Creates a SnowflakeId object from a SnowflakeId code.
         /// </summary>
-        /// <param name="b">Code</param>
-        /// <returns></returns>
+        /// <param name="b">The SnowflakeId code as a ulong.</param>
+        /// <returns>A new instance of the <see cref="Snowflake"/> class.</returns>
         [CLSCompliant(false)]
         public static Snowflake Parse(ulong b)
         {
@@ -287,11 +314,11 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Creates a SnowflakeId object from a SnowflakeId code using a custom epoch
+        /// Creates a SnowflakeId object from a SnowflakeId code using a custom epoch.
         /// </summary>
-        /// <param name="b">Code</param>
-        /// <param name="customEpoch">Date to use as epoch</param>
-        /// <returns></returns>
+        /// <param name="b">The SnowflakeId code as a ulong.</param>
+        /// <param name="customEpoch">The custom date to use as the epoch.</param>
+        /// <returns>A new instance of the <see cref="Snowflake"/> class.</returns>
         [CLSCompliant(false)]
         public static Snowflake Parse(ulong b, DateTime customEpoch)
         {
@@ -299,19 +326,23 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Gets code as string
+        /// Gets the Snowflake ID as a string.
         /// </summary>
-        /// <returns>SnowflakeId code</returns>
+        /// <returns>
+        /// A <see cref="string"/> representing the Snowflake ID.
+        /// </returns>
         public override string ToString()
         {
             return Code;
         }
 
         /// <summary>
-        /// Checks equality between two SnowflakeId objects
+        /// Checks equality between this Snowflake object and another object.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
+        /// <param name="obj">The object to compare with the current Snowflake object.</param>
+        /// <returns>
+        /// <c>true</c> if the specified object is equal to the current Snowflake object; otherwise, <c>false</c>.
+        /// </returns>
         public override bool Equals(object obj)
         {
             if (obj is not Snowflake other) { return false; }
@@ -319,19 +350,23 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Checks equality between two SnowflakeId objects
+        /// Checks equality between this Snowflake object and another Snowflake object.
         /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
+        /// <param name="other">The Snowflake object to compare with the current Snowflake object.</param>
+        /// <returns>
+        /// <c>true</c> if the specified Snowflake object is equal to the current Snowflake object; otherwise, <c>false</c>.
+        /// </returns>
         public virtual bool Equals(Snowflake other)
         {
             return other != null && Id == other.Id && Epoch == other.Epoch;
         }
 
         /// <summary>
-        /// Serves as the default hash function. Override of <seealso cref="object.GetHashCode()"/>
+        /// Serves as the default hash function. Override of <seealso cref="object.GetHashCode()"/>.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>
+        /// A hash code for the current Snowflake object.
+        /// </returns>
         public override int GetHashCode()
         {
             unchecked
@@ -344,11 +379,27 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Implements of <seealso cref="IComparable.CompareTo(object)"/>
+        /// Compares the current Snowflake object with another object.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        /// <exception cref="SnowflakesUsingDifferentEpochsException">When comparing ids generated using different epochs, since there's not an order in that case</exception>
+        /// <param name="obj">The object to compare with the current Snowflake object.</param>
+        /// <returns>
+        /// A value that indicates the relative order of the objects being compared.
+        /// The return value has these meanings:
+        /// <list type="bullet">
+        /// <item>
+        /// <description>Less than zero: This object is less than the <paramref name="obj"/> parameter.</description>
+        /// </item>
+        /// <item>
+        /// <description>Zero: This object is equal to <paramref name="obj"/>.</description>
+        /// </item>
+        /// <item>
+        /// <description>Greater than zero: This object is greater than <paramref name="obj"/>.</description>
+        /// </item>
+        /// </list>
+        /// </returns>
+        /// <exception cref="SnowflakesUsingDifferentEpochsException">
+        /// Thrown when comparing Snowflake objects generated using different epochs.
+        /// </exception>
         public int CompareTo(object obj)
         {
             if (obj is not Snowflake other) { return 1; }
@@ -356,11 +407,27 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Implements of <seealso cref="IComparable{SnowflakeID}.CompareTo(SnowflakeID)"/>
+        /// Compares the current Snowflake object with another Snowflake object.
         /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        /// <exception cref="SnowflakesUsingDifferentEpochsException">When comparing ids generated using different epochs, since there's not an order in that case</exception>
+        /// <param name="other">The Snowflake object to compare with the current Snowflake object.</param>
+        /// <returns>
+        /// A value that indicates the relative order of the objects being compared.
+        /// The return value has these meanings:
+        /// <list type="bullet">
+        /// <item>
+        /// <description>Less than zero: This object is less than the <paramref name="other"/> parameter.</description>
+        /// </item>
+        /// <item>
+        /// <description>Zero: This object is equal to <paramref name="other"/>.</description>
+        /// </item>
+        /// <item>
+        /// <description>Greater than zero: This object is greater than <paramref name="other"/>.</description>
+        /// </item>
+        /// </list>
+        /// </returns>
+        /// <exception cref="SnowflakesUsingDifferentEpochsException">
+        /// Thrown when comparing Snowflake objects generated using different epochs.
+        /// </exception>
         public int CompareTo(Snowflake other)
         {
             if (other == null) { return 1; }
@@ -369,11 +436,13 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Equality operator
+        /// Determines whether two specified instances of <see cref="Snowflake"/> are equal.
         /// </summary>
-        /// <param name="s1"></param>
-        /// <param name="s2"></param>
-        /// <returns></returns>
+        /// <param name="s1">The first <see cref="Snowflake"/> to compare.</param>
+        /// <param name="s2">The second <see cref="Snowflake"/> to compare.</param>
+        /// <returns>
+        /// <c>true</c> if the two <see cref="Snowflake"/> instances are equal; otherwise, <c>false</c>.
+        /// </returns>
         public static bool operator ==(Snowflake s1, Snowflake s2)
         {
             if (s1 is null)
@@ -391,76 +460,98 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Inequality operator
+        /// Determines whether two specified instances of <see cref="Snowflake"/> are not equal.
         /// </summary>
-        /// <param name="s1"></param>
-        /// <param name="s2"></param>
-        /// <returns></returns>
+        /// <param name="s1">The first <see cref="Snowflake"/> to compare.</param>
+        /// <param name="s2">The second <see cref="Snowflake"/> to compare.</param>
+        /// <returns>
+        /// <c>true</c> if the two <see cref="Snowflake"/> instances are not equal; otherwise, <c>false</c>.
+        /// </returns>
         public static bool operator !=(Snowflake s1, Snowflake s2) => !(s1 == s2);
 
         /// <summary>
-        /// Greater than operator
+        /// Determines whether the first specified <see cref="Snowflake"/> is greater than the second specified <see cref="Snowflake"/>.
         /// </summary>
-        /// <param name="s1"></param>
-        /// <param name="s2"></param>
-        /// <returns></returns>
-        /// <exception cref="SnowflakesUsingDifferentEpochsException">When comparing ids generated using different epochs, since there's not an order in that case</exception>
+        /// <param name="s1">The first <see cref="Snowflake"/> to compare.</param>
+        /// <param name="s2">The second <see cref="Snowflake"/> to compare.</param>
+        /// <returns>
+        /// <c>true</c> if the first <see cref="Snowflake"/> is greater than the second <see cref="Snowflake"/>; otherwise, <c>false</c>.
+        /// </returns>
+        /// <exception cref="SnowflakesUsingDifferentEpochsException">
+        /// Thrown when comparing <see cref="Snowflake"/> objects generated using different epochs.
+        /// </exception>
         public static bool operator >(Snowflake s1, Snowflake s2) => (!(s1 is null ^ s2 is null)) && s1 != s2 && s1.CompareTo(s2) > 0;
 
         /// <summary>
-        /// Less than operator
+        /// Determines whether the first specified <see cref="Snowflake"/> is less than the second specified <see cref="Snowflake"/>.
         /// </summary>
-        /// <param name="s1"></param>
-        /// <param name="s2"></param>
-        /// <returns></returns>
-        /// <exception cref="SnowflakesUsingDifferentEpochsException">When comparing ids generated using different epochs, since there's not an order in that case</exception>
+        /// <param name="s1">The first <see cref="Snowflake"/> to compare.</param>
+        /// <param name="s2">The second <see cref="Snowflake"/> to compare.</param>
+        /// <returns>
+        /// <c>true</c> if the first <see cref="Snowflake"/> is less than the second <see cref="Snowflake"/>; otherwise, <c>false</c>.
+        /// </returns>
+        /// <exception cref="SnowflakesUsingDifferentEpochsException">
+        /// Thrown when comparing <see cref="Snowflake"/> objects generated using different epochs.
+        /// </exception>
         public static bool operator <(Snowflake s1, Snowflake s2) => (!(s1 is null ^ s2 is null)) && s1 != s2 && s1.CompareTo(s2) < 0;
 
         /// <summary>
-        /// Greater than or equal to operator
+        /// Determines whether the first specified <see cref="Snowflake"/> is greater than or equal to the second specified <see cref="Snowflake"/>.
         /// </summary>
-        /// <param name="s1"></param>
-        /// <param name="s2"></param>
-        /// <returns></returns>
-        /// <exception cref="SnowflakesUsingDifferentEpochsException">When comparing ids generated using different epochs, since there's not an order in that case</exception>
+        /// <param name="s1">The first <see cref="Snowflake"/> to compare.</param>
+        /// <param name="s2">The second <see cref="Snowflake"/> to compare.</param>
+        /// <returns>
+        /// <c>true</c> if the first <see cref="Snowflake"/> is greater than or equal to the second <see cref="Snowflake"/>; otherwise, <c>false</c>.
+        /// </returns>
+        /// <exception cref="SnowflakesUsingDifferentEpochsException">
+        /// Thrown when comparing <see cref="Snowflake"/> objects generated using different epochs.
+        /// </exception>
         public static bool operator >=(Snowflake s1, Snowflake s2) => s1 == s2 || s1 > s2;
 
         /// <summary>
-        /// Less than or equal to operator
+        /// Determines whether the first specified <see cref="Snowflake"/> is less than or equal to the second specified <see cref="Snowflake"/>.
         /// </summary>
-        /// <param name="s1"></param>
-        /// <param name="s2"></param>
-        /// <returns></returns>
-        /// <exception cref="SnowflakesUsingDifferentEpochsException">When comparing ids generated using different epochs, since there's not an order in that case</exception>
+        /// <param name="s1">The first <see cref="Snowflake"/> to compare.</param>
+        /// <param name="s2">The second <see cref="Snowflake"/> to compare.</param>
+        /// <returns>
+        /// <c>true</c> if the first <see cref="Snowflake"/> is less than or equal to the second <see cref="Snowflake"/>; otherwise, <c>false</c>.
+        /// </returns>
+        /// <exception cref="SnowflakesUsingDifferentEpochsException">
+        /// Thrown when comparing <see cref="Snowflake"/> objects generated using different epochs.
+        /// </exception>
         public static bool operator <=(Snowflake s1, Snowflake s2) => s1 == s2 || s1 < s2;
 
         #region Implicit and explicit cast operator with alternative functions. This part might be partially redundant
         /// <summary>
-        /// Explicit cast from <see cref="string"/>
+        /// Converts the specified string to a <see cref="Snowflake"/> instance.
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name="s">The string to convert.</param>
+        /// <returns>A <see cref="Snowflake"/> instance that is equivalent to the specified string.</returns>
         public static explicit operator Snowflake(string s) => Parse(s);
 
         /// <summary>
-        /// Explicit cast from <see cref="string"/>
+        /// Creates a <see cref="Snowflake"/> instance from the specified string.
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name="s">The string representation of the <see cref="Snowflake"/>.</param>
+        /// <returns>A <see cref="Snowflake"/> instance that corresponds to the specified string.</returns>
         public static Snowflake FromString(string s)
         {
             return (Snowflake)s;
         }
 
         /// <summary>
-        /// Explicit cast from <see cref="ulong"/>
+        /// Converts the specified unsigned long integer to a <see cref="Snowflake"/> instance.
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name="s">The unsigned long integer to convert.</param>
+        /// <returns>A <see cref="Snowflake"/> instance that is equivalent to the specified unsigned long integer.</returns>
         [CLSCompliant(false)]
         public static explicit operator Snowflake(ulong s) => Parse(s);
 
         /// <summary>
-        /// Explicit cast from <see cref="ulong"/>
+        /// Creates a <see cref="Snowflake"/> instance from the specified unsigned long integer.
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name="s">The unsigned long integer representation of the <see cref="Snowflake"/>.</param>
+        /// <returns>A <see cref="Snowflake"/> instance that corresponds to the specified unsigned long integer.</returns>
         [CLSCompliant(false)]
         public static Snowflake FromUInt64(ulong s)
         {
@@ -468,21 +559,24 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Implicit cast to <see cref="string"/>
+        /// Converts the specified <see cref="Snowflake"/> instance to its string representation.
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name="s">The <see cref="Snowflake"/> instance to convert.</param>
+        /// <returns>A string representation of the specified <see cref="Snowflake"/> instance.</returns>
         public static implicit operator string(Snowflake s) => s?.ToString();
 
         /// <summary>
-        /// Implicit cast to <see cref="ulong"/>
+        /// Converts the specified <see cref="Snowflake"/> instance to its unsigned long integer representation.
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name="s">The <see cref="Snowflake"/> instance to convert.</param>
+        /// <returns>An unsigned long integer representation of the specified <see cref="Snowflake"/> instance.</returns>
         [CLSCompliant(false)]
         public static implicit operator ulong(Snowflake s) => s?.Id ?? default;
 
         /// <summary>
-        /// Implicit cast to <see cref="ulong"/>
+        /// Converts the current <see cref="Snowflake"/> instance to its unsigned long integer representation.
         /// </summary>
+        /// <returns>An unsigned long integer representation of the current <see cref="Snowflake"/> instance.</returns>
         [CLSCompliant(false)]
         public ulong ToUInt64()
         {
