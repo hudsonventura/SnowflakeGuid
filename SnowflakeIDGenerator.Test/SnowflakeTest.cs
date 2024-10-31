@@ -1,5 +1,6 @@
 ﻿// Ignore Spelling: Rebase
 
+using SnowflakeID.Exceptions;
 using System.Globalization;
 
 namespace SnowflakeID.Test
@@ -185,7 +186,16 @@ namespace SnowflakeID.Test
         [TestCase(9007199254872096)]
         public void CreationErrorTest(long timestamp)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            Assert.Catch<ArgumentOutOfRangeException>(() =>
+            {
+                _ = new Snowflake()
+                {
+                    TimestampInt64 = timestamp,
+                    MachineIdInt32 = 123,
+                    SequenceInt32 = 123,
+                };
+            });
+            Assert.Throws<TimestampOutOfRangeException>(() =>
             {
                 _ = new Snowflake()
                 {
@@ -569,6 +579,61 @@ namespace SnowflakeID.Test
                 Assert.That(fromCode.UtcDateTime, Is.EqualTo(snowflake.UtcDateTime));
                 Assert.That(fromCode.Sequence, Is.EqualTo(snowflake.Sequence));
                 Assert.That(fromCode.MachineId, Is.EqualTo(snowflake.MachineId));
+            });
+        }
+
+        [Test]
+        public void MaxTimestamp()
+        {
+            ulong ts = (ulong)Math.Pow(2, 42) - 1;
+
+            Snowflake s = new()
+            {
+                Timestamp = ts,
+                MachineId = 0,
+                Sequence = 0,
+            };
+
+            string c = s.ToString();
+
+            Snowflake snowflake = Snowflake.Parse(c);
+            string c2 = snowflake.ToString();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(snowflake, Is.EqualTo(s));
+                Assert.That(c, Is.EqualTo(c2));
+                Assert.That(snowflake.Sequence, Is.EqualTo(s.Sequence));
+                Assert.That(snowflake.MachineId, Is.EqualTo(s.MachineId));
+                Assert.That(snowflake.Timestamp, Is.EqualTo(s.Timestamp));
+                Assert.That(snowflake.TimestampInt64, Is.EqualTo(s.TimestampInt64));
+                Assert.That(snowflake.UtcDateTime, Is.EqualTo(s.UtcDateTime));
+            });
+        }
+
+        [Test]
+        public void TimestampOutOfRange()
+        {
+            ulong ts = (ulong)Math.Pow(2, 42);
+
+            Assert.Catch<ArgumentOutOfRangeException>(() =>
+            {
+                _ = new Snowflake()
+                {
+                    Timestamp = ts,
+                    MachineId = 0,
+                    Sequence = 0,
+                };
+            });
+
+            Assert.Throws<TimestampOutOfRangeException>(() =>
+            {
+                _ = new Snowflake()
+                {
+                    Timestamp = ts,
+                    MachineId = 0,
+                    Sequence = 0,
+                };
             });
         }
     }

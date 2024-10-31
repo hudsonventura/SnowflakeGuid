@@ -27,6 +27,11 @@ namespace SnowflakeID
         /// </summary>
         public const long MaxMachineId = 1024; //amount. Range: [0..1024) = [0..1023]
 
+        /// <summary>
+        /// Max number of milliseconds since epoch. Range from 0 to MaxTimestamp-1
+        /// </summary>
+        public const long MaxTimestamp = 1l << 42;
+
 
         private const int BITS_SHIFT_DATETIMEMILLIS = 22;
         private const int BITS_SHIFT_MACHINE = 12;
@@ -153,6 +158,7 @@ namespace SnowflakeID
         /// <summary>
         /// Gets / Sets timeStamp as number of milliseconds since selected epoch
         /// </summary>
+        /// <exception cref="TimestampOutOfRangeException">When Timestamp is greater than or equal to <see cref="MaxTimestamp"/></exception>
         [CLSCompliant(false)]
         public ulong Timestamp
         {
@@ -162,6 +168,10 @@ namespace SnowflakeID
             }
             set
             {
+                if (value >= MaxTimestamp)
+                {
+                    throw new TimestampOutOfRangeException(nameof(Timestamp), $"{nameof(Timestamp)} must be less than {MaxTimestamp}. Got: {value}.");
+                }
                 UtcDateTime = DateTime.SpecifyKind(Epoch.AddTicks((long)value * (TimeSpan.TicksPerMillisecond)), DateTimeKind.Utc);
             }
         }
@@ -169,20 +179,22 @@ namespace SnowflakeID
         /// <summary>
         /// Gets / Sets timeStamp as number of milliseconds since selected epoch
         /// </summary>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="TimestampOutOfRangeException">When TimestampInt64 is less than 0 or TimestampInt64 is greater than or equal to <see cref="MaxTimestamp"/></exception>
         public long TimestampInt64
         {
             get => (long)Timestamp;
             set
             {
-#if NET8_0_OR_GREATER
-                ArgumentOutOfRangeException.ThrowIfNegative(value);
-#else
-                if (value < 0) { throw new ArgumentOutOfRangeException(nameof(TimestampInt64)); }
-#endif
-                ulong newVal = (ulong)value & MASK_DATETIMEMILLIS_RIGHT_ALIGNED;
-                if (newVal != (ulong)value) { throw new ArgumentOutOfRangeException(nameof(TimestampInt64)); }
-                Timestamp = newVal;
+                if (value < 0)
+                {
+                    throw new TimestampOutOfRangeException(nameof(TimestampInt64), $"{nameof(TimestampInt64)} must be greater than 0. Got: {value}.");
+                }
+
+                if (value >= MaxTimestamp)
+                {
+                    throw new TimestampOutOfRangeException(nameof(TimestampInt64), $"{nameof(TimestampInt64)} must be less than {MaxTimestamp}. Got: {value}.");
+                }
+                Timestamp = (ulong)value;
             }
         }
 
@@ -194,19 +206,17 @@ namespace SnowflakeID
         {
             get
             {
-                ulong timestamp = ((ulong)UtcDateTime.Subtract(Epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
+                ulong timestamp = (ulong)(UtcDateTime - Epoch).TotalMilliseconds;
+
                 return ((timestamp & MASK_DATETIMEMILLIS_RIGHT_ALIGNED) << BITS_SHIFT_DATETIMEMILLIS)
                                         | ((MachineId & MASK_ESTACION_RIGHT_ALIGNED) << BITS_SHIFT_MACHINE)
                                         | ((Sequence & MASK_SECUENCIA_RIGHT_ALIGNED) << BITS_SHIFT_SEQUENCE);
             }
             private set
             {
-                ulong val = value >> BITS_SHIFT_SEQUENCE;
-                Sequence = val & MASK_SECUENCIA_RIGHT_ALIGNED;
-                val >>= BITS_SHIFT_MACHINE - BITS_SHIFT_SEQUENCE;
-                MachineId = val & MASK_ESTACION_RIGHT_ALIGNED;
-                val >>= BITS_SHIFT_DATETIMEMILLIS - BITS_SHIFT_MACHINE - BITS_SHIFT_SEQUENCE;
-                Timestamp = val & MASK_DATETIMEMILLIS_RIGHT_ALIGNED;
+                Sequence = (value >> BITS_SHIFT_SEQUENCE) & MASK_SECUENCIA_RIGHT_ALIGNED;
+                MachineId = (value >> BITS_SHIFT_MACHINE) & MASK_ESTACION_RIGHT_ALIGNED;
+                Timestamp = (value >> BITS_SHIFT_DATETIMEMILLIS) & MASK_DATETIMEMILLIS_RIGHT_ALIGNED;
             }
         }
 
