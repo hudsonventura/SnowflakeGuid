@@ -30,7 +30,7 @@ namespace SnowflakeID
         /// <summary>
         /// Max number of milliseconds since epoch. Range from 0 to MaxTimestamp-1
         /// </summary>
-        public const long MaxTimestamp = 1l << 42;
+        public const long MaxTimestamp = 1L << 42;
 
 
         private const int BITS_SHIFT_DATETIMEMILLIS = 22;
