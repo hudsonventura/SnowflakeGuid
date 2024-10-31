@@ -3,6 +3,9 @@
 Generate unique identifiers based on Twitter's [Snowflake ID](https://en.wikipedia.org/wiki/Snowflake_ID).
 Parse a Snowflake to get information about it's creation.
 
+| [More info](https://fenase.github.io/projects/SnowflakeIDGenerator) | [API](https://fenase.github.io/SnowflakeIDGenerator/api/SnowflakeID.html) |
+|---|---|
+
 
 [![Nuget](https://img.shields.io/nuget/v/SnowflakeIDGenerator?logo=nuget)](https://www.nuget.org/packages/SnowflakeIDGenerator)
 [![Build Status](https://dev.azure.com/fenase/SnowflakeIDGenerator/_apis/build/status%2FSnowflakeIDGenerator-CI?branchName=master)](https://dev.azure.com/fenase/SnowflakeIDGenerator/_build/latest?definitionId=21)
