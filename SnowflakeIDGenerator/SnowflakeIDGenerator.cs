@@ -21,13 +21,25 @@ namespace SnowflakeID
         private static readonly object lockObject = new();
 
         /// <summary>
-        /// Date configured as epoch for the generator
+        /// Gets the date configured as the epoch for the generator.
         /// </summary>
+        /// <value>
+        /// The <see cref="DateTime"/> value representing the custom epoch date.
+        /// </value>
+        /// <remarks>
+        /// The epoch date is used as the starting point for generating unique IDs.
+        /// </remarks>
         public DateTime ConfiguredEpoch { get; }
 
         /// <summary>
-        /// Configured instance id for the generator
+        /// Gets the configured machine ID for the generator.
         /// </summary>
+        /// <value>
+        /// The <see cref="int"/> value representing the machine ID.
+        /// </value>
+        /// <remarks>
+        /// The machine ID is used to ensure uniqueness across different instances of the generator.
+        /// </remarks>
         public int ConfiguredMachineId { get => (int)MACHINE_ID; }
 
         private static void SetLastTimestampDriftCorrected(ulong timestamp, DateTime epoch)
@@ -39,11 +51,17 @@ namespace SnowflakeID
         private static ulong LastTimestampDriftCorrected;
 
         /// <summary>
-        /// Creates a SnowflakeIDGenerator for a given machine number using a custom date as epoch
+        /// Creates a SnowflakeIDGenerator for a given machine number using a custom date as epoch.
         /// </summary>
         /// <param name="machineId">Machine number</param>
         /// <param name="customEpoch">Date to use as epoch</param>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="machineId"/> is greater than or equal to <see cref="Snowflake.MaxMachineId"/>.
+        /// </exception>
+        /// <remarks>
+        /// This constructor initializes the generator with a specific machine ID and a custom epoch date.
+        /// It ensures that the machine ID is within the valid range and sets the initial timestamp to prevent overflow issues.
+        /// </remarks>
         [CLSCompliant(false)]
         public SnowflakeIDGenerator(ulong machineId, DateTime customEpoch)
         {
@@ -59,26 +77,44 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Creates a SnowflakeIDGenerator for a given machine number
+        /// Creates a SnowflakeIDGenerator for a given machine number.
         /// </summary>
         /// <param name="machineId">Machine number</param>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="machineId"/> is greater than or equal to <see cref="Snowflake.MaxMachineId"/>.
+        /// </exception>
+        /// <remarks>
+        /// This constructor initializes the generator with a specific machine ID and uses the default epoch date.
+        /// It ensures that the machine ID is within the valid range and sets the initial timestamp to prevent overflow issues.
+        /// </remarks>
         [CLSCompliant(false)]
         public SnowflakeIDGenerator(ulong machineId) : this(machineId, GlobalConstants.DefaultEpoch) { }
 
         /// <summary>
-        /// Creates a SnowflakeIDGenerator for a given machine number using a custom date as epoch
+        /// Creates a SnowflakeIDGenerator for a given machine number using a custom date as epoch.
         /// </summary>
         /// <param name="machineId">Machine number</param>
         /// <param name="customEpoch">Date to use as epoch</param>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="machineId"/> is greater than or equal to <see cref="Snowflake.MaxMachineId"/>.
+        /// </exception>
+        /// <remarks>
+        /// This constructor initializes the generator with a specific machine ID and a custom epoch date.
+        /// It ensures that the machine ID is within the valid range and sets the initial timestamp to prevent overflow issues.
+        /// </remarks>
         public SnowflakeIDGenerator(int machineId, DateTime customEpoch) : this((ulong)machineId, customEpoch) { }
 
         /// <summary>
-        /// Creates a SnowflakeIDGenerator for a given machine number
+        /// Creates a SnowflakeIDGenerator for a given machine number.
         /// </summary>
         /// <param name="machineId">Machine number</param>
-        /// <exception cref="ArgumentOutOfRangeException"><paramref name="machineId"/> must be less than Snowflake.MaxMachineId</exception>
+        /// <exception cref="ArgumentOutOfRangeException">
+        /// Thrown when <paramref name="machineId"/> is greater than or equal to <see cref="Snowflake.MaxMachineId"/>.
+        /// </exception>
+        /// <remarks>
+        /// This constructor initializes the generator with a specific machine ID and uses the default epoch date.
+        /// It ensures that the machine ID is within the valid range and sets the initial timestamp to prevent overflow issues.
+        /// </remarks>
         public SnowflakeIDGenerator(int machineId) : this(machineId, GlobalConstants.DefaultEpoch) { }
 
         /// <summary>
@@ -130,6 +166,7 @@ namespace SnowflakeID
         /// </summary>
         /// <returns>A <see cref="ulong"/> representing the next Snowflake ID.</returns>
         /// <remarks>
+        /// This method generates a new Snowflake ID and returns it as a numeric value.
         /// </remarks>
         [CLSCompliant(false)]
         public ulong GetCode()
@@ -141,17 +178,19 @@ namespace SnowflakeID
         /// Gets the next Snowflake ID as a string.
         /// </summary>
         /// <returns>A <see cref="string"/> representing the next Snowflake ID.</returns>
+        /// <remarks>
+        /// This method generates a new Snowflake ID and returns it as a string value.
+        /// </remarks>
         public string GetCodeString()
         {
             return GetSnowflake().Code;
         }
 
         /// <summary>
-        /// Static method
-        /// Gets next Snowflake id for a given <typeparamref cref="ulong"><paramref name="machineId"/></typeparamref>
+        /// Static method to get the next Snowflake ID for a given machine ID.
         /// </summary>
+        /// <param name="machineId">The machine ID as a <see cref="ulong"/>.</param>
         /// <returns>A <see cref="Snowflake"/> object containing the generated ID.</returns>
-        /// <param name="machineId">Machine number</param>
         [CLSCompliant(false)]
         public static Snowflake GetSnowflake(ulong machineId)
         {
@@ -159,12 +198,11 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Static method
-        /// Gets next Snowflake id for a given <typeparamref cref="ulong"><paramref name="machineId"/></typeparamref> using a custom date as epoch
+        /// Static method to get the next Snowflake ID for a given machine ID using a custom epoch date.
         /// </summary>
+        /// <param name="machineId">The machine ID as a <see cref="ulong"/>.</param>
+        /// <param name="customEpoch">The custom epoch date as a <see cref="DateTime"/>.</param>
         /// <returns>A <see cref="Snowflake"/> object containing the generated ID.</returns>
-        /// <param name="machineId">Machine number</param>
-        /// <param name="customEpoch">Date to use as epoch</param>
         [CLSCompliant(false)]
         public static Snowflake GetSnowflake(ulong machineId, DateTime customEpoch)
         {
@@ -172,29 +210,25 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Static method
-        /// Gets next Snowflake id for a given <typeparamref cref="int"><paramref name="machineId"/></typeparamref>
+        /// Static method to get the next Snowflake ID for a given machine ID.
         /// </summary>
+        /// <param name="machineId">The machine ID as an <see cref="int"/>.</param>
         /// <returns>A <see cref="Snowflake"/> object containing the generated ID.</returns>
-        /// <param name="machineId">Machine number</param>
         public static Snowflake GetSnowflake(int machineId) => GetSnowflake((ulong)machineId);
 
         /// <summary>
-        /// Static method
-        /// Gets next Snowflake id for a given <typeparamref cref="int"><paramref name="machineId"/></typeparamref> using a custom date as epoch
+        /// Static method to get the next Snowflake ID for a given machine ID using a custom epoch date.
         /// </summary>
+        /// <param name="machineId">The machine ID as an <see cref="int"/>.</param>
+        /// <param name="customEpoch">The custom epoch date as a <see cref="DateTime"/>.</param>
         /// <returns>A <see cref="Snowflake"/> object containing the generated ID.</returns>
-        /// <param name="machineId">Machine number</param>
-        /// <param name="customEpoch">Date to use as epoch</param>
         public static Snowflake GetSnowflake(int machineId, DateTime customEpoch) => GetSnowflake((ulong)machineId, customEpoch);
 
         /// <summary>
-        /// Static method
-        /// Gets next Snowflake as <typeparamref cref="ulong">ulong</typeparamref> for a given <typeparamref cref="ulong"><paramref name="machineId"/></typeparamref>
+        /// Static method to get the next Snowflake ID as a number for a given machine ID.
         /// </summary>
+        /// <param name="machineId">The machine ID as a <see cref="ulong"/>.</param>
         /// <returns>A <see cref="ulong"/> representing the next Snowflake ID.</returns>
-        /// <param name="machineId">Machine number</param>
-        /// <typeparam cref="ulong">ulong</typeparam>
         [CLSCompliant(false)]
         public static ulong GetCode(ulong machineId)
         {
@@ -202,13 +236,11 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Static method
-        /// Gets next Snowflake as <typeparamref cref="ulong">ulong</typeparamref> for a given <typeparamref cref="ulong"><paramref name="machineId"/></typeparamref> using a custom date as epoch
+        /// Static method to get the next Snowflake ID as a number for a given machine ID using a custom epoch date.
         /// </summary>
+        /// <param name="machineId">The machine ID as a <see cref="ulong"/>.</param>
+        /// <param name="customEpoch">The custom epoch date as a <see cref="DateTime"/>.</param>
         /// <returns>A <see cref="ulong"/> representing the next Snowflake ID.</returns>
-        /// <param name="machineId">Machine number</param>
-        /// <param name="customEpoch">Date to use as epoch</param>
-        /// <typeparam cref="ulong">ulong</typeparam>
         [CLSCompliant(false)]
         public static ulong GetCode(ulong machineId, DateTime customEpoch)
         {
@@ -216,9 +248,9 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Gets next Snowflake as <typeparamref cref="string">string</typeparamref> for a given <typeparamref cref="ulong"><paramref name="machineId"/></typeparamref>
+        /// Gets the next Snowflake ID as a string for a given machine ID.
         /// </summary>
-        /// <param name="machineId">Machine number</param>
+        /// <param name="machineId">The machine ID as a <see cref="ulong"/>.</param>
         /// <returns>A <see cref="string"/> representing the next Snowflake ID.</returns>
         [CLSCompliant(false)]
         public static string GetCodeString(ulong machineId)
@@ -227,10 +259,10 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Gets next Snowflake as <typeparamref cref="string">string</typeparamref> for a given <typeparamref cref="ulong"><paramref name="machineId"/></typeparamref> using a custom date as epoch
+        /// Gets the next Snowflake ID as a string for a given machine ID using a custom epoch date.
         /// </summary>
-        /// <param name="machineId">Machine number</param>
-        /// <param name="customEpoch">Date to use as epoch</param>
+        /// <param name="machineId">The machine ID as a <see cref="ulong"/>.</param>
+        /// <param name="customEpoch">The custom epoch date as a <see cref="DateTime"/>.</param>
         /// <returns>A <see cref="string"/> representing the next Snowflake ID.</returns>
         [CLSCompliant(false)]
         public static string GetCodeString(ulong machineId, DateTime customEpoch)
@@ -239,17 +271,17 @@ namespace SnowflakeID
         }
 
         /// <summary>
-        /// Gets next Snowflake as <typeparamref cref="string">string</typeparamref> for a given <typeparamref cref="int"><paramref name="machineId"/></typeparamref>
+        /// Gets the next Snowflake ID as a string for a given machine ID.
         /// </summary>
-        /// <param name="machineId">Machine number</param>
+        /// <param name="machineId">The machine ID as an <see cref="int"/>.</param>
         /// <returns>A <see cref="string"/> representing the next Snowflake ID.</returns>
         public static string GetCodeString(int machineId) => GetCodeString((ulong)machineId);
 
         /// <summary>
-        /// Gets next Snowflake as <typeparamref cref="string">string</typeparamref> for a given <typeparamref cref="int"><paramref name="machineId"/></typeparamref> using a custom date as epoch
+        /// Gets the next Snowflake ID as a string for a given machine ID using a custom epoch date.
         /// </summary>
-        /// <param name="machineId">Machine number</param>
-        /// <param name="customEpoch">Date to use as epoch</param>
+        /// <param name="machineId">The machine ID as an <see cref="int"/>.</param>
+        /// <param name="customEpoch">The custom epoch date as a <see cref="DateTime"/>.</param>
         /// <returns>A <see cref="string"/> representing the next Snowflake ID.</returns>
         public static string GetCodeString(int machineId, DateTime customEpoch) => GetCodeString((ulong)machineId, customEpoch);
     }
