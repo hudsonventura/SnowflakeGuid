@@ -13,22 +13,23 @@ namespace SnowflakeID.Exceptions
 #endif
     public class TimestampOutOfRangeException : ArgumentOutOfRangeException
     {
+        /// <summary>Initializes a new instance of the <see cref="TimestampOutOfRangeException" /> class.</summary>
         public TimestampOutOfRangeException() : base() { }
 
-        /// <summary>Initializes a new instance of the <see cref="ArgumentOutOfRangeException" /> class with the name of the parameter that causes this exception.</summary>
+        /// <summary>Initializes a new instance of the <see cref="TimestampOutOfRangeException" /> class with the name of the parameter that causes this exception.</summary>
         /// <param name="paramName">The name of the parameter that causes this exception.</param>
         public TimestampOutOfRangeException(string paramName) : base(paramName)
         {
         }
 
-        /// <summary>Initializes a new instance of the <see cref="ArgumentOutOfRangeException" /> class with a specified error message and the exception that is the cause of this exception.</summary>
+        /// <summary>Initializes a new instance of the <see cref="TimestampOutOfRangeException" /> class with a specified error message and the exception that is the cause of this exception.</summary>
         /// <param name="message">The error message that explains the reason for this exception.</param>
         /// <param name="innerException">The exception that is the cause of the current exception, or a null reference (<see langword="Nothing" /> in Visual Basic) if no inner exception is specified.</param>
         public TimestampOutOfRangeException(string message, Exception innerException) : base(message, innerException)
         {
         }
 
-        /// <summary>Initializes a new instance of the <see cref="ArgumentOutOfRangeException" /> class with the parameter name, the value of the argument, and a specified error message.</summary>
+        /// <summary>Initializes a new instance of the <see cref="TimestampOutOfRangeException" /> class with the parameter name, the value of the argument, and a specified error message.</summary>
         /// <param name="paramName">The name of the parameter that caused the exception.</param>
         /// <param name="actualValue">The value of the argument that causes this exception.</param>
         /// <param name="message">The message that describes the error.</param>
@@ -36,7 +37,7 @@ namespace SnowflakeID.Exceptions
         {
         }
 
-        /// <summary>Initializes a new instance of the <see cref="ArgumentOutOfRangeException" /> class with the name of the parameter that causes this exception and a specified error message.</summary>
+        /// <summary>Initializes a new instance of the <see cref="TimestampOutOfRangeException" /> class with the name of the parameter that causes this exception and a specified error message.</summary>
         /// <param name="paramName">The name of the parameter that caused the exception.</param>
         /// <param name="message">The message that describes the error.</param>
         public TimestampOutOfRangeException(string paramName, string message) : base(paramName, message)
