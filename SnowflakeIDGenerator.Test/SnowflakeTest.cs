@@ -1,6 +1,5 @@
 ﻿// Ignore Spelling: Rebase
 
-using SnowflakeID.Exceptions;
 using System.Globalization;
 
 namespace SnowflakeID.Test
@@ -186,16 +185,7 @@ namespace SnowflakeID.Test
         [TestCase(9007199254872096)]
         public void CreationErrorTest(long timestamp)
         {
-            Assert.Catch<ArgumentOutOfRangeException>(() =>
-            {
-                _ = new Snowflake()
-                {
-                    TimestampInt64 = timestamp,
-                    MachineIdInt32 = 123,
-                    SequenceInt32 = 123,
-                };
-            });
-            Assert.Throws<TimestampOutOfRangeException>(() =>
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 _ = new Snowflake()
                 {
@@ -616,17 +606,7 @@ namespace SnowflakeID.Test
         {
             ulong ts = (ulong)Math.Pow(2, 42);
 
-            Assert.Catch<ArgumentOutOfRangeException>(() =>
-            {
-                _ = new Snowflake()
-                {
-                    Timestamp = ts,
-                    MachineId = 0,
-                    Sequence = 0,
-                };
-            });
-
-            Assert.Throws<TimestampOutOfRangeException>(() =>
+            Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 _ = new Snowflake()
                 {

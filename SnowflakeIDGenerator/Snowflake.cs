@@ -158,7 +158,7 @@ namespace SnowflakeID
         /// <summary>
         /// Gets / Sets timeStamp as number of milliseconds since selected epoch
         /// </summary>
-        /// <exception cref="TimestampOutOfRangeException">When Timestamp is greater than or equal to <see cref="MaxTimestamp"/></exception>
+        /// <exception cref="ArgumentOutOfRangeException">When Timestamp is greater than or equal to <see cref="MaxTimestamp"/></exception>
         [CLSCompliant(false)]
         public ulong Timestamp
         {
@@ -170,7 +170,7 @@ namespace SnowflakeID
             {
                 if (value >= MaxTimestamp)
                 {
-                    throw new TimestampOutOfRangeException(nameof(Timestamp), $"{nameof(Timestamp)} must be less than {MaxTimestamp}. Got: {value}.");
+                    throw new ArgumentOutOfRangeException(nameof(Timestamp), $"{nameof(Timestamp)} must be less than {MaxTimestamp}. Got: {value}.");
                 }
                 UtcDateTime = DateTime.SpecifyKind(Epoch.AddTicks((long)value * (TimeSpan.TicksPerMillisecond)), DateTimeKind.Utc);
             }
@@ -179,7 +179,7 @@ namespace SnowflakeID
         /// <summary>
         /// Gets / Sets timeStamp as number of milliseconds since selected epoch
         /// </summary>
-        /// <exception cref="TimestampOutOfRangeException">When TimestampInt64 is less than 0 or TimestampInt64 is greater than or equal to <see cref="MaxTimestamp"/></exception>
+        /// <exception cref="ArgumentOutOfRangeException">When TimestampInt64 is less than 0 or TimestampInt64 is greater than or equal to <see cref="MaxTimestamp"/></exception>
         public long TimestampInt64
         {
             get => (long)Timestamp;
@@ -187,12 +187,12 @@ namespace SnowflakeID
             {
                 if (value < 0)
                 {
-                    throw new TimestampOutOfRangeException(nameof(TimestampInt64), $"{nameof(TimestampInt64)} must be greater than 0. Got: {value}.");
+                    throw new ArgumentOutOfRangeException(nameof(TimestampInt64), $"{nameof(TimestampInt64)} must be greater than 0. Got: {value}.");
                 }
 
                 if (value >= MaxTimestamp)
                 {
-                    throw new TimestampOutOfRangeException(nameof(TimestampInt64), $"{nameof(TimestampInt64)} must be less than {MaxTimestamp}. Got: {value}.");
+                    throw new ArgumentOutOfRangeException(nameof(TimestampInt64), $"{nameof(TimestampInt64)} must be less than {MaxTimestamp}. Got: {value}.");
                 }
                 Timestamp = (ulong)value;
             }
