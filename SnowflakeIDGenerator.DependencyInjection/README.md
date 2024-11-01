@@ -4,6 +4,9 @@
 This package extends package [SnowflakeIDGenerator](https://www.nuget.org/packages/SnowflakeIDGenerator) 
 to help in configuring the snowflakeId generator using dependency injection
 
+| [More info](https://fenase.github.io/projects/SnowflakeIDGenerator) | [API](https://fenase.github.io/SnowflakeIDGenerator/api/SnowflakeID.html) |
+|---|---|
+
 
 [![Nuget](https://img.shields.io/nuget/v/SnowflakeIDGenerator.DependencyInjection?logo=nuget)](https://www.nuget.org/packages/SnowflakeIDGenerator.DependencyInjection)
 [![Build Status](https://dev.azure.com/fenase/SnowflakeIDGenerator/_apis/build/status%2FSnowflakeIDGenerator-CI?branchName=master)](https://dev.azure.com/fenase/SnowflakeIDGenerator/_build/latest?definitionId=21)

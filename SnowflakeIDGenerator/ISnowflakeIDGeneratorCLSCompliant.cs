@@ -8,32 +8,49 @@ using System;
 namespace SnowflakeID
 {
     /// <summary>
-    /// Generator class for <see cref="SnowflakeID"/>.
+    /// Interface for the generator class for <see cref="Snowflake"/>.
     /// <para>This keeps track of time, machine number and sequence.</para>
     /// </summary>
     public interface ISnowflakeIDGeneratorClsCompliant
     {
         /// <summary>
-        /// Date configured as epoch for the generator
+        /// Gets the date configured as the epoch for the generator.
         /// </summary>
+        /// <value>
+        /// The <see cref="DateTime"/> value representing the custom epoch date.
+        /// </value>
+        /// <remarks>
+        /// The epoch date is used as the starting point for generating unique IDs.
+        /// </remarks>
         DateTime ConfiguredEpoch { get; }
 
         /// <summary>
-        /// Configured instance id for the generator
+        /// Gets the configured machine ID for the generator.
         /// </summary>
+        /// <value>
+        /// The <see cref="int"/> value representing the machine ID.
+        /// </value>
+        /// <remarks>
+        /// The machine ID is used to ensure uniqueness across different instances of the generator.
+        /// </remarks>
         int ConfiguredMachineId { get; }
 
         /// <summary>
-        /// Gets next Snowflake as <typeparamref cref="string">string</typeparamref>
+        /// Gets the next Snowflake ID as a string.
         /// </summary>
-        /// <returns></returns>
-        /// <typeparam cref="string">string</typeparam>
+        /// <returns>A <see cref="string"/> representing the next Snowflake ID.</returns>
+        /// <remarks>
+        /// This method generates a new Snowflake ID and returns it as a string value.
+        /// </remarks>
         string GetCodeString();
 
         /// <summary>
-        /// Gets next Snowflake id
+        /// Generates the next Snowflake ID.
         /// </summary>
-        /// <returns><typeparamref cref="Snowflake">Snowflake</typeparamref></returns>
+        /// <returns>A <see cref="Snowflake"/> object containing the generated ID.</returns>
+        /// <remarks>
+        /// This method generates a new Snowflake ID and returns it as a <see cref="Snowflake"/> object.
+        /// </remarks>
         Snowflake GetSnowflake();
     }
 }

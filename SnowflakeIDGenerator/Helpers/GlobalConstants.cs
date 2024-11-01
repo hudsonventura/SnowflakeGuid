@@ -6,16 +6,19 @@ using System;
 namespace SnowflakeID.Helpers
 {
     /// <summary>
-    /// Global constants.
+    /// Global constants used throughout the Snowflake ID generator.
     /// </summary>
     public static class GlobalConstants
     {
         /// <summary>
-        /// Default date used as epoch if not configured
+        /// The default date used as the epoch if not configured.
         /// </summary>
+        /// <remarks>
+        /// This is set to Unix Epoch (January 1, 1970).
+        /// </remarks>
         public static readonly DateTime DefaultEpoch =
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-            DateTime.UnixEpoch;
+               DateTime.UnixEpoch;
 #else
             new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
 #endif
