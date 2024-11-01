@@ -1,4 +1,7 @@
 ﻿# Changelog
+## 1.5
+- Slightly improved performance
+- Improved documentation
 
 ## 1.4
 - Added dependency injection helpers using Microsoft.Extensions.DependencyInjection.
