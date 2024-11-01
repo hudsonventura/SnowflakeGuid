@@ -20,7 +20,7 @@ namespace SnowflakeID.Test
         public void SequenceTest(ulong machineId)
         {
             Queue<string> generated = new();
-            int cant = 100000;
+            const int cant = 100000;
             DateTime d1 = DateTimeUtcMillis();
             for (int i = 0; i < cant; i++)
             {
@@ -65,11 +65,10 @@ namespace SnowflakeID.Test
             }
         }
 
-
         [Test]
         public void ParallelTest()
         {
-            List<Task<HashSet<Snowflake>>> tasks = new();
+            List<Task<HashSet<Snowflake>>> tasks = [];
             const int TaskQuantity = 50;
             const int GeneratedQuantity = 10000;
             const ulong machineId = 1ul;
@@ -84,7 +83,7 @@ namespace SnowflakeID.Test
                 {
                     tasks.Add(new Task<HashSet<Snowflake>>(() =>
                     {
-                        HashSet<Snowflake> list = new();
+                        HashSet<Snowflake> list = [];
                         for (int j = 0; j < GeneratedQuantity; j++)
                         {
                             list.Add((Snowflake)SnowflakeIDGenerator.GetCodeString(machineId));
@@ -131,7 +130,6 @@ namespace SnowflakeID.Test
             }
         }
 
-
         [TestCase(1024UL)]
         [TestCase(1025UL)]
         [TestCase(2025UL)]
@@ -161,7 +159,6 @@ namespace SnowflakeID.Test
                 });
             });
         }
-
 
         [Test]
         public void DefaultEpochTest()
@@ -271,7 +268,6 @@ namespace SnowflakeID.Test
             });
         }
 
-
         [Test]
         public void DateTimeMillisecondsTest()
         {
@@ -326,10 +322,6 @@ namespace SnowflakeID.Test
                 }
             });
         }
-
-
-
-
 
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         private static readonly DateTime UnixEpoch = DateTime.UnixEpoch;
