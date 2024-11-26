@@ -99,10 +99,7 @@ namespace SnowflakeID
                 {
                     throw new ArgumentOutOfRangeException(nameof(MachineId), $"{nameof(MachineId)} must be less than {MaxMachineId}. Got: {value}.");
                 }
-                else
-                {
-                    _MachineId = value;
-                }
+                _MachineId = value;
             }
         }
 
@@ -143,10 +140,7 @@ namespace SnowflakeID
                 {
                     throw new ArgumentOutOfRangeException(nameof(Sequence), $"{nameof(Sequence)} must be less than {MaxSequence}. Got: {value}.");
                 }
-                else
-                {
-                    _Sequence = value;
-                }
+                _Sequence = value;
             }
         }
 
@@ -180,17 +174,14 @@ namespace SnowflakeID
         [CLSCompliant(false)]
         public ulong Timestamp
         {
-            get
-            {
-                return ((ulong)UtcDateTime.Subtract(Epoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
-            }
+            get => ((ulong)UtcDateTime.Subtract(Epoch).Ticks) / TimeSpan.TicksPerMillisecond;
             set
             {
                 if (value >= MaxTimestamp)
                 {
                     throw new ArgumentOutOfRangeException(nameof(Timestamp), $"{nameof(Timestamp)} must be less than {MaxTimestamp}. Got: {value}.");
                 }
-                UtcDateTime = DateTime.SpecifyKind(Epoch.AddTicks((long)value * (TimeSpan.TicksPerMillisecond)), DateTimeKind.Utc);
+                UtcDateTime = DateTime.SpecifyKind(Epoch.AddTicks((long)value * TimeSpan.TicksPerMillisecond), DateTimeKind.Utc);
             }
         }
 
@@ -251,24 +242,15 @@ namespace SnowflakeID
         /// </value>
         public string Code
         {
-            get
-            {
-                return Id.ToString(CultureInfo.InvariantCulture).PadLeft(NumberOfDigits, '0');
-            }
-            private set
-            {
-                Id = ulong.Parse(value, CultureInfo.InvariantCulture);
-            }
+            get => Id.ToString(CultureInfo.InvariantCulture).PadLeft(NumberOfDigits, '0');
+            private set => Id = ulong.Parse(value, CultureInfo.InvariantCulture);
         }
 
         /// <summary>
         /// Rebase the Snowflake to a new epoch CHANGING THE GENERATED CODE but keeping the same date and time.
         /// </summary>
         /// <param name="newEpoch">The new epoch to set.</param>
-        public void RebaseEpoch(DateTime newEpoch)
-        {
-            Epoch = newEpoch;
-        }
+        public void RebaseEpoch(DateTime newEpoch) => Epoch = newEpoch;
 
         /// <summary>
         /// Changes the snowflake's epoch keeping the code intact.
@@ -286,10 +268,7 @@ namespace SnowflakeID
         /// </summary>
         /// <param name="s">The SnowflakeId code as a string.</param>
         /// <returns>A new instance of the <see cref="Snowflake"/> class.</returns>
-        public static Snowflake Parse(string s)
-        {
-            return new Snowflake() { Code = s };
-        }
+        public static Snowflake Parse(string s) => new() { Code = s };
 
         /// <summary>
         /// Creates a SnowflakeId object from a SnowflakeId code using a custom epoch.
@@ -297,10 +276,7 @@ namespace SnowflakeID
         /// <param name="s">The SnowflakeId code as a string.</param>
         /// <param name="customEpoch">The custom date to use as the epoch.</param>
         /// <returns>A new instance of the <see cref="Snowflake"/> class.</returns>
-        public static Snowflake Parse(string s, DateTime customEpoch)
-        {
-            return new Snowflake(customEpoch) { Code = s };
-        }
+        public static Snowflake Parse(string s, DateTime customEpoch) => new(customEpoch) { Code = s };
 
         /// <summary>
         /// Creates a SnowflakeId object from a SnowflakeId code.
@@ -308,10 +284,7 @@ namespace SnowflakeID
         /// <param name="b">The SnowflakeId code as a ulong.</param>
         /// <returns>A new instance of the <see cref="Snowflake"/> class.</returns>
         [CLSCompliant(false)]
-        public static Snowflake Parse(ulong b)
-        {
-            return new Snowflake() { Id = b };
-        }
+        public static Snowflake Parse(ulong b) => new() { Id = b };
 
         /// <summary>
         /// Creates a SnowflakeId object from a SnowflakeId code using a custom epoch.
@@ -320,10 +293,7 @@ namespace SnowflakeID
         /// <param name="customEpoch">The custom date to use as the epoch.</param>
         /// <returns>A new instance of the <see cref="Snowflake"/> class.</returns>
         [CLSCompliant(false)]
-        public static Snowflake Parse(ulong b, DateTime customEpoch)
-        {
-            return new Snowflake(customEpoch) { Id = b };
-        }
+        public static Snowflake Parse(ulong b, DateTime customEpoch) => new(customEpoch) { Id = b };
 
         /// <summary>
         /// Gets the Snowflake ID as a string.
@@ -331,10 +301,7 @@ namespace SnowflakeID
         /// <returns>
         /// A <see cref="string"/> representing the Snowflake ID.
         /// </returns>
-        public override string ToString()
-        {
-            return Code;
-        }
+        public override string ToString() => Code;
 
         /// <summary>
         /// Checks equality between this Snowflake object and another object.
@@ -356,10 +323,8 @@ namespace SnowflakeID
         /// <returns>
         /// <c>true</c> if the specified Snowflake object is equal to the current Snowflake object; otherwise, <c>false</c>.
         /// </returns>
-        public virtual bool Equals(Snowflake other)
-        {
-            return other != null && Id == other.Id && Epoch == other.Epoch;
-        }
+        public virtual bool Equals(Snowflake other) =>
+            other is not null && Id == other.Id && Epoch == other.Epoch;
 
         /// <summary>
         /// Serves as the default hash function. Override of <seealso cref="object.GetHashCode()"/>.
@@ -534,10 +499,7 @@ namespace SnowflakeID
         /// </summary>
         /// <param name="s">The string representation of the <see cref="Snowflake"/>.</param>
         /// <returns>A <see cref="Snowflake"/> instance that corresponds to the specified string.</returns>
-        public static Snowflake FromString(string s)
-        {
-            return (Snowflake)s;
-        }
+        public static Snowflake FromString(string s) => (Snowflake)s;
 
         /// <summary>
         /// Converts the specified unsigned long integer to a <see cref="Snowflake"/> instance.
@@ -553,10 +515,7 @@ namespace SnowflakeID
         /// <param name="s">The unsigned long integer representation of the <see cref="Snowflake"/>.</param>
         /// <returns>A <see cref="Snowflake"/> instance that corresponds to the specified unsigned long integer.</returns>
         [CLSCompliant(false)]
-        public static Snowflake FromUInt64(ulong s)
-        {
-            return (Snowflake)s;
-        }
+        public static Snowflake FromUInt64(ulong s) => (Snowflake)s;
 
         /// <summary>
         /// Converts the specified <see cref="Snowflake"/> instance to its string representation.
@@ -578,10 +537,7 @@ namespace SnowflakeID
         /// </summary>
         /// <returns>An unsigned long integer representation of the current <see cref="Snowflake"/> instance.</returns>
         [CLSCompliant(false)]
-        public ulong ToUInt64()
-        {
-            return this;
-        }
+        public ulong ToUInt64() => this;
         #endregion
     }
 }
