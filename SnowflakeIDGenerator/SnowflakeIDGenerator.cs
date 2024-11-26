@@ -18,7 +18,11 @@ namespace SnowflakeID
         private static ulong _Sequence;
         private static ulong Sequence { get => _Sequence; set => _Sequence = value % Snowflake.MaxSequence; }
 
+#if NET9_0_OR_GREATER
+        private static readonly Lock lockObject = new();
+#else
         private static readonly object lockObject = new();
+#endif
 
         /// <summary>
         /// Gets the date configured as the epoch for the generator.
