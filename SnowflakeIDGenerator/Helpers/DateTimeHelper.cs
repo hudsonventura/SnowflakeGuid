@@ -16,9 +16,7 @@ namespace SnowflakeID.Helpers
         /// <param name="date">The date for which to calculate the timestamp.</param>
         /// <param name="epoch">The epoch date to use as the reference point.</param>
         /// <returns>The timestamp in milliseconds as an <see cref="ulong"/>.</returns>
-        internal static ulong TimestampMillisFromEpoch(DateTime date, DateTime epoch)
-        {
-            return (ulong)date.Subtract(epoch).Ticks / TimeSpan.TicksPerMillisecond;
-        }
+        internal static ulong TimestampMillisFromEpoch(DateTime date, DateTime epoch) =>
+            (ulong)date.Subtract(epoch).Ticks / TimeSpan.TicksPerMillisecond;
     }
 }
