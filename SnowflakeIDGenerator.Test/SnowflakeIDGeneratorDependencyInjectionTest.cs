@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace SnowflakeID.Test
 {
-    public class SnowflakeIDGeneratorDependencyInjectionTest
+    internal sealed class SnowflakeIDGeneratorDependencyInjectionTest
     {
         [SetUp]
         public void Setup()
@@ -20,13 +20,11 @@ namespace SnowflakeID.Test
             //before
             Assert.That(services, Is.Empty);
 
-            services.AddSnowflakeIdGeneratorService();
+            _ = services.AddSnowflakeIdGeneratorService();
 
             //after
             Assert.Multiple(() =>
             {
-
-
                 Assert.That(services, Is.Not.Empty);
                 Assert.That(services, Has.Count.GreaterThanOrEqualTo(1));
                 Assert.That(services.Any(x => x.ServiceType == typeof(ISnowflakeIDGenerator)), Is.True);
@@ -38,12 +36,12 @@ namespace SnowflakeID.Test
         {
             ServiceCollection services = new();
 
-            services.AddSnowflakeIdGeneratorService();
+            _ = services.AddSnowflakeIdGeneratorService();
 
             ServiceProvider serviceProvider = services.BuildServiceProvider();
             Assert.That(serviceProvider, Is.Not.Null);
 
-            var generator = serviceProvider!.GetService<ISnowflakeIDGenerator>();
+            ISnowflakeIDGenerator? generator = serviceProvider!.GetService<ISnowflakeIDGenerator>();
             Assert.Multiple(() =>
             {
                 Assert.That(generator, Is.Not.Null);
@@ -51,7 +49,7 @@ namespace SnowflakeID.Test
                 Assert.That(generator!.ConfiguredMachineId, Is.EqualTo(0));
             });
 
-            Snowflake snowflake = generator.GetSnowflake();
+            Snowflake snowflake = generator!.GetSnowflake();
             Assert.Multiple(() =>
             {
                 Assert.That(snowflake.MachineId, Is.EqualTo(0));
@@ -76,7 +74,7 @@ namespace SnowflakeID.Test
             DateTime epoch = DateTime.Parse(epochString, CultureInfo.InvariantCulture);
             ServiceCollection services = new();
 
-            services.AddSnowflakeIdGeneratorService(machineId, epoch);
+            _ = services.AddSnowflakeIdGeneratorService(machineId, epoch);
 
             ServiceProvider serviceProvider = services.BuildServiceProvider();
             Assert.That(serviceProvider, Is.Not.Null);
@@ -89,7 +87,7 @@ namespace SnowflakeID.Test
                 Assert.That(generator!.ConfiguredMachineId, Is.EqualTo(machineId));
             });
 
-            Snowflake snowflake = generator.GetSnowflake();
+            Snowflake snowflake = generator!.GetSnowflake();
             Assert.Multiple(() =>
             {
                 Assert.That(snowflake.MachineId, Is.EqualTo(machineId));

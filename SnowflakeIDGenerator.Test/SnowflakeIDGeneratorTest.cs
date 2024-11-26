@@ -2,7 +2,7 @@
 
 namespace SnowflakeID.Test
 {
-    public class SnowflakeIDGeneratorTest
+    internal sealed class SnowflakeIDGeneratorTest
     {
         [SetUp]
         public void Setup()
@@ -86,7 +86,7 @@ namespace SnowflakeID.Test
                         HashSet<Snowflake> list = [];
                         for (int j = 0; j < GeneratedQuantity; j++)
                         {
-                            list.Add((Snowflake)SnowflakeIDGenerator.GetCodeString(machineId));
+                            _ = list.Add((Snowflake)SnowflakeIDGenerator.GetCodeString(machineId));
                         }
                         return list;
                     }));
@@ -96,7 +96,7 @@ namespace SnowflakeID.Test
                     task.Start();
                 }
 
-                Task.WaitAll(tasks.ToArray());
+                Task.WaitAll([.. tasks]);
                 d2 = DateTimeUtcMillis();
             }
             catch (AggregateException ae)
@@ -138,25 +138,13 @@ namespace SnowflakeID.Test
         {
             Assert.Multiple(() =>
             {
-                Assert.Throws<ArgumentOutOfRangeException>(() =>
-                {
-                    SnowflakeIDGenerator.GetCode(machineId);
-                });
+                _ = Assert.Throws<ArgumentOutOfRangeException>(() => SnowflakeIDGenerator.GetCode(machineId));
 
-                Assert.Throws<ArgumentOutOfRangeException>(() =>
-                {
-                    SnowflakeIDGenerator.GetCodeString(machineId);
-                });
+                _ = Assert.Throws<ArgumentOutOfRangeException>(() => SnowflakeIDGenerator.GetCodeString(machineId));
 
-                Assert.Throws<ArgumentOutOfRangeException>(() =>
-                {
-                    new SnowflakeIDGenerator(machineId);
-                });
+                _ = Assert.Throws<ArgumentOutOfRangeException>(() => new SnowflakeIDGenerator(machineId));
 
-                Assert.Throws<ArgumentOutOfRangeException>(() =>
-                {
-                    new SnowflakeIDGenerator((int)machineId);
-                });
+                _ = Assert.Throws<ArgumentOutOfRangeException>(() => new SnowflakeIDGenerator((int)machineId));
             });
         }
 
@@ -188,12 +176,12 @@ namespace SnowflakeID.Test
 
             Assert.Multiple(() =>
             {
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake > snowflakeDefaultEpochSetted);
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake >= snowflakeDefaultEpochSetted);
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake < snowflakeDefaultEpochSetted);
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake <= snowflakeDefaultEpochSetted);
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake.CompareTo(snowflakeDefaultEpochSetted));
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeDefaultEpochSetted.CompareTo(snowflake));
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake > snowflakeDefaultEpochSetted);
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake >= snowflakeDefaultEpochSetted);
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake < snowflakeDefaultEpochSetted);
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake <= snowflakeDefaultEpochSetted);
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake.CompareTo(snowflakeDefaultEpochSetted));
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeDefaultEpochSetted.CompareTo(snowflake));
                 Assert.That(snowflake.Id, Is.GreaterThan(snowflakeDefaultEpochSetted.Id));
                 Assert.That(snowflake.Epoch, Is.Not.EqualTo(snowflakeDefaultEpochSetted.Epoch));
                 Assert.That(snowflake.Epoch, Is.EqualTo(UnixEpoch));
@@ -211,12 +199,12 @@ namespace SnowflakeID.Test
 
             Assert.Multiple(() =>
             {
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake > snowflakeDefaultEpochSetted);
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake >= snowflakeDefaultEpochSetted);
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake < snowflakeDefaultEpochSetted);
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake <= snowflakeDefaultEpochSetted);
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake.CompareTo(snowflakeDefaultEpochSetted));
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeDefaultEpochSetted.CompareTo(snowflake));
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake > snowflakeDefaultEpochSetted);
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake >= snowflakeDefaultEpochSetted);
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake < snowflakeDefaultEpochSetted);
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake <= snowflakeDefaultEpochSetted);
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflake.CompareTo(snowflakeDefaultEpochSetted));
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeDefaultEpochSetted.CompareTo(snowflake));
                 Assert.That(snowflake.Id, Is.GreaterThan(snowflakeDefaultEpochSetted.Id));
                 Assert.That(snowflake.Epoch, Is.Not.EqualTo(snowflakeDefaultEpochSetted.Epoch));
                 Assert.That(snowflake.Epoch, Is.EqualTo(UnixEpoch));
@@ -254,12 +242,12 @@ namespace SnowflakeID.Test
 
             Assert.Multiple(() =>
             {
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString > snowflakeStringDefaultEpochSetted);
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString >= snowflakeStringDefaultEpochSetted);
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString < snowflakeStringDefaultEpochSetted);
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString <= snowflakeStringDefaultEpochSetted);
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString.CompareTo(snowflakeStringDefaultEpochSetted));
-                Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeStringDefaultEpochSetted.CompareTo(snowflakeString));
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString > snowflakeStringDefaultEpochSetted);
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString >= snowflakeStringDefaultEpochSetted);
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString < snowflakeStringDefaultEpochSetted);
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString <= snowflakeStringDefaultEpochSetted);
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeString.CompareTo(snowflakeStringDefaultEpochSetted));
+                _ = Assert.Throws<SnowflakesUsingDifferentEpochsException>(() => _ = snowflakeStringDefaultEpochSetted.CompareTo(snowflakeString));
                 Assert.That(snowflakeString.Id, Is.GreaterThan(snowflakeStringDefaultEpochSetted.Id));
                 Assert.That(snowflakeString.Epoch, Is.Not.EqualTo(snowflakeStringDefaultEpochSetted.Epoch));
                 Assert.That(snowflakeString.Epoch, Is.EqualTo(UnixEpoch));
@@ -330,14 +318,11 @@ namespace SnowflakeID.Test
         private static readonly DateTime UnixEpoch = new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
 #endif
         private static readonly DateTime CustomEpoch = new(year: 2020, month: 1, day: 1, hour: 0, minute: 0, second: 0, DateTimeKind.Utc);
-        private static DateTime DateTimeUtcMillis()
-        {
-            return DateTimeOnlyMillis(DateTime.UtcNow);
-        }
+        private static DateTime DateTimeUtcMillis() => DateTimeOnlyMillis(DateTime.UtcNow);
         private static DateTime DateTimeOnlyMillis(DateTime d)
         {
-            ulong ml = ((ulong)d.Subtract(UnixEpoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond); // same as floor (integer division -> multiplication)
-            return DateTime.SpecifyKind(UnixEpoch.AddTicks((long)ml * (TimeSpan.TicksPerMillisecond)), DateTimeKind.Utc);
+            ulong ml = ((ulong)d.Subtract(UnixEpoch).Ticks) / TimeSpan.TicksPerMillisecond; // same as floor (integer division -> multiplication)
+            return DateTime.SpecifyKind(UnixEpoch.AddTicks((long)ml * TimeSpan.TicksPerMillisecond), DateTimeKind.Utc);
         }
     }
 }
