@@ -11,6 +11,12 @@ namespace SnowflakeID
     /// Interface for the generator class for <see cref="Snowflake"/>.
     /// <para>This keeps track of time, machine number and sequence.</para>
     /// </summary>
+    /// <remarks>
+    /// <para><see href="https://www.nuget.org/packages/SnowflakeIDGenerator">NuGet</see></para>
+    /// <para><seealso href="https://github.com/fenase/SnowflakeIDGenerator">Source</seealso></para>
+    /// <para><seealso href="https://fenase.github.io/SnowflakeIDGenerator/api/SnowflakeID.html">API</seealso></para>
+    /// <para><seealso href="https://fenase.github.io/projects/SnowflakeIDGenerator">Site</seealso></para>
+    /// </remarks>
     public interface ISnowflakeIDGeneratorClsCompliant
     {
         /// <summary>

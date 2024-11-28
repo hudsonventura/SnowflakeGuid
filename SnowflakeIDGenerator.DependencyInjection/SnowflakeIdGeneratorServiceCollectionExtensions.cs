@@ -11,6 +11,12 @@ namespace SnowflakeID
     /// <summary>
     /// Extension methods to register <see cref="SnowflakeIDGenerator"/> services.
     /// </summary>
+    /// <remarks>
+    /// <para><see href="https://www.nuget.org/packages/SnowflakeIDGenerator">NuGet</see></para>
+    /// <para><seealso href="https://github.com/fenase/SnowflakeIDGenerator">Source</seealso></para>
+    /// <para><seealso href="https://fenase.github.io/SnowflakeIDGenerator/api/SnowflakeID.html">API</seealso></para>
+    /// <para><seealso href="https://fenase.github.io/projects/SnowflakeIDGenerator">Site</seealso></para>
+    /// </remarks>
     public static class SnowflakeIdGeneratorServiceCollectionExtensions
     {
         /// <summary>
