@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace SnowflakeID.Test
 {
-    public class SnowflakeTest
+    internal sealed class SnowflakeTest
     {
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         private static readonly DateTime defaultEpoch = DateTime.UnixEpoch;
@@ -14,13 +14,11 @@ namespace SnowflakeID.Test
 #endif
         private static readonly DateTime customEpoch = new(year: 2023, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
 
-
         [SetUp]
         public void Setup()
         {
             // Method intentionally left empty.
         }
-
 
         [TestCase(0ul)]
         [TestCase(1ul)]
@@ -57,50 +55,39 @@ namespace SnowflakeID.Test
         }
 
         [Test]
-        public void DigitAmountTest()
-        {
+        public void DigitAmountTest() =>
             //This should fail if someone touches something they shouldn't
             Assert.That(Snowflake.NumberOfDigits, Is.EqualTo(20));
-        }
 
-        [TestCase(true, true)]
-        [TestCase(true, false)]
-        [TestCase(false, true)]
-        [TestCase(false, false)]
-        public void CreationTest(bool useTimeStamp, bool desc)
+        [Test]
+        public void CreationTest([Values] bool useTimeStamp, [Values] bool desc)
         {
             DateTime d = DateTime.UtcNow;
-            ulong timestampActualMillis = ((ulong)d.Subtract(defaultEpoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
-            long i_ini = (desc ? Snowflake.MaxMachineId - 1 : 0);
-            long i_fin = (desc ? 0 : Snowflake.MaxMachineId - 1);
-            long j_ini = (desc ? Snowflake.MaxSequence - 1 : 0);
-            long j_fin = (desc ? 0 : Snowflake.MaxSequence - 1);
+            ulong timestampActualMillis = ((ulong)d.Subtract(defaultEpoch).Ticks) / TimeSpan.TicksPerMillisecond;
+            long i_ini = desc ? Snowflake.MaxMachineId - 1 : 0;
+            long i_fin = desc ? 0 : Snowflake.MaxMachineId - 1;
+            long j_ini = desc ? Snowflake.MaxSequence - 1 : 0;
+            long j_fin = desc ? 0 : Snowflake.MaxSequence - 1;
             long step = desc ? -10 : 10;
-
 
             for (long i = i_ini; desc ? i >= i_fin : i <= i_fin; i += step)
             {
                 for (long j = j_ini; desc ? j >= j_fin : j <= j_fin; j += step)
                 {
-                    Snowflake snowflake;
-                    if (useTimeStamp)
-                    {
-                        snowflake = new Snowflake()
+                    Snowflake snowflake = useTimeStamp
+                        ? new Snowflake()
                         {
                             Timestamp = timestampActualMillis,
                             Sequence = (ulong)j,
                             MachineId = (ulong)i,
-                        };
-                    }
-                    else
-                    {
-                        snowflake = new Snowflake()
+                        }
+                        : new Snowflake()
                         {
                             UtcDateTime = d,
                             Sequence = (ulong)j,
                             MachineId = (ulong)i,
                         };
-                    }
+
                     Assert.Multiple(() =>
                     {
                         Assert.That(snowflake.UtcDateTime.Year, Is.EqualTo(d.Year));
@@ -133,7 +120,6 @@ namespace SnowflakeID.Test
             }
         }
 
-
         [TestCase(1024UL, 4096UL)]
         [TestCase(124UL, 4096UL)]
         [TestCase(1024UL, 406UL)]
@@ -142,7 +128,7 @@ namespace SnowflakeID.Test
         [TestCase(2024UL, 456UL)]
         public void CreationErrorTest(ulong machine, ulong sequence)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            _ = Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 _ = new Snowflake()
                 {
@@ -165,7 +151,7 @@ namespace SnowflakeID.Test
         [TestCase(-1, -1)]
         public void CreationErrorTest(int machine, int sequence)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            _ = Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 _ = new Snowflake()
                 {
@@ -185,7 +171,7 @@ namespace SnowflakeID.Test
         [TestCase(9007199254872096)]
         public void CreationErrorTest(long timestamp)
         {
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            _ = Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 _ = new Snowflake()
                 {
@@ -195,7 +181,6 @@ namespace SnowflakeID.Test
                 };
             });
         }
-
 
         [TestCase(0ul, 0ul)]
         [TestCase(0ul, 4095ul)]
@@ -208,7 +193,7 @@ namespace SnowflakeID.Test
         public void Date(ulong machineId, ulong sequence)
         {
             DateTime d = DateTime.UtcNow;
-            ulong timestampActualMillis = ((ulong)d.Subtract(defaultEpoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
+            ulong timestampActualMillis = ((ulong)d.Subtract(defaultEpoch).Ticks) / TimeSpan.TicksPerMillisecond;
             DateTime dMillis = DateTime.SpecifyKind(defaultEpoch.AddMilliseconds(timestampActualMillis), DateTimeKind.Utc);
 
             Assert.Multiple(() =>
@@ -249,16 +234,15 @@ namespace SnowflakeID.Test
             });
         }
 
-
         [Test]
         public void UnsignedEqualsSigned()
         {
             DateTime d = DateTime.UtcNow;
-            ulong timestampActualMillis = ((ulong)d.Subtract(defaultEpoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
-            ulong machineId = 123;
-            ulong sequence = 3468;
-            int machineIdInt32 = (int)machineId;
-            int sequenceInt32 = (int)sequence;
+            ulong timestampActualMillis = ((ulong)d.Subtract(defaultEpoch).Ticks) / TimeSpan.TicksPerMillisecond;
+            const ulong machineId = 123;
+            const ulong sequence = 3468;
+            const int machineIdInt32 = (int)machineId;
+            const int sequenceInt32 = (int)sequence;
             long timestampActualMillisInt64 = (long)timestampActualMillis;
 
             Snowflake snowflake = new()
@@ -385,8 +369,8 @@ namespace SnowflakeID.Test
         public void ChangeEpoch(DateTime oldEpoch, DateTime newEpoch)
         {
             DateTime dateTime = DateTime.UtcNow;
-            ulong seq = 12;
-            ulong machine = 65;
+            const ulong seq = 12;
+            const ulong machine = 65;
 
             TimeSpan epochDifference = newEpoch - oldEpoch;
 
@@ -416,8 +400,8 @@ namespace SnowflakeID.Test
         public void RebaseEpoch(DateTime oldEpoch, DateTime newEpoch)
         {
             DateTime dateTime = DateTime.UtcNow;
-            ulong seq = 12;
-            ulong machine = 65;
+            const ulong seq = 12;
+            const ulong machine = 65;
 
             Snowflake snowflake = new(epoch: oldEpoch)
             {
@@ -490,10 +474,10 @@ namespace SnowflakeID.Test
         public void CastOperators()
         {
             DateTime d = DateTime.UtcNow;
-            ulong timestampActualMillis = ((ulong)d.Subtract(defaultEpoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
+            ulong timestampActualMillis = ((ulong)d.Subtract(defaultEpoch).Ticks) / TimeSpan.TicksPerMillisecond;
             DateTime dateTime = DateTime.SpecifyKind(defaultEpoch.AddMilliseconds(timestampActualMillis), DateTimeKind.Utc); // remove sub-millisecond precision
-            ulong seq = 12;
-            ulong machine = 65;
+            const ulong seq = 12;
+            const ulong machine = 65;
 
             Snowflake snowflake = new()
             {
@@ -533,10 +517,10 @@ namespace SnowflakeID.Test
         public void CastAlternativeOperators()
         {
             DateTime d = DateTime.UtcNow;
-            ulong timestampActualMillis = ((ulong)d.Subtract(defaultEpoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
+            ulong timestampActualMillis = ((ulong)d.Subtract(defaultEpoch).Ticks) / TimeSpan.TicksPerMillisecond;
             DateTime dateTime = DateTime.SpecifyKind(defaultEpoch.AddMilliseconds(timestampActualMillis), DateTimeKind.Utc); // remove sub-millisecond precision
-            ulong seq = 12;
-            ulong machine = 65;
+            const ulong seq = 12;
+            const ulong machine = 65;
 
             Snowflake snowflake = new()
             {
@@ -606,7 +590,7 @@ namespace SnowflakeID.Test
         {
             ulong ts = (ulong)Math.Pow(2, 42);
 
-            Assert.Throws<ArgumentOutOfRangeException>(() =>
+            _ = Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 _ = new Snowflake()
                 {

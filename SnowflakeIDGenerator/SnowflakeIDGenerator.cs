@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2022-2024, Federico Seckel.
+﻿// Copyright (c) 2022-2025, Federico Seckel.
 // Licensed under the BSD 3-Clause License. See LICENSE file in the project root for full license information.
 
 using SnowflakeID.Helpers;
@@ -11,6 +11,12 @@ namespace SnowflakeID
     /// Generator class for <see cref="Snowflake"/>.
     /// <para>This keeps track of time, machine number and sequence.</para>
     /// </summary>
+    /// <remarks>
+    /// <para><see href="https://www.nuget.org/packages/SnowflakeIDGenerator">NuGet</see></para>
+    /// <para><seealso href="https://github.com/fenase/SnowflakeIDGenerator">Source</seealso></para>
+    /// <para><seealso href="https://fenase.github.io/SnowflakeIDGenerator/api/SnowflakeID.html">API</seealso></para>
+    /// <para><seealso href="https://fenase.github.io/projects/SnowflakeIDGenerator">Site</seealso></para>
+    /// </remarks>
     public class SnowflakeIDGenerator : ISnowflakeIDGenerator, ISnowflakeIDGeneratorClsCompliant
     {
         private readonly ulong MACHINE_ID;
@@ -18,7 +24,11 @@ namespace SnowflakeID
         private static ulong _Sequence;
         private static ulong Sequence { get => _Sequence; set => _Sequence = value % Snowflake.MaxSequence; }
 
+#if NET9_0_OR_GREATER
+        private static readonly Lock lockObject = new();
+#else
         private static readonly object lockObject = new();
+#endif
 
         /// <summary>
         /// Gets the date configured as the epoch for the generator.
@@ -40,12 +50,10 @@ namespace SnowflakeID
         /// <remarks>
         /// The machine ID is used to ensure uniqueness across different instances of the generator.
         /// </remarks>
-        public int ConfiguredMachineId { get => (int)MACHINE_ID; }
+        public int ConfiguredMachineId => (int)MACHINE_ID;
 
-        private static void SetLastTimestampDriftCorrected(ulong timestamp, DateTime epoch)
-        {
+        private static void SetLastTimestampDriftCorrected(ulong timestamp, DateTime epoch) =>
             LastTimestampDriftCorrected = timestamp + DateTimeHelper.TimestampMillisFromEpoch(epoch, GlobalConstants.DefaultEpoch);
-        }
 
         private ulong LastTimeStamp => LastTimestampDriftCorrected - DateTimeHelper.TimestampMillisFromEpoch(ConfiguredEpoch, GlobalConstants.DefaultEpoch);
         private static ulong LastTimestampDriftCorrected;
@@ -169,10 +177,7 @@ namespace SnowflakeID
         /// This method generates a new Snowflake ID and returns it as a numeric value.
         /// </remarks>
         [CLSCompliant(false)]
-        public ulong GetCode()
-        {
-            return GetSnowflake().Id;
-        }
+        public ulong GetCode() => GetSnowflake().Id;
 
         /// <summary>
         /// Gets the next Snowflake ID as a string.
@@ -181,10 +186,7 @@ namespace SnowflakeID
         /// <remarks>
         /// This method generates a new Snowflake ID and returns it as a string value.
         /// </remarks>
-        public string GetCodeString()
-        {
-            return GetSnowflake().Code;
-        }
+        public string GetCodeString() => GetSnowflake().Code;
 
         /// <summary>
         /// Static method to get the next Snowflake ID for a given machine ID.
@@ -195,10 +197,7 @@ namespace SnowflakeID
         /// This method generates a new Snowflake ID and returns it as a <see cref="Snowflake"/> object.
         /// </remarks>
         [CLSCompliant(false)]
-        public static Snowflake GetSnowflake(ulong machineId)
-        {
-            return new SnowflakeIDGenerator(machineId).GetSnowflake();
-        }
+        public static Snowflake GetSnowflake(ulong machineId) => new SnowflakeIDGenerator(machineId).GetSnowflake();
 
         /// <summary>
         /// Static method to get the next Snowflake ID for a given machine ID using a custom epoch date.
@@ -207,10 +206,8 @@ namespace SnowflakeID
         /// <param name="customEpoch">The custom epoch date as a <see cref="DateTime"/>.</param>
         /// <returns>A <see cref="Snowflake"/> object containing the generated ID.</returns>
         [CLSCompliant(false)]
-        public static Snowflake GetSnowflake(ulong machineId, DateTime customEpoch)
-        {
-            return new SnowflakeIDGenerator(machineId, customEpoch).GetSnowflake();
-        }
+        public static Snowflake GetSnowflake(ulong machineId, DateTime customEpoch) =>
+            new SnowflakeIDGenerator(machineId, customEpoch).GetSnowflake();
 
         /// <summary>
         /// Static method to get the next Snowflake ID for a given machine ID.
@@ -233,10 +230,7 @@ namespace SnowflakeID
         /// <param name="machineId">The machine ID as a <see cref="ulong"/>.</param>
         /// <returns>A <see cref="ulong"/> representing the next Snowflake ID.</returns>
         [CLSCompliant(false)]
-        public static ulong GetCode(ulong machineId)
-        {
-            return new SnowflakeIDGenerator(machineId).GetCode();
-        }
+        public static ulong GetCode(ulong machineId) => new SnowflakeIDGenerator(machineId).GetCode();
 
         /// <summary>
         /// Static method to get the next Snowflake ID as a number for a given machine ID using a custom epoch date.
@@ -245,10 +239,7 @@ namespace SnowflakeID
         /// <param name="customEpoch">The custom epoch date as a <see cref="DateTime"/>.</param>
         /// <returns>A <see cref="ulong"/> representing the next Snowflake ID.</returns>
         [CLSCompliant(false)]
-        public static ulong GetCode(ulong machineId, DateTime customEpoch)
-        {
-            return new SnowflakeIDGenerator(machineId, customEpoch).GetCode();
-        }
+        public static ulong GetCode(ulong machineId, DateTime customEpoch) => new SnowflakeIDGenerator(machineId, customEpoch).GetCode();
 
         /// <summary>
         /// Gets the next Snowflake ID as a string for a given machine ID.
@@ -256,10 +247,7 @@ namespace SnowflakeID
         /// <param name="machineId">The machine ID as a <see cref="ulong"/>.</param>
         /// <returns>A <see cref="string"/> representing the next Snowflake ID.</returns>
         [CLSCompliant(false)]
-        public static string GetCodeString(ulong machineId)
-        {
-            return new SnowflakeIDGenerator(machineId).GetCodeString();
-        }
+        public static string GetCodeString(ulong machineId) => new SnowflakeIDGenerator(machineId).GetCodeString();
 
         /// <summary>
         /// Gets the next Snowflake ID as a string for a given machine ID using a custom epoch date.
@@ -268,10 +256,7 @@ namespace SnowflakeID
         /// <param name="customEpoch">The custom epoch date as a <see cref="DateTime"/>.</param>
         /// <returns>A <see cref="string"/> representing the next Snowflake ID.</returns>
         [CLSCompliant(false)]
-        public static string GetCodeString(ulong machineId, DateTime customEpoch)
-        {
-            return new SnowflakeIDGenerator(machineId, customEpoch).GetCodeString();
-        }
+        public static string GetCodeString(ulong machineId, DateTime customEpoch) => new SnowflakeIDGenerator(machineId, customEpoch).GetCodeString();
 
         /// <summary>
         /// Gets the next Snowflake ID as a string for a given machine ID.

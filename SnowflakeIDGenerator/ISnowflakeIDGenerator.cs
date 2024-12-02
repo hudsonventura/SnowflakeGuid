@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2022-2024, Federico Seckel.
+﻿// Copyright (c) 2022-2025, Federico Seckel.
 // Licensed under the BSD 3-Clause License. See LICENSE file in the project root for full license information.
 
 using System;
@@ -9,6 +9,12 @@ namespace SnowflakeID
     /// Interface for the generator class for <see cref="Snowflake"/>.
     /// <para>This keeps track of time, machine number, and sequence.</para>
     /// </summary>
+    /// <remarks>
+    /// <para><see href="https://www.nuget.org/packages/SnowflakeIDGenerator">NuGet</see></para>
+    /// <para><seealso href="https://github.com/fenase/SnowflakeIDGenerator">Source</seealso></para>
+    /// <para><seealso href="https://fenase.github.io/SnowflakeIDGenerator/api/SnowflakeID.html">API</seealso></para>
+    /// <para><seealso href="https://fenase.github.io/projects/SnowflakeIDGenerator">Site</seealso></para>
+    /// </remarks>
     [CLSCompliant(false)]
     public interface ISnowflakeIDGenerator
     {

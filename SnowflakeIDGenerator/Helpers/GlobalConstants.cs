@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2022-2024, Federico Seckel.
+﻿// Copyright (c) 2022-2025, Federico Seckel.
 // Licensed under the BSD 3-Clause License. See LICENSE file in the project root for full license information.
 
 using System;
@@ -18,7 +18,7 @@ namespace SnowflakeID.Helpers
         /// </remarks>
         public static readonly DateTime DefaultEpoch =
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
-               DateTime.UnixEpoch;
+            DateTime.UnixEpoch;
 #else
             new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
 #endif

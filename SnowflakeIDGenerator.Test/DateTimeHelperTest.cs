@@ -2,13 +2,13 @@
 
 namespace SnowflakeID.Test
 {
-    public class DateTimeHelperTest
+    internal sealed class DateTimeHelperTest
     {
         [Test]
         public void TimestampFromEpochTest()
         {
             DateTime d = DateTime.UtcNow;
-            ulong oldWay = ((ulong)d.Subtract(UnixEpoch).Ticks) / ((ulong)TimeSpan.TicksPerMillisecond);
+            ulong oldWay = ((ulong)d.Subtract(UnixEpoch).Ticks) / TimeSpan.TicksPerMillisecond;
             ulong newWay = DateTimeHelper.TimestampMillisFromEpoch(d, UnixEpoch);
             Assert.That(newWay, Is.EqualTo(oldWay));
         }
@@ -41,10 +41,6 @@ namespace SnowflakeID.Test
             });
         }
 #endif
-
-
-
-
 
 #if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         private static readonly DateTime UnixEpochAsUnixEpoch = DateTime.UnixEpoch;

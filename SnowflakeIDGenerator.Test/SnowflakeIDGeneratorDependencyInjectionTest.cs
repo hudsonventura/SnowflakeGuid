@@ -1,11 +1,18 @@
-﻿#if NET6_0_OR_GREATER
+﻿#if NET6_0_OR_GREATER || NET48_OR_GREATER
 using Microsoft.Extensions.DependencyInjection;
 using System.Globalization;
 
 namespace SnowflakeID.Test
 {
-    public class SnowflakeIDGeneratorDependencyInjectionTest
+    internal sealed class SnowflakeIDGeneratorDependencyInjectionTest
     {
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+        private static readonly DateTime UnixEpoch = DateTime.UnixEpoch;
+#else
+        // This should be DateTime.UnixEpoch. However, that constant is only available in .netCore and net5 or newer
+        private static readonly DateTime UnixEpoch = new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
+#endif
+
         [SetUp]
         public void Setup()
         {
@@ -20,13 +27,11 @@ namespace SnowflakeID.Test
             //before
             Assert.That(services, Is.Empty);
 
-            services.AddSnowflakeIdGeneratorService();
+            _ = services.AddSnowflakeIdGeneratorService();
 
             //after
             Assert.Multiple(() =>
             {
-
-
                 Assert.That(services, Is.Not.Empty);
                 Assert.That(services, Has.Count.GreaterThanOrEqualTo(1));
                 Assert.That(services.Any(x => x.ServiceType == typeof(ISnowflakeIDGenerator)), Is.True);
@@ -38,24 +43,24 @@ namespace SnowflakeID.Test
         {
             ServiceCollection services = new();
 
-            services.AddSnowflakeIdGeneratorService();
+            _ = services.AddSnowflakeIdGeneratorService();
 
             ServiceProvider serviceProvider = services.BuildServiceProvider();
             Assert.That(serviceProvider, Is.Not.Null);
 
-            var generator = serviceProvider!.GetService<ISnowflakeIDGenerator>();
+            ISnowflakeIDGenerator? generator = serviceProvider!.GetService<ISnowflakeIDGenerator>();
             Assert.Multiple(() =>
             {
                 Assert.That(generator, Is.Not.Null);
-                Assert.That(generator!.ConfiguredEpoch, Is.EqualTo(DateTime.UnixEpoch));
+                Assert.That(generator!.ConfiguredEpoch, Is.EqualTo(UnixEpoch));
                 Assert.That(generator!.ConfiguredMachineId, Is.EqualTo(0));
             });
 
-            Snowflake snowflake = generator.GetSnowflake();
+            Snowflake snowflake = generator!.GetSnowflake();
             Assert.Multiple(() =>
             {
                 Assert.That(snowflake.MachineId, Is.EqualTo(0));
-                Assert.That(snowflake.Epoch, Is.EqualTo(DateTime.UnixEpoch));
+                Assert.That(snowflake.Epoch, Is.EqualTo(UnixEpoch));
             });
         }
 
@@ -76,7 +81,7 @@ namespace SnowflakeID.Test
             DateTime epoch = DateTime.Parse(epochString, CultureInfo.InvariantCulture);
             ServiceCollection services = new();
 
-            services.AddSnowflakeIdGeneratorService(machineId, epoch);
+            _ = services.AddSnowflakeIdGeneratorService(machineId, epoch);
 
             ServiceProvider serviceProvider = services.BuildServiceProvider();
             Assert.That(serviceProvider, Is.Not.Null);
@@ -89,7 +94,7 @@ namespace SnowflakeID.Test
                 Assert.That(generator!.ConfiguredMachineId, Is.EqualTo(machineId));
             });
 
-            Snowflake snowflake = generator.GetSnowflake();
+            Snowflake snowflake = generator!.GetSnowflake();
             Assert.Multiple(() =>
             {
                 Assert.That(snowflake.MachineId, Is.EqualTo(machineId));
