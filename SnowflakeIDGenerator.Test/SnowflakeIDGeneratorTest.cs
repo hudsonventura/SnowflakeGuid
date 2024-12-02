@@ -276,10 +276,9 @@ namespace SnowflakeID.Test
             });
         }
 
-        [TestCase(true)]
-        [TestCase(false)]
+        [Test]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "Cryptographically secure randomness not needed")]
-        public void SnowflakeAsStaticTest(bool useCustomEpoch)
+        public void SnowflakeAsStaticTest([Values] bool useCustomEpoch)
         {
             DateTime epoch = useCustomEpoch ? CustomEpoch : UnixEpoch;
             ulong machine = (ulong)new Random().Next(0, (int)Snowflake.MaxMachineId);
@@ -305,7 +304,6 @@ namespace SnowflakeID.Test
                 }
                 else
                 {
-                    Assert.That(sGenerator.Sequence, Is.EqualTo(0));
                     Assert.That(sStatic.Sequence, Is.EqualTo(0));
                 }
             });

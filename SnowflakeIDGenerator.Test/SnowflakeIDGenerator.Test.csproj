@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>net9.0;net8.0;net6.0;net40</TargetFrameworks>
+		<TargetFrameworks>net9.0;net8.0;net6.0;net48;net40</TargetFrameworks>
 		<Nullable>enable</Nullable>
 		<Deterministic>True</Deterministic>
 		<LangVersion>latest</LangVersion>
@@ -10,7 +10,7 @@
 		<AnalysisLevel>latest-all</AnalysisLevel>
 
 		<IsPackable>false</IsPackable>
-		
+
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 
@@ -51,7 +51,7 @@
 		<ProjectReference Include="..\SnowflakeIDGenerator.DependencyInjection\SnowflakeIDGenerator.DependencyInjection.csproj" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0' OR '$(TargetFramework)' == 'net8.0'">
+	<ItemGroup Condition="'$(TargetFramework)' == 'net9.0' OR '$(TargetFramework)' == 'net8.0' OR '$(TargetFramework)' == 'net48'">
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
 	</ItemGroup>
 

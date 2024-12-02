@@ -1,10 +1,17 @@
-﻿#if NET6_0_OR_GREATER
+﻿#if NET6_0_OR_GREATER || NET48_OR_GREATER
 using System.Globalization;
 
 namespace SnowflakeID.Test
 {
     internal sealed class SnowflakeIdGeneratorOptionsTest
     {
+#if NETCOREAPP2_1_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+        private static readonly DateTime UnixEpoch = DateTime.UnixEpoch;
+#else
+        // This should be DateTime.UnixEpoch. However, that constant is only available in .netCore and net5 or newer
+        private static readonly DateTime UnixEpoch = new(year: 1970, month: 1, day: 1, hour: 0, minute: 0, second: 0, kind: DateTimeKind.Utc);
+#endif
+
         [SetUp]
         public void Setup()
         {
@@ -18,11 +25,11 @@ namespace SnowflakeID.Test
             Assert.Multiple(() =>
             {
                 Assert.That(obj.MachineId, Is.EqualTo(0));
-                Assert.That(obj.EpochObject, Is.EqualTo(DateTime.UnixEpoch));
+                Assert.That(obj.EpochObject, Is.EqualTo(UnixEpoch));
                 Assert.That(obj.EpochObject.Kind, Is.EqualTo(DateTimeKind.Utc));
-                Assert.That(obj.EpochObject.Kind, Is.EqualTo(DateTime.UnixEpoch.Kind));
-                Assert.That(obj.EpochObject.ToUniversalTime(), Is.EqualTo(DateTime.UnixEpoch.ToUniversalTime()));
-                Assert.That(obj.Epoch, Is.EqualTo(DateTime.UnixEpoch.ToString("O")));
+                Assert.That(obj.EpochObject.Kind, Is.EqualTo(UnixEpoch.Kind));
+                Assert.That(obj.EpochObject.ToUniversalTime(), Is.EqualTo(UnixEpoch.ToUniversalTime()));
+                Assert.That(obj.Epoch, Is.EqualTo(UnixEpoch.ToString("O")));
             });
         }
 
@@ -69,11 +76,11 @@ namespace SnowflakeID.Test
             {
                 Assert.Multiple(() =>
                 {
-                    Assert.That(obj.EpochObject, Is.EqualTo(DateTime.UnixEpoch));
+                    Assert.That(obj.EpochObject, Is.EqualTo(UnixEpoch));
                     Assert.That(obj.EpochObject.Kind, Is.EqualTo(DateTimeKind.Utc));
-                    Assert.That(obj.EpochObject.Kind, Is.EqualTo(DateTime.UnixEpoch.Kind));
-                    Assert.That(obj.EpochObject.ToUniversalTime(), Is.EqualTo(DateTime.UnixEpoch.ToUniversalTime()));
-                    Assert.That(obj.Epoch, Is.EqualTo(DateTime.UnixEpoch.ToString("O")));
+                    Assert.That(obj.EpochObject.Kind, Is.EqualTo(UnixEpoch.Kind));
+                    Assert.That(obj.EpochObject.ToUniversalTime(), Is.EqualTo(UnixEpoch.ToUniversalTime()));
+                    Assert.That(obj.Epoch, Is.EqualTo(UnixEpoch.ToString("O")));
                 });
             }
         }
