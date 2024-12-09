@@ -535,6 +535,11 @@ namespace SnowflakeID
         /// </summary>
         /// <param name="s">The <see cref="Snowflake"/> instance to convert.</param>
         /// <returns>An unsigned long integer representation of the specified <see cref="Snowflake"/> instance.</returns>
+        /// <remarks>
+        /// If a loosely typed language (or a language that doesn't differentiate between number types, i.e.: Typescript)
+        /// is part of your workflow, use the string representation to avoid issues regarding
+        /// floating-point underflow and rounding.
+        /// </remarks>
         [CLSCompliant(false)]
         public static implicit operator ulong(Snowflake s) => s?.Id ?? default;
 
@@ -542,6 +547,11 @@ namespace SnowflakeID
         /// Converts the current <see cref="Snowflake"/> instance to its unsigned long integer representation.
         /// </summary>
         /// <returns>An unsigned long integer representation of the current <see cref="Snowflake"/> instance.</returns>
+        /// <remarks>
+        /// If a loosely typed language (or a language that doesn't differentiate between number types, i.e.: Typescript)
+        /// is part of your workflow, use <see cref="ToString()"/> to avoid issues regarding
+        /// floating-point underflow and rounding.
+        /// </remarks>
         [CLSCompliant(false)]
         public ulong ToUInt64() => this;
         #endregion

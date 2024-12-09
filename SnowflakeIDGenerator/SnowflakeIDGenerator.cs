@@ -174,7 +174,10 @@ namespace SnowflakeID
         /// </summary>
         /// <returns>A <see cref="ulong"/> representing the next Snowflake ID.</returns>
         /// <remarks>
-        /// This method generates a new Snowflake ID and returns it as a numeric value.
+        /// <para>This method generates a new Snowflake ID and returns it as a numeric value.</para>
+        /// <para>If a loosely typed language (or a language that doesn't differentiate between number types, i.e.: Typescript)
+        /// is part of your workflow, use <see cref="GetCodeString()"/> to avoid issues regarding
+        /// floating-point underflow and rounding.</para>
         /// </remarks>
         [CLSCompliant(false)]
         public ulong GetCode() => GetSnowflake().Id;
@@ -229,6 +232,12 @@ namespace SnowflakeID
         /// </summary>
         /// <param name="machineId">The machine ID as a <see cref="ulong"/>.</param>
         /// <returns>A <see cref="ulong"/> representing the next Snowflake ID.</returns>
+        /// <remarks>
+        /// <para>This method generates a new Snowflake ID and returns it as a numeric value.</para>
+        /// <para>If a loosely typed language (or a language that doesn't differentiate between number types, i.e.: Typescript)
+        /// is part of your workflow, use <see cref="GetCodeString(ulong)"/> to avoid issues regarding
+        /// floating-point underflow and rounding.</para>
+        /// </remarks>
         [CLSCompliant(false)]
         public static ulong GetCode(ulong machineId) => new SnowflakeIDGenerator(machineId).GetCode();
 
@@ -238,6 +247,12 @@ namespace SnowflakeID
         /// <param name="machineId">The machine ID as a <see cref="ulong"/>.</param>
         /// <param name="customEpoch">The custom epoch date as a <see cref="DateTime"/>.</param>
         /// <returns>A <see cref="ulong"/> representing the next Snowflake ID.</returns>
+        /// <remarks>
+        /// <para>This method generates a new Snowflake ID and returns it as a numeric value.</para>
+        /// <para>If a loosely typed language (or a language that doesn't differentiate between number types, i.e.: Typescript)
+        /// is part of your workflow, use <see cref="GetCodeString(ulong, DateTime)"/> to avoid issues regarding
+        /// floating-point underflow and rounding.</para>
+        /// </remarks>
         [CLSCompliant(false)]
         public static ulong GetCode(ulong machineId, DateTime customEpoch) => new SnowflakeIDGenerator(machineId, customEpoch).GetCode();
 
