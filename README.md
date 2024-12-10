@@ -81,6 +81,10 @@ The method names are the same as when using the generator, except they need the 
 2. Call `SnowflakeIDGenerator.GetCode(machineId)` to get an Id in number (ulong) format
 3. Call `SnowflakeIDGenerator.GetCodeString(machineId)` to get an Id in string format
 
+> If the generated code is going to be used somewhere without a well-defined ulong type (example, Typescript),
+> it is recommended to use the string representation, because those languages usually represent numbers as
+> floating-point numbers and must round the code since they can't represent every integer beyond certain value.
+
 ### Using a non-standard date as epoch
 
 *version 1.1.2023 and up*
