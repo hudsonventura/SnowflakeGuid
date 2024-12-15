@@ -97,18 +97,28 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
 
         var final = FromUInt64(uint64);
 
+
         this.Epoch = final.Epoch;
-        this.UtcDateTime = final.UtcDateTime;
-        this.Timestamp = final.Timestamp;
+        this.DateTimeUTC = final.DateTimeUTC;
+        this.DateTime = final.DateTimeUTC.ToLocalTime();
+        this.TimestampUTC = final.TimestampUTC;
+        this.Timestamp = (long)(final.DateTimeUTC.ToLocalTime() - GlobalConstants.DefaultEpoch).TotalMilliseconds;
         this.MachineId = final.MachineId;
         this.Sequence = final.Sequence;
     }
 
     /// <summary>
     /// Sets the timeStamp portion of the SnowflakeGuid based on current time and selected epoch.
-    /// Gets real time of the SnowflakeGuid based on selected epoch.
+    /// Gets time of the SnowflakeGuid in UTC (+0UTC).
     /// </summary>
-    public DateTime UtcDateTime { get; set; }
+    public DateTime DateTimeUTC { get; private set; }
+
+    /// <summary>
+    /// Sets the timeStamp portion of the SnowflakeGuid based on current time and selected epoch.
+    /// Gets time of the SnowflakeGuid, in your timezone
+    /// </summary>
+    public DateTime DateTime { get; private set; }
+
 
     /// <summary>
     /// Gets or sets the machine/server number.
@@ -153,22 +163,41 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     private int _Sequence;
 
     /// <summary>
-    /// Gets or sets the timestamp as the number of milliseconds since the selected epoch.
+    /// Gets or sets the timestamp as the number of milliseconds since 01/01/1970 in UTC (+0UTC)
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException">
     /// Thrown when the value is greater than or equal to <see cref="MaxTimestamp"/>.
     /// </exception>
     [CLSCompliant(false)]
+    public long TimestampUTC
+    {
+        get => (DateTimeUTC.Subtract(Epoch).Ticks) / TimeSpan.TicksPerMillisecond;
+        set
+        {
+            if (value >= MaxTimestamp)
+            {
+                throw new ArgumentOutOfRangeException(nameof(TimestampUTC), $"{nameof(TimestampUTC)} must be less than {MaxTimestamp}. Got: {value}.");
+            }
+            DateTimeUTC = DateTime.SpecifyKind(Epoch.AddTicks((long)value * TimeSpan.TicksPerMillisecond), DateTimeKind.Utc);
+        }
+    }
+
+    /// <summary>
+    /// Gets or sets the timestamp as the number of milliseconds since 01/01/1970 in your local time
+    /// </summary>
+    /// <exception cref="ArgumentOutOfRangeException">
+    /// Thrown when the value is greater than or equal to <see cref="MaxTimestamp"/>.
+    /// </exception>
     public long Timestamp
     {
-        get => (UtcDateTime.Subtract(Epoch).Ticks) / TimeSpan.TicksPerMillisecond;
-        set
+        get => (DateTime.Subtract(Epoch).Ticks) / TimeSpan.TicksPerMillisecond;
+        private set
         {
             if (value >= MaxTimestamp)
             {
                 throw new ArgumentOutOfRangeException(nameof(Timestamp), $"{nameof(Timestamp)} must be less than {MaxTimestamp}. Got: {value}.");
             }
-            UtcDateTime = DateTime.SpecifyKind(Epoch.AddTicks((long)value * TimeSpan.TicksPerMillisecond), DateTimeKind.Utc);
+            DateTime = DateTime.SpecifyKind(Epoch.AddTicks((long)value * TimeSpan.TicksPerMillisecond), DateTimeKind.Utc);
         }
     }
 
@@ -185,7 +214,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     {
         get
         {
-            ulong timestamp = (ulong)(UtcDateTime - Epoch).TotalMilliseconds;
+            ulong timestamp = (ulong)(DateTimeUTC - Epoch).TotalMilliseconds;
 
             return ((timestamp & MASK_DATETIMEMILLIS_RIGHT_ALIGNED) << BITS_SHIFT_DATETIMEMILLIS)
                                     | (((ulong)MachineId & MASK_ESTACION_RIGHT_ALIGNED) << BITS_SHIFT_MACHINE)
@@ -195,7 +224,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
         {
             Sequence = (int)((value >> BITS_SHIFT_SEQUENCE) & MASK_SECUENCIA_RIGHT_ALIGNED);
             MachineId = (int)((value >> BITS_SHIFT_MACHINE) & MASK_ESTACION_RIGHT_ALIGNED);
-            Timestamp = (long)((value >> BITS_SHIFT_DATETIMEMILLIS) & MASK_DATETIMEMILLIS_RIGHT_ALIGNED);
+            TimestampUTC = (long)((value >> BITS_SHIFT_DATETIMEMILLIS) & MASK_DATETIMEMILLIS_RIGHT_ALIGNED);
         }
     }
 
@@ -220,12 +249,12 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
 
     /// <summary>
     /// Changes the snowflake's epoch keeping the code intact.
-    /// This will adjust the represented <see cref="UtcDateTime"/> to match the new epoch.
+    /// This will adjust the represented <see cref="DateTimeUTC"/> to match the new epoch.
     /// </summary>
     /// <param name="newEpoch">The new epoch to set.</param>
     public void ChangeEpoch(DateTime newEpoch)
     {
-        UtcDateTime += newEpoch - Epoch;
+        DateTimeUTC += newEpoch - Epoch;
         Epoch = newEpoch;
     }
 
@@ -576,7 +605,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     /// <param name="guid"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    public ulong FromGuid(Guid guid){
+    private ulong FromGuid(Guid guid){
         string guidString = guid.ToString("N"); // Remove os hifens, formato "N" é o hexadecimal puro do Guid
 
         if (guidString.Length < 16)
@@ -663,14 +692,19 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
             }
             SetLastTimestampDriftCorrected(currentTimestampMillis, GlobalConstants.DefaultEpoch);
 
+
+
             SnowflakeGuid snowflake = new(GlobalConstants.DefaultEpoch)
             {
-                Timestamp = (long)currentTimestampMillis,
                 MachineId = MACHINE_ID,
                 Sequence = Sequencer,
+                TimestampUTC = (long)currentTimestampMillis
             };
 
+            snowflake.Timestamp = (long)(snowflake.DateTimeUTC.ToLocalTime() - GlobalConstants.DefaultEpoch).TotalMilliseconds;
+
             snowflake.Guid = snowflake.ToGuid();
+            
 
             Sequencer++;
 
