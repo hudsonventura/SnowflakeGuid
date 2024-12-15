@@ -5,7 +5,7 @@
 
 using System;
 
-namespace SnowflakeGuid;
+
 
 /// <summary>
 /// Interface for the generator class for <see cref="Snowflake"/>.
@@ -42,21 +42,21 @@ public interface ISnowflakeIDGeneratorClsCompliant
     int ConfiguredMachineId { get; }
 
     /// <summary>
-    /// Gets the next Snowflake ID as a string.
+    /// Gets the next SnowflakeGuid ID as a string.
     /// </summary>
-    /// <returns>A <see cref="string"/> representing the next Snowflake ID.</returns>
+    /// <returns>A <see cref="string"/> representing the next SnowflakeGuid ID.</returns>
     /// <remarks>
-    /// This method generates a new Snowflake ID and returns it as a string value.
+    /// This method generates a new SnowflakeGuid ID and returns it as a string value.
     /// </remarks>
     string GetCodeString();
 
     /// <summary>
-    /// Generates the next Snowflake ID.
+    /// Generates the next SnowflakeGuid ID.
     /// </summary>
     /// <returns>A <see cref="Snowflake"/> object containing the generated ID.</returns>
     /// <remarks>
-    /// This method generates a new Snowflake ID and returns it as a <see cref="Snowflake"/> object.
+    /// This method generates a new SnowflakeGuid ID and returns it as a <see cref="Snowflake"/> object.
     /// </remarks>
-    Snowflake GetSnowflake();
+    SnowflakeGuid GetSnowflake();
 }
 

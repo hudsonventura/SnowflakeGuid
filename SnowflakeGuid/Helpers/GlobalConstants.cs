@@ -3,7 +3,7 @@
 
 using System;
 
-namespace SnowflakeGuid.Helpers;
+namespace Helpers;
 
 /// <summary>
 /// Global constants used throughout the Snowflake ID generator.

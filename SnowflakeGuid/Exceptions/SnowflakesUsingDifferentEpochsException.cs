@@ -3,7 +3,7 @@
 
 using System;
 
-namespace SnowflakeGuid.Exceptions;
+namespace Exceptions;
 
 /// <summary>
 /// Exception thrown when trying to compare IDs using different epochs.

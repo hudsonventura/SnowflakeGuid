@@ -3,7 +3,7 @@
 
 using System;
 
-namespace SnowflakeGuid.Helpers;
+namespace Helpers;
 
 /// <summary>
 /// Helper class for DateTime operations related to Snowflake ID generation.
