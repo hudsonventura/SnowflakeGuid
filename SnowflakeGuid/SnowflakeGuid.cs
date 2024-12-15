@@ -117,7 +117,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     /// Thrown when the value is greater than or equal to <see cref="MaxMachineId"/>.
     /// </exception>
     [CLSCompliant(false)]
-    public ulong MachineId
+    public int MachineId
     {
         get => _MachineId;
         set
@@ -129,27 +129,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
             _MachineId = value;
         }
     }
-
-    /// <summary>
-    /// Gets or sets the machine/server number as an integer.
-    /// </summary>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// Thrown when the value is negative or greater than or equal to <see cref="MaxMachineId"/>.
-    /// </exception>
-    public int MachineIdInt32
-    {
-        get => (int)MachineId;
-        set
-        {
-#if NET8_0_OR_GREATER
-            ArgumentOutOfRangeException.ThrowIfNegative(value);
-#else
-            if (value < 0) { throw new ArgumentOutOfRangeException(nameof(MachineIdInt32)); }
-#endif
-            MachineId = (ulong)value;
-        }
-    }
-    private ulong _MachineId;
+    private int _MachineId;
 
     /// <summary>
     /// Gets or sets the sequence number.
@@ -158,7 +138,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     /// Thrown when the value is greater than or equal to <see cref="MaxSequence"/>.
     /// </exception>
     [CLSCompliant(false)]
-    public ulong Sequence
+    public int Sequence
     {
         get => _Sequence;
         set
@@ -170,27 +150,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
             _Sequence = value;
         }
     }
-
-    /// <summary>
-    /// Gets or sets the sequence number as an integer.
-    /// </summary>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// Thrown when the value is negative or greater than or equal to <see cref="MaxSequence"/>.
-    /// </exception>
-    public int SequenceInt32
-    {
-        get => (int)Sequence;
-        set
-        {
-#if NET8_0_OR_GREATER
-            ArgumentOutOfRangeException.ThrowIfNegative(value);
-#else
-            if (value < 0) { throw new ArgumentOutOfRangeException(nameof(SequenceInt32)); }
-#endif
-            Sequence = (ulong)value;
-        }
-    }
-    private ulong _Sequence;
+    private int _Sequence;
 
     /// <summary>
     /// Gets or sets the timestamp as the number of milliseconds since the selected epoch.
@@ -199,9 +159,9 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     /// Thrown when the value is greater than or equal to <see cref="MaxTimestamp"/>.
     /// </exception>
     [CLSCompliant(false)]
-    public ulong Timestamp
+    public long Timestamp
     {
-        get => ((ulong)UtcDateTime.Subtract(Epoch).Ticks) / TimeSpan.TicksPerMillisecond;
+        get => (UtcDateTime.Subtract(Epoch).Ticks) / TimeSpan.TicksPerMillisecond;
         set
         {
             if (value >= MaxTimestamp)
@@ -212,29 +172,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
         }
     }
 
-    /// <summary>
-    /// Gets or sets the timestamp as the number of milliseconds since the selected epoch.
-    /// </summary>
-    /// <exception cref="ArgumentOutOfRangeException">
-    /// Thrown when the value is less than 0 or greater than or equal to <see cref="MaxTimestamp"/>.
-    /// </exception>
-    public long TimestampInt64
-    {
-        get => (long)Timestamp;
-        set
-        {
-            if (value < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(TimestampInt64), $"{nameof(TimestampInt64)} must be greater than 0. Got: {value}.");
-            }
 
-            if (value >= MaxTimestamp)
-            {
-                throw new ArgumentOutOfRangeException(nameof(TimestampInt64), $"{nameof(TimestampInt64)} must be less than {MaxTimestamp}. Got: {value}.");
-            }
-            Timestamp = (ulong)value;
-        }
-    }
 
     /// <summary>
     /// Gets the SnowflakeGuid ID.
@@ -250,14 +188,14 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
             ulong timestamp = (ulong)(UtcDateTime - Epoch).TotalMilliseconds;
 
             return ((timestamp & MASK_DATETIMEMILLIS_RIGHT_ALIGNED) << BITS_SHIFT_DATETIMEMILLIS)
-                                    | ((MachineId & MASK_ESTACION_RIGHT_ALIGNED) << BITS_SHIFT_MACHINE)
-                                    | ((Sequence & MASK_SECUENCIA_RIGHT_ALIGNED) << BITS_SHIFT_SEQUENCE);
+                                    | (((ulong)MachineId & MASK_ESTACION_RIGHT_ALIGNED) << BITS_SHIFT_MACHINE)
+                                    | (((ulong)Sequence & MASK_SECUENCIA_RIGHT_ALIGNED) << BITS_SHIFT_SEQUENCE);
         }
         private set
         {
-            Sequence = (value >> BITS_SHIFT_SEQUENCE) & MASK_SECUENCIA_RIGHT_ALIGNED;
-            MachineId = (value >> BITS_SHIFT_MACHINE) & MASK_ESTACION_RIGHT_ALIGNED;
-            Timestamp = (value >> BITS_SHIFT_DATETIMEMILLIS) & MASK_DATETIMEMILLIS_RIGHT_ALIGNED;
+            Sequence = (int)((value >> BITS_SHIFT_SEQUENCE) & MASK_SECUENCIA_RIGHT_ALIGNED);
+            MachineId = (int)((value >> BITS_SHIFT_MACHINE) & MASK_ESTACION_RIGHT_ALIGNED);
+            Timestamp = (long)((value >> BITS_SHIFT_DATETIMEMILLIS) & MASK_DATETIMEMILLIS_RIGHT_ALIGNED);
         }
     }
 
@@ -603,7 +541,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     
     string ToHex(ulong number)
     {
-        const string chars = "abcdef0123456789";
+        const string chars = "0123456789abcdef";
         StringBuilder result = new StringBuilder();
 
         do
@@ -657,7 +595,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
             throw new ArgumentException("Input string cannot be null or empty.", nameof(hex));
         }
 
-        const string chars = "abcdef0123456789";
+        const string chars = "0123456789abcdef";
         ulong result = 0;
 
         foreach (char c in hex.ToLower())
@@ -675,10 +613,6 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     }
 
     
-    public static SnowflakeGuid NewGuid(){
-
-        return SnowflakeGuidGenerator.GetSnowflake();
-    }
 
 
 
@@ -691,17 +625,17 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     private static readonly object lockObject = new();
     #endif
 
-    private static readonly ulong MACHINE_ID;
+    private static int MACHINE_ID;
 
 
     /// <summary>
-    /// Generates the next SnowflakeGuid ID.
+    /// Generates the next SnowflakeGuid.
     /// </summary>
-    /// <returns>A <see cref="Snowflake"/> object containing the generated ID.</returns>
+    /// <returns>A <see cref="Snowflake"/> object containing the generated Guid.</returns>
     /// <exception cref="InvalidOperationException">
     /// Thrown when the system clock is moved backwards.
     /// </exception>
-    public static SnowflakeGuid GetSnowflake()
+    public static SnowflakeGuid NewGuid()
     {
         lock (lockObject)
         {
@@ -727,7 +661,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
 
             SnowflakeGuid snowflake = new(GlobalConstants.DefaultEpoch)
             {
-                Timestamp = currentTimestampMillis,
+                Timestamp = (long)currentTimestampMillis,
                 MachineId = MACHINE_ID,
                 Sequence = Sequencer,
             };
@@ -747,8 +681,16 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
 
     private static ulong LastTimestampDriftCorrected;
 
-    private static ulong Sequencer;
+    private static int Sequencer;
 
     #endregion
+
+
+
+
+    public static void SetMachineID(int machineID = 0){
+        MACHINE_ID = machineID;
+    }
 }
+
 
