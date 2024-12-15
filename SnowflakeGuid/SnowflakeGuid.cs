@@ -639,6 +639,10 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     {
         lock (lockObject)
         {
+            if(!_machineID_altered){
+                SetMachineID(0);
+            }
+
             ulong currentTimestampMillis = DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, GlobalConstants.DefaultEpoch);
 
             if (Sequencer == 0 && currentTimestampMillis == LastTimeStamp)
@@ -687,9 +691,14 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
 
 
 
-
-    public static void SetMachineID(int machineID = 0){
+    private static bool _machineID_altered = false;
+    public static void SetMachineID(int machineID = 0)
+    {
+        if(_machineID_altered){
+            throw new OverflowException("You can set MachineID once");
+        }
         MACHINE_ID = machineID;
+        _machineID_altered = true;
     }
 }
 
