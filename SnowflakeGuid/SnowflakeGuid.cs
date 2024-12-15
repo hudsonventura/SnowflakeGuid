@@ -8,6 +8,7 @@ using Helpers;
 using System;
 using System.Globalization;
 using System.Text;
+using System.Threading;
 
 
 
@@ -678,5 +679,76 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
 
         return SnowflakeGuidGenerator.GetSnowflake();
     }
+
+
+
+
+    #region GENERATOR
+
+    #if NET9_0_OR_GREATER
+    private static readonly Lock lockObject = new();
+    #else
+    private static readonly object lockObject = new();
+    #endif
+
+    private static readonly ulong MACHINE_ID;
+
+
+    /// <summary>
+    /// Generates the next SnowflakeGuid ID.
+    /// </summary>
+    /// <returns>A <see cref="Snowflake"/> object containing the generated ID.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the system clock is moved backwards.
+    /// </exception>
+    public static SnowflakeGuid GetSnowflake()
+    {
+        lock (lockObject)
+        {
+            ulong currentTimestampMillis = DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, GlobalConstants.DefaultEpoch);
+
+            if (Sequencer == 0 && currentTimestampMillis == LastTimeStamp)
+            {
+                do
+                {
+                    Thread.Sleep(1);
+                    currentTimestampMillis = DateTimeHelper.TimestampMillisFromEpoch(DateTime.UtcNow, GlobalConstants.DefaultEpoch);
+                } while (currentTimestampMillis == LastTimeStamp);
+            }
+            else if (currentTimestampMillis < LastTimeStamp)
+            {
+                throw new InvalidOperationException("Time moved backwards!");
+            }
+            else if (currentTimestampMillis > LastTimeStamp)
+            {
+                Sequencer = 0;
+            }
+            SetLastTimestampDriftCorrected(currentTimestampMillis, GlobalConstants.DefaultEpoch);
+
+            SnowflakeGuid snowflake = new(GlobalConstants.DefaultEpoch)
+            {
+                Timestamp = currentTimestampMillis,
+                MachineId = MACHINE_ID,
+                Sequence = Sequencer,
+            };
+
+            snowflake.Guid = snowflake.ToGuid();
+
+            Sequencer++;
+
+            return snowflake;
+        }
+    }
+
+    private static void SetLastTimestampDriftCorrected(ulong timestamp, DateTime epoch) =>
+        LastTimestampDriftCorrected = timestamp + DateTimeHelper.TimestampMillisFromEpoch(epoch, GlobalConstants.DefaultEpoch);
+
+    private static ulong LastTimeStamp => LastTimestampDriftCorrected - DateTimeHelper.TimestampMillisFromEpoch(GlobalConstants.DefaultEpoch, GlobalConstants.DefaultEpoch);
+
+    private static ulong LastTimestampDriftCorrected;
+
+    private static ulong Sequencer;
+
+    #endregion
 }
 

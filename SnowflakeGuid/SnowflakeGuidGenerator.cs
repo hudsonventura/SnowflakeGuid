@@ -17,7 +17,7 @@ using System.Threading;
 /// <para><seealso href="https://fenase.github.io/SnowflakeIDGenerator/api/SnowflakeID.html">API</seealso></para>
 /// <para><seealso href="https://fenase.github.io/projects/SnowflakeIDGenerator">Site</seealso></para>
 /// </remarks>
-public class SnowflakeGuidGenerator : ISnowflakeIDGenerator, ISnowflakeIDGeneratorClsCompliant
+internal class SnowflakeGuidGenerator : ISnowflakeIDGenerator, ISnowflakeIDGeneratorClsCompliant
 {
     private readonly ulong MACHINE_ID;
 
