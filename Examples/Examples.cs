@@ -1,7 +1,7 @@
-﻿// See https://aka.ms/new-console-template for more information
-using SnowflakeID;
+// See https://aka.ms/new-console-template for more information
+using SnowflakeGuid;
 using System.Diagnostics;
-
+using System.Reflection;
 
 
 

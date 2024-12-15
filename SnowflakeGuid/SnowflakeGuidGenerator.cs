@@ -1,11 +1,11 @@
 ﻿// Copyright (c) 2022-2025, Federico Seckel.
 // Licensed under the BSD 3-Clause License. See LICENSE file in the project root for full license information.
 
-using SnowflakeID.Helpers;
+using SnowflakeGuid.Helpers;
 using System;
 using System.Threading;
 
-namespace SnowflakeID
+namespace SnowflakeGuid
 {
     /// <summary>
     /// Generator class for <see cref="Snowflake"/>.

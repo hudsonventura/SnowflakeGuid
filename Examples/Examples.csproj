@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\SnowflakeGuidGenerator\SnowflakeGuidGenerator.csproj" />
+    <ProjectReference Include="..\SnowflakeGuid\SnowflakeGuid.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
