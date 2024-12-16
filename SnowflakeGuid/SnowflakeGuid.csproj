@@ -22,7 +22,7 @@ Parse a Snowflake to get information about it's creation.
 		<LangVersion>latest</LangVersion>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
-		<PackageProjectUrl>https://www.nuget.org/packages/SnowflakeGuid</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/hudsonventura/SnowflakeGuid</PackageProjectUrl>
 		<PackageReleaseNotes>$([System.IO.File]::ReadAllText("$(MSBuildProjectDirectory)/../CHANGELOG.md"))</PackageReleaseNotes>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>
 	</PropertyGroup>

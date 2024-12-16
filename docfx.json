@@ -3,13 +3,13 @@
     {
       "src": [
         {
-          "src": "./SnowflakeIDGenerator",
+          "src": "./SnowflakeGuid",
           "files": [
             "**/*.csproj"
           ]
         },
         {
-          "src": "./SnowflakeIDGenerator.DependencyInjection",
+          "src": "./SnowflakeGuid.DependencyInjection",
           "files": [
             "**/*.csproj"
           ]
@@ -42,8 +42,8 @@
       "modern"
     ],
     "globalMetadata": {
-      "_appName": "SnowflakeIDGenerator",
-      "_appTitle": "SnowflakeIDGenerator",
+      "_appName": "SnowflakeGuid",
+      "_appTitle": "SnowflakeGuid",
       "_enableSearch": true,
       "pdf": true
     }
