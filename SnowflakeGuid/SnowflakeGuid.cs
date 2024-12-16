@@ -74,13 +74,13 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     /// <summary>
     /// Initializes a new instance of the <see cref="Snowflake"/> class using the default epoch (UNIX time 1-1-1970).
     /// </summary>
-    public SnowflakeGuid() : this(GlobalConstants.DefaultEpoch) { }
+    private SnowflakeGuid() : this(GlobalConstants.DefaultEpoch) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Snowflake"/> class using a custom date as epoch.
     /// </summary>
     /// <param name="epoch">The date to use as the epoch.</param>
-    public SnowflakeGuid(DateTime epoch)
+    private SnowflakeGuid(DateTime epoch)
     {
         this.Epoch = epoch;
     }
@@ -89,22 +89,36 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     /// Initializes a new instance of the <see cref="Snowflake"/> class from a Guid
     /// </summary>
     /// <param name="guid"></param>
-    public SnowflakeGuid(Guid guid)
+    public static SnowflakeGuid Parse(Guid guid)
     {
-        Guid = guid;
-
         var uint64 = FromGuid(guid);
 
         var final = FromUInt64(uint64);
 
+        final.Guid = guid;
+        final.Epoch = final.Epoch;
+        final.DateTime = final.DateTimeUTC.ToLocalTime();
+        final.Timestamp = (long)(final.DateTimeUTC.ToLocalTime() - GlobalConstants.DefaultEpoch).TotalMilliseconds;
 
-        this.Epoch = final.Epoch;
-        this.DateTimeUTC = final.DateTimeUTC;
-        this.DateTime = final.DateTimeUTC.ToLocalTime();
-        this.TimestampUTC = final.TimestampUTC;
-        this.Timestamp = (long)(final.DateTimeUTC.ToLocalTime() - GlobalConstants.DefaultEpoch).TotalMilliseconds;
-        this.MachineId = final.MachineId;
-        this.Sequence = final.Sequence;
+        return final;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Snowflake"/> class from a Guid
+    /// </summary>
+    /// <param name="guid"></param>
+    public static SnowflakeGuid Parse(long v)
+    {
+        return Parse((ulong) v);
+    }
+
+    public static SnowflakeGuid Parse(ulong v)
+    {
+        var result = FromUInt64(v);
+        result.Guid = result.ToGuid();
+        result.DateTime = result.DateTimeUTC.ToLocalTime();
+        result.Timestamp = (long)(result.DateTimeUTC.ToLocalTime() - GlobalConstants.DefaultEpoch).TotalMilliseconds;
+        return result;
     }
 
     /// <summary>
@@ -236,7 +250,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     /// </value>
     public string Code
     {
-        get => Id.ToString(CultureInfo.InvariantCulture).PadLeft(NumberOfDigits, '0');
+        get => Id.ToString(CultureInfo.InvariantCulture);
         private set => Id = ulong.Parse(value, CultureInfo.InvariantCulture);
     }
     
@@ -259,36 +273,70 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     }
 
     /// <summary>
-    /// Creates a SnowflakeId object from a SnowflakeId code.
+    /// Creates a SnowflakeGuid object from string with a valid ulong, long or Guid value.
     /// </summary>
     /// <param name="s">The SnowflakeId code as a string.</param>
     /// <returns>A new instance of the <see cref="Snowflake"/> class.</returns>
-    public static SnowflakeGuid Parse(string s) => new() { Code = s };
+    public static SnowflakeGuid Parse(string v) {
+        try
+        {
+            Guid converted = Guid.Parse(v);
+            return Parse(converted);
+        }
+        catch (System.Exception)
+        {
+            
+        }
+
+        try
+        {
+            long converted = long.Parse(v);
+            SnowflakeGuid result = InternalParse(converted);
+            result.Guid = result.ToGuid();
+            result.DateTime = result.DateTimeUTC.ToLocalTime();
+            result.Timestamp = (long)(result.DateTimeUTC.ToLocalTime() - GlobalConstants.DefaultEpoch).TotalMilliseconds;
+            return result;
+        }
+        catch (System.Exception)
+        {
+            
+        }
+
+        try
+        {
+            ulong converted = ulong.Parse(v);
+            SnowflakeGuid result = InternalParse(converted);
+            
+            return result;
+        }
+        catch (System.Exception)
+        {
+            
+        }
+
+
+
+        throw new Exception($"The value '{v}' is not a valid long, ulong or Guid value");
+    }
+
 
     /// <summary>
-    /// Creates a SnowflakeId object from a SnowflakeId code using a custom epoch.
-    /// </summary>
-    /// <param name="s">The SnowflakeId code as a string.</param>
-    /// <param name="customEpoch">The custom date to use as the epoch.</param>
-    /// <returns>A new instance of the <see cref="Snowflake"/> class.</returns>
-    public static SnowflakeGuid Parse(string s, DateTime customEpoch) => new(customEpoch) { Code = s };
-
-    /// <summary>
-    /// Creates a SnowflakeId object from a SnowflakeId code.
+    /// Creates a SnowflakeGuid object from a SnowflakeId code.
     /// </summary>
     /// <param name="b">The SnowflakeId code as a ulong.</param>
     /// <returns>A new instance of the <see cref="Snowflake"/> class.</returns>
     [CLSCompliant(false)]
-    public static SnowflakeGuid Parse(ulong b) => new() { Id = b };
+    private static SnowflakeGuid InternalParse(ulong b) => new() { Id = b };
 
     /// <summary>
-    /// Creates a SnowflakeId object from a SnowflakeId code using a custom epoch.
+    /// Creates a SnowflakeGuid object from a SnowflakeId code.
     /// </summary>
     /// <param name="b">The SnowflakeId code as a ulong.</param>
-    /// <param name="customEpoch">The custom date to use as the epoch.</param>
     /// <returns>A new instance of the <see cref="Snowflake"/> class.</returns>
     [CLSCompliant(false)]
-    public static SnowflakeGuid Parse(ulong b, DateTime customEpoch) => new(customEpoch) { Id = b };
+    private static SnowflakeGuid InternalParse(long b) => InternalParse((ulong)b);
+
+
 
     /// <summary>
     /// Gets the SnowflakeGuid ID as a string.
@@ -321,22 +369,6 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     public virtual bool Equals(SnowflakeGuid other) =>
         other is not null && Id == other.Id && Epoch == other.Epoch;
 
-    /// <summary>
-    /// Serves as the default hash function. Override of <seealso cref="object.GetHashCode()"/>.
-    /// </summary>
-    /// <returns>
-    /// A hash code for the current SnowflakeGuid object.
-    /// </returns>
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            int hc = 3;
-            hc += 5 * Id.GetHashCode();
-            hc += 7 * Epoch.GetHashCode();
-            return hc;
-        }
-    }
 
     /// <summary>
     /// Compares the current SnowflakeGuid object with another object.
@@ -487,14 +519,9 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     /// </summary>
     /// <param name="s">The string to convert.</param>
     /// <returns>A <see cref="Snowflake"/> instance that is equivalent to the specified string.</returns>
-    public static explicit operator SnowflakeGuid(string s) => Parse(s);
+    public static explicit operator SnowflakeGuid(string s) => InternalParse(ulong.Parse(s));
 
-    /// <summary>
-    /// Creates a <see cref="Snowflake"/> instance from the specified string.
-    /// </summary>
-    /// <param name="s">The string representation of the <see cref="Snowflake"/>.</param>
-    /// <returns>A <see cref="Snowflake"/> instance that corresponds to the specified string.</returns>
-    public static SnowflakeGuid FromString(string s) => (SnowflakeGuid)s;
+
 
     /// <summary>
     /// Converts the specified unsigned long integer to a <see cref="Snowflake"/> instance.
@@ -502,7 +529,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     /// <param name="s">The unsigned long integer to convert.</param>
     /// <returns>A <see cref="Snowflake"/> instance that is equivalent to the specified unsigned long integer.</returns>
     [CLSCompliant(false)]
-    public static explicit operator SnowflakeGuid(ulong s) => Parse(s);
+    public static explicit operator SnowflakeGuid(ulong s) => InternalParse(s);
 
     /// <summary>
     /// Creates a <see cref="Snowflake"/> instance from the specified unsigned long integer.
@@ -567,8 +594,12 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     }
 
 
-    
-    string ToHex(ulong number)
+    /// <summary>
+    /// Convert ulong to hexadecimal Guid valid
+    /// </summary>
+    /// <param name="number"></param>
+    /// <returns></returns>
+    static string ToHex(ulong number)
     {
         const string chars = "0123456789abcdef";
         StringBuilder result = new StringBuilder();
@@ -605,7 +636,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     /// <param name="guid"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    private ulong FromGuid(Guid guid){
+    private static ulong FromGuid(Guid guid){
         string guidString = guid.ToString("N"); // Remove os hifens, formato "N" é o hexadecimal puro do Guid
 
         if (guidString.Length < 16)
@@ -617,7 +648,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
         return FromHex(hex);
     }
 
-    ulong FromHex(string hex)
+    static ulong FromHex(string hex)
     {
         if (string.IsNullOrEmpty(hex))
         {
@@ -664,7 +695,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     /// <exception cref="InvalidOperationException">
     /// Thrown when the system clock is moved backwards.
     /// </exception>
-    public static SnowflakeGuid NewGuid()
+    public static SnowflakeGuid Create()
     {
         lock (lockObject)
         {
@@ -734,6 +765,16 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
         MACHINE_ID = machineID;
         _machineID_altered = true;
     }
+
+
+    /// <summary>
+    /// Generates the next SnowflakeGuid converted to System Guid.
+    /// </summary>
+    /// <returns>A <see cref="Guid"/> object containing the generated Guid.</returns>
+    /// <exception cref="InvalidOperationException">
+    /// Thrown when the system clock is moved backwards.
+    /// </exception>
+    public static Guid NewGuid() => Create().Guid;
 }
 
 
