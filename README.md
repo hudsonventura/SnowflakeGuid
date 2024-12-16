@@ -1,7 +1,12 @@
-# Snowflake Guid Generator
+# SnowflakeGuid
 
 This lib is a fork from `SnowflakeIDGenerator`.  
 Credits: [https://www.nuget.org/packages/SnowflakeIDGenerator](https://www.nuget.org/packages/SnowflakeIDGenerator)
+
+## About  
+This is a package to generate a System.Guid, but not completely random, and there is some information exactly in SnowflakeID, like timestamp, machineID and a string, but it looks like a uuid (see usage examples below).   
+You can convert SnowflakeID (as number) to SnowflakeGuid, Guid to SnowflakeGuid, or the other way around.  
+
 
 
 
