@@ -17,10 +17,8 @@ using System.Threading;
 /// <seealso href="https://en.wikipedia.org/wiki/Snowflake_ID">Wikipedia article about SnowflakeId</seealso>
 /// </summary>
 /// <remarks>
-/// <para><see href="https://www.nuget.org/packages/SnowflakeIDGenerator">NuGet</see></para>
-/// <para><seealso href="https://github.com/fenase/SnowflakeIDGenerator">Source</seealso></para>
-/// <para><seealso href="https://fenase.github.io/SnowflakeIDGenerator/api/SnowflakeID.html">API</seealso></para>
-/// <para><seealso href="https://fenase.github.io/projects/SnowflakeIDGenerator">Site</seealso></para>
+/// <para><see href="https://www.nuget.org/packages/SnowflakeGuid">NuGet</see></para>
+/// <para><seealso href="https://github.com/hudsonventura/SnowflakeGuid">Source</seealso></para>
 /// </remarks>
 public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGuid>, IComparable
 {
@@ -72,12 +70,12 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     #endregion
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Snowflake"/> class using the default epoch (UNIX time 1-1-1970).
+    /// Initializes a new instance of the <see cref="SnowflakeGuid"/> class using the default epoch (UNIX time 1-1-1970).
     /// </summary>
     private SnowflakeGuid() : this(GlobalConstants.DefaultEpoch) { }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Snowflake"/> class using a custom date as epoch.
+    /// Initializes a new instance of the <see cref="SnowflakeGuid"/> class using a custom date as epoch.
     /// </summary>
     /// <param name="epoch">The date to use as the epoch.</param>
     private SnowflakeGuid(DateTime epoch)
@@ -86,9 +84,11 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Snowflake"/> class from a Guid
+    /// Initializes a new instance of the <see cref="SnowflakeGuid"/> class from a System.Guid
     /// </summary>
     /// <param name="guid"></param>
+    /// <returns>A new instance of the <see cref="SnowflakeGuid"/> class.</returns>
+    
     public static SnowflakeGuid Parse(Guid guid)
     {
         var uint64 = FromGuid(guid);
@@ -104,14 +104,19 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Snowflake"/> class from a Guid
+    /// Initializes a new instance of the <see cref="SnowflakeGuid"/> class from a long value
     /// </summary>
-    /// <param name="guid"></param>
+    /// <param name="long">teste</param>
+    /// <returns>A new instance of the <see cref="SnowflakeGuid"/> class.</returns>
     public static SnowflakeGuid Parse(long v)
     {
         return Parse((ulong) v);
     }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SnowflakeGuid"/> class from a ulong value
+    /// </summary>
+    /// <param name="ulong"></param>
     public static SnowflakeGuid Parse(ulong v)
     {
         var result = FromUInt64(v);
@@ -275,8 +280,8 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     /// <summary>
     /// Creates a SnowflakeGuid object from string with a valid ulong, long or Guid value.
     /// </summary>
-    /// <param name="s">The SnowflakeId code as a string.</param>
-    /// <returns>A new instance of the <see cref="Snowflake"/> class.</returns>
+    /// <param name="v">The SnowflakeId code as a string.</param>
+    /// <returns>A new instance of the <see cref="SnowflakeGuid"/> class.</returns>
     public static SnowflakeGuid Parse(string v) {
         try
         {
@@ -324,7 +329,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     /// Creates a SnowflakeGuid object from a SnowflakeId code.
     /// </summary>
     /// <param name="b">The SnowflakeId code as a ulong.</param>
-    /// <returns>A new instance of the <see cref="Snowflake"/> class.</returns>
+    /// <returns>A new instance of the <see cref="SnowflakeGuid"/> class.</returns>
     [CLSCompliant(false)]
     private static SnowflakeGuid InternalParse(ulong b) => new() { Id = b };
 
@@ -332,7 +337,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     /// Creates a SnowflakeGuid object from a SnowflakeId code.
     /// </summary>
     /// <param name="b">The SnowflakeId code as a ulong.</param>
-    /// <returns>A new instance of the <see cref="Snowflake"/> class.</returns>
+    /// <returns>A new instance of the <see cref="SnowflakeGuid"/> class.</returns>
     [CLSCompliant(false)]
     private static SnowflakeGuid InternalParse(long b) => InternalParse((ulong)b);
 
@@ -428,12 +433,12 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     }
 
     /// <summary>
-    /// Determines whether two specified instances of <see cref="Snowflake"/> are equal.
+    /// Determines whether two specified instances of <see cref="SnowflakeGuid"/> are equal.
     /// </summary>
-    /// <param name="s1">The first <see cref="Snowflake"/> to compare.</param>
-    /// <param name="s2">The second <see cref="Snowflake"/> to compare.</param>
+    /// <param name="s1">The first <see cref="SnowflakeGuid"/> to compare.</param>
+    /// <param name="s2">The second <see cref="SnowflakeGuid"/> to compare.</param>
     /// <returns>
-    /// <c>true</c> if the two <see cref="Snowflake"/> instances are equal; otherwise, <c>false</c>.
+    /// <c>true</c> if the two <see cref="SnowflakeGuid"/> instances are equal; otherwise, <c>false</c>.
     /// </returns>
     public static bool operator ==(SnowflakeGuid s1, SnowflakeGuid s2)
     {
@@ -452,105 +457,105 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     }
 
     /// <summary>
-    /// Determines whether two specified instances of <see cref="Snowflake"/> are not equal.
+    /// Determines whether two specified instances of <see cref="SnowflakeGuid"/> are not equal.
     /// </summary>
-    /// <param name="s1">The first <see cref="Snowflake"/> to compare.</param>
-    /// <param name="s2">The second <see cref="Snowflake"/> to compare.</param>
+    /// <param name="s1">The first <see cref="SnowflakeGuid"/> to compare.</param>
+    /// <param name="s2">The second <see cref="SnowflakeGuid"/> to compare.</param>
     /// <returns>
-    /// <c>true</c> if the two <see cref="Snowflake"/> instances are not equal; otherwise, <c>false</c>.
+    /// <c>true</c> if the two <see cref="SnowflakeGuid"/> instances are not equal; otherwise, <c>false</c>.
     /// </returns>
     public static bool operator !=(SnowflakeGuid s1, SnowflakeGuid s2) => !(s1 == s2);
 
     /// <summary>
-    /// Determines whether the first specified <see cref="Snowflake"/> is greater than the second specified <see cref="Snowflake"/>.
+    /// Determines whether the first specified <see cref="SnowflakeGuid"/> is greater than the second specified <see cref="SnowflakeGuid"/>.
     /// </summary>
-    /// <param name="s1">The first <see cref="Snowflake"/> to compare.</param>
-    /// <param name="s2">The second <see cref="Snowflake"/> to compare.</param>
+    /// <param name="s1">The first <see cref="SnowflakeGuid"/> to compare.</param>
+    /// <param name="s2">The second <see cref="SnowflakeGuid"/> to compare.</param>
     /// <returns>
-    /// <c>true</c> if the first <see cref="Snowflake"/> is greater than the second <see cref="Snowflake"/>; otherwise, <c>false</c>.
+    /// <c>true</c> if the first <see cref="SnowflakeGuid"/> is greater than the second <see cref="SnowflakeGuid"/>; otherwise, <c>false</c>.
     /// </returns>
     /// <exception cref="SnowflakesUsingDifferentEpochsException">
-    /// Thrown when comparing <see cref="Snowflake"/> objects generated using different epochs.
+    /// Thrown when comparing <see cref="SnowflakeGuid"/> objects generated using different epochs.
     /// </exception>
     public static bool operator >(SnowflakeGuid s1, SnowflakeGuid s2) => (!(s1 is null ^ s2 is null)) && s1 != s2 && s1.CompareTo(s2) > 0;
 
     /// <summary>
-    /// Determines whether the first specified <see cref="Snowflake"/> is less than the second specified <see cref="Snowflake"/>.
+    /// Determines whether the first specified <see cref="SnowflakeGuid"/> is less than the second specified <see cref="SnowflakeGuid"/>.
     /// </summary>
-    /// <param name="s1">The first <see cref="Snowflake"/> to compare.</param>
-    /// <param name="s2">The second <see cref="Snowflake"/> to compare.</param>
+    /// <param name="s1">The first <see cref="SnowflakeGuid"/> to compare.</param>
+    /// <param name="s2">The second <see cref="SnowflakeGuid"/> to compare.</param>
     /// <returns>
-    /// <c>true</c> if the first <see cref="Snowflake"/> is less than the second <see cref="Snowflake"/>; otherwise, <c>false</c>.
+    /// <c>true</c> if the first <see cref="SnowflakeGuid"/> is less than the second <see cref="SnowflakeGuid"/>; otherwise, <c>false</c>.
     /// </returns>
     /// <exception cref="SnowflakesUsingDifferentEpochsException">
-    /// Thrown when comparing <see cref="Snowflake"/> objects generated using different epochs.
+    /// Thrown when comparing <see cref="SnowflakeGuid"/> objects generated using different epochs.
     /// </exception>
     public static bool operator <(SnowflakeGuid s1, SnowflakeGuid s2) => (!(s1 is null ^ s2 is null)) && s1 != s2 && s1.CompareTo(s2) < 0;
 
     /// <summary>
-    /// Determines whether the first specified <see cref="Snowflake"/> is greater than or equal to the second specified <see cref="Snowflake"/>.
+    /// Determines whether the first specified <see cref="SnowflakeGuid"/> is greater than or equal to the second specified <see cref="SnowflakeGuid"/>.
     /// </summary>
-    /// <param name="s1">The first <see cref="Snowflake"/> to compare.</param>
-    /// <param name="s2">The second <see cref="Snowflake"/> to compare.</param>
+    /// <param name="s1">The first <see cref="SnowflakeGuid"/> to compare.</param>
+    /// <param name="s2">The second <see cref="SnowflakeGuid"/> to compare.</param>
     /// <returns>
-    /// <c>true</c> if the first <see cref="Snowflake"/> is greater than or equal to the second <see cref="Snowflake"/>; otherwise, <c>false</c>.
+    /// <c>true</c> if the first <see cref="SnowflakeGuid"/> is greater than or equal to the second <see cref="SnowflakeGuid"/>; otherwise, <c>false</c>.
     /// </returns>
     /// <exception cref="SnowflakesUsingDifferentEpochsException">
-    /// Thrown when comparing <see cref="Snowflake"/> objects generated using different epochs.
+    /// Thrown when comparing <see cref="SnowflakeGuid"/> objects generated using different epochs.
     /// </exception>
     public static bool operator >=(SnowflakeGuid s1, SnowflakeGuid s2) => s1 == s2 || s1 > s2;
 
     /// <summary>
-    /// Determines whether the first specified <see cref="Snowflake"/> is less than or equal to the second specified <see cref="Snowflake"/>.
+    /// Determines whether the first specified <see cref="SnowflakeGuid"/> is less than or equal to the second specified <see cref="SnowflakeGuid"/>.
     /// </summary>
-    /// <param name="s1">The first <see cref="Snowflake"/> to compare.</param>
-    /// <param name="s2">The second <see cref="Snowflake"/> to compare.</param>
+    /// <param name="s1">The first <see cref="SnowflakeGuid"/> to compare.</param>
+    /// <param name="s2">The second <see cref="SnowflakeGuid"/> to compare.</param>
     /// <returns>
-    /// <c>true</c> if the first <see cref="Snowflake"/> is less than or equal to the second <see cref="Snowflake"/>; otherwise, <c>false</c>.
+    /// <c>true</c> if the first <see cref="SnowflakeGuid"/> is less than or equal to the second <see cref="SnowflakeGuid"/>; otherwise, <c>false</c>.
     /// </returns>
     /// <exception cref="SnowflakesUsingDifferentEpochsException">
-    /// Thrown when comparing <see cref="Snowflake"/> objects generated using different epochs.
+    /// Thrown when comparing <see cref="SnowflakeGuid"/> objects generated using different epochs.
     /// </exception>
     public static bool operator <=(SnowflakeGuid s1, SnowflakeGuid s2) => s1 == s2 || s1 < s2;
 
     #region Implicit and explicit cast operator with alternative functions. This part might be partially redundant
     /// <summary>
-    /// Converts the specified string to a <see cref="Snowflake"/> instance.
+    /// Converts the specified string to a <see cref="SnowflakeGuid"/> instance.
     /// </summary>
     /// <param name="s">The string to convert.</param>
-    /// <returns>A <see cref="Snowflake"/> instance that is equivalent to the specified string.</returns>
+    /// <returns>A <see cref="SnowflakeGuid"/> instance that is equivalent to the specified string.</returns>
     public static explicit operator SnowflakeGuid(string s) => InternalParse(ulong.Parse(s));
 
 
 
     /// <summary>
-    /// Converts the specified unsigned long integer to a <see cref="Snowflake"/> instance.
+    /// Converts the specified unsigned long integer to a <see cref="SnowflakeGuid"/> instance.
     /// </summary>
     /// <param name="s">The unsigned long integer to convert.</param>
-    /// <returns>A <see cref="Snowflake"/> instance that is equivalent to the specified unsigned long integer.</returns>
+    /// <returns>A <see cref="SnowflakeGuid"/> instance that is equivalent to the specified unsigned long integer.</returns>
     [CLSCompliant(false)]
     public static explicit operator SnowflakeGuid(ulong s) => InternalParse(s);
 
     /// <summary>
-    /// Creates a <see cref="Snowflake"/> instance from the specified unsigned long integer.
+    /// Creates a <see cref="SnowflakeGuid"/> instance from the specified unsigned long integer.
     /// </summary>
-    /// <param name="s">The unsigned long integer representation of the <see cref="Snowflake"/>.</param>
-    /// <returns>A <see cref="Snowflake"/> instance that corresponds to the specified unsigned long integer.</returns>
+    /// <param name="s">The unsigned long integer representation of the <see cref="SnowflakeGuid"/>.</param>
+    /// <returns>A <see cref="SnowflakeGuid"/> instance that corresponds to the specified unsigned long integer.</returns>
     [CLSCompliant(false)]
     public static SnowflakeGuid FromUInt64(ulong s) => (SnowflakeGuid)s;
 
     /// <summary>
-    /// Converts the specified <see cref="Snowflake"/> instance to its string representation.
+    /// Converts the specified <see cref="SnowflakeGuid"/> instance to its string representation.
     /// </summary>
-    /// <param name="s">The <see cref="Snowflake"/> instance to convert.</param>
-    /// <returns>A string representation of the specified <see cref="Snowflake"/> instance.</returns>
+    /// <param name="s">The <see cref="SnowflakeGuid"/> instance to convert.</param>
+    /// <returns>A string representation of the specified <see cref="SnowflakeGuid"/> instance.</returns>
     public static implicit operator string(SnowflakeGuid s) => s?.ToString();
 
     /// <summary>
-    /// Converts the specified <see cref="Snowflake"/> instance to its unsigned long integer representation.
+    /// Converts the specified <see cref="SnowflakeGuid"/> instance to its unsigned long integer representation.
     /// </summary>
-    /// <param name="s">The <see cref="Snowflake"/> instance to convert.</param>
-    /// <returns>An unsigned long integer representation of the specified <see cref="Snowflake"/> instance.</returns>
+    /// <param name="s">The <see cref="SnowflakeGuid"/> instance to convert.</param>
+    /// <returns>An unsigned long integer representation of the specified <see cref="SnowflakeGuid"/> instance.</returns>
     /// <remarks>
     /// If a loosely typed language (or a language that doesn't differentiate between number types, i.e.: Typescript)
     /// is part of your workflow, use the string representation to avoid issues regarding
@@ -560,9 +565,9 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     public static implicit operator ulong(SnowflakeGuid s) => s?.Id ?? default;
 
     /// <summary>
-    /// Converts the current <see cref="Snowflake"/> instance to its unsigned long integer representation.
+    /// Converts the current <see cref="SnowflakeGuid"/> instance to its unsigned long integer representation.
     /// </summary>
-    /// <returns>An unsigned long integer representation of the current <see cref="Snowflake"/> instance.</returns>
+    /// <returns>An unsigned long integer representation of the current <see cref="SnowflakeGuid"/> instance.</returns>
     /// <remarks>
     /// If a loosely typed language (or a language that doesn't differentiate between number types, i.e.: Typescript)
     /// is part of your workflow, use <see cref="ToString()"/> to avoid issues regarding
@@ -574,12 +579,14 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
 
 
 
-
+    /// <summary>
+    /// A System.Guid representing the SnowflakeGuid. It contains the SnowflakeID
+    /// </summary>
     public Guid Guid { get; internal set; }
 
 
     /// <summary>
-    /// Converts the current <see cref="Snowflake"/> instance to Guid object
+    /// Converts the current <see cref="SnowflakeGuid"/> instance to Guid object
     /// </summary>
     /// <returns></returns>
     public Guid ToGuid(){
@@ -691,7 +698,7 @@ public class SnowflakeGuid : IEquatable<SnowflakeGuid>, IComparable<SnowflakeGui
     /// <summary>
     /// Generates the next SnowflakeGuid.
     /// </summary>
-    /// <returns>A <see cref="Snowflake"/> object containing the generated Guid.</returns>
+    /// <returns>A <see cref="SnowflakeGuid"/> object containing the generated Guid.</returns>
     /// <exception cref="InvalidOperationException">
     /// Thrown when the system clock is moved backwards.
     /// </exception>

@@ -32,11 +32,15 @@ SnowflakeGuid.SetMachineID(1);
   Guid guid = SnowflakeGuid.NewGuid();
 
 
-  //OR ... you can put it on you object class, using Guid to make compatible json or EFCore systems
+  //Generate a System.Guid compatible json or EFCore
+  using System.ComponentModel.DataAnnotations;
+  
+  [Key]
   public Guid guid { get; private set; } = SnowflakeGuid.NewGuid();
 
   //Optionally you can use SnowflakeGuid as system Guid, using this.
   //It will use the string uuid do save to a database and json, for example.
+  //NOT RECOMENDED. It not works with EFCore
   using System.Text.Json.Serialization;
 
   [JsonConverter(typeof(SnowflakeGuidJsonConverter))]
