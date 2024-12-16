@@ -57,29 +57,21 @@ SnowflakeGuid.SetMachineID(1);
 
 ### Usage - Parsing SnowflakeID
 ```C#
-//Parse from ulong
-ulong ulong_value = 1864424336924868608;
-Guid guid = SnowflakeGuid.Parse(ulong_value);
+/*Parse from a System.Guid*/
+Guid value = Guid.Parse("64f3414f-3d00-1000-0000-a1d12c9e2ef9");
+Snowflake snow = SnowflakeGuid.Parse(guid);
 
-//Parse from long
-long long_value = 1864424336924868608;
-Guid guid = SnowflakeGuid.ParseFromLong(long_value);
+/*Pase from a string (valid guid)*/
+Snowflake snow = SnowflakeGuid.Parse("64f3414f-3d00-1000-0000-a1d12c9e2ef9");
 
-//Parse from string (long valid)
-string string_value = "1864424336924868608";
-Guid guid = SnowflakeGuid.ParseFromString(string_value);
-```
+/*Parse from ulong*/
+Guid guid = SnowflakeGuid.Parse(1864424336924868608);
 
-### Usage - Get Guid by SnowflakeID ()
-```C#
-string value = "01864424336924868608";
-Guid guid = SnowflakeGuid.ParseFromGuid(value);
-```
+/*Parse from long*/
+Guid guid = SnowflakeGuid.Parse(1864424336924868608);
 
-### Usage -  Get SnowflakeID by Guid (Parse from a common Guid)
-```C#
-Guid value = Guid.Parse("8b7bbd43-d429-49c6-b64c-11586f994e75");
-Snowflake snow = SnowflakeGuid.ParseFromGuid(guid);
+/*Parse from string (long valid)*/
+Guid guid = SnowflakeGuid.ParseFromString("1864424336924868608");
 ```
 
 
@@ -89,10 +81,15 @@ Snowflake snow = SnowflakeGuid.ParseFromGuid(guid);
 ### Usage - Properties of SnowflakeID
 ```C#
 Snowflake snow = new Snowflake(guid);
-Console.WriteLine(snow.UtcDateTime);  // 13/9/2022 22:27:47
-Console.WriteLine(snow.Timestamp);    // 1663108067853
-Console.WriteLine(snow.MachineId);    // 701
-Console.WriteLine(snow.Sequence);     // 3911
+
+Console.WriteLine(snow.MachineId);      // Till 1024
+Console.WriteLine(snow.Sequence);       // Till 4096
+
+Console.WriteLine(snow.DateTimeUTC);    // 13/9/2022 22:27:47 in +0UTC
+Console.WriteLine(snow.TimestampUTC);   // 1663108067853  in +0UTC
+
+Console.WriteLine(snow.DateTime);    // 13/9/2022 22:27:47 in your local timezone
+Console.WriteLine(snow.Timestamp);   // 1663108067853 in your local timezone
 ```
 
 
