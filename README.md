@@ -22,7 +22,7 @@ dotnet add package SnowflakeGuid
 Configure machine ID. If ignored, `0` will be considered.  
 You must configure the machine ID on starting app. You cannot change it after generate the first SnowfalkeGuid.
 ``` C#
-SnowflakeGuid.SetMachineID(1);
+SnowflakeGuid.SetMachineID(1); //max is 1024
 ```
 
 
@@ -76,15 +76,28 @@ Snowflake snow = SnowflakeGuid.ParseFromString("1864424336924868608");
 ```C#
 Snowflake snow = new Snowflake(guid);
 
-Console.WriteLine(snow.MachineId);      // Till 1024 configurable, see session `Install and configure`
-Console.WriteLine(snow.Sequence);       // Till 4096
+Console.WriteLine(snow.MachineId);      // The machine/instance ID configured. See session `Install and configure`
+Console.WriteLine(snow.Sequence);       // Sequence, starting from 0 generated automatically each millisecond
 
-Console.WriteLine(snow.DateTimeUTC);    // 13/9/2022 22:27:47 in +0UTC
-Console.WriteLine(snow.TimestampUTC);   // 1663108067853  in +0UTC
+Console.WriteLine(snow.DateTimeUTC);    // DateTime object in +0UTC
+Console.WriteLine(snow.TimestampUTC);   // Timestamp with millisecond precision in +0UTC
 
-Console.WriteLine(snow.DateTime);    // 13/9/2022 22:27:47 in your local timezone
-Console.WriteLine(snow.Timestamp);   // 1663108067853 in your local timezone
+Console.WriteLine(snow.DateTime);       // DateTime object in your local timezone
+Console.WriteLine(snow.Timestamp);      // Timestamp with millisecond precision in your local timezone
 ```
+
+# About
+ 
+
+SnowflakeGuid uses 128bits wich:
+ - 64bits to timestamp (max 4398032111103 milliseconds from 01/01/1970);  
+ - 10 to instance ID (max 1024 machines in your infrastructure);  
+ - 12 bits to sequence (max 4096 IDs for each millisecond);  
+ - 42 bits to random data.  
+
+The maximum timestamp you can generate is the maximum SnowflakeID (not Guid) as ulong (18446744073709551615) and it is `4398032111103` as timestamp.  
+It will be on `Wed May 15, 2109 03:35:11 GMT+0000` with millisecond precision.
+ 
 
 
 ## Reason
