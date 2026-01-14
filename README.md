@@ -1,119 +1,241 @@
-# SnowflakeGuid
+# ❄️ SnowflakeGuid
 
-This lib is a fork from `SnowflakeIDGenerator`.  
-Credits: [https://www.nuget.org/packages/SnowflakeIDGenerator](https://www.nuget.org/packages/SnowflakeIDGenerator)
+[![NuGet](https://img.shields.io/nuget/v/SnowflakeGuid.svg)](https://www.nuget.org/packages/SnowflakeGuid)
+[![License](https://img.shields.io/badge/license-MIT-purple.svg)](LICENSE)
+[![Downloads](https://img.shields.io/nuget/dt/SnowflakeGuid.svg)](https://img.shields.io/nuget/dt/SnowflakeGuid.svg/)  
 
-## About  
-This is a package to generate a System.Guid, but not completely random, and there is some information exactly in SnowflakeID, like timestamp, machineID and a string, but it looks like a uuid (see usage examples below).   
-You can convert SnowflakeID (as number) to SnowflakeGuid, Guid to SnowflakeGuid, or the other way around.  
+A .NET library that generates `System.Guid` values with embedded SnowflakeID information (timestamp, machine ID, sequence), while maintaining UUID appearance and compatibility.
 
+> **Note:** This library is a fork from `SnowflakeIDGenerator`.  
+> Credits: [SnowflakeIDGenerator on NuGet](https://www.nuget.org/packages/SnowflakeIDGenerator)
 
+---
 
+## 📋 Table of Contents
 
-# Usage
+- [About](#-about)
+- [Features](#-features)
+- [Installation](#-installation)
+- [Quick Start](#-quick-start)
+- [Usage](#-usage)
+  - [Configuration](#configuration)
+  - [Generating IDs](#generating-ids)
+  - [Parsing IDs](#parsing-ids)
+  - [Accessing Properties](#accessing-properties)
+- [Technical Details](#-technical-details)
+- [Why SnowflakeGuid?](#-why-snowflakeguid)
 
-### Usage - Install and configure
+---
 
-Install
-``` bash
+## 📖 About
+
+SnowflakeGuid generates `System.Guid` values that are not completely random. Instead, they embed SnowflakeID information (timestamp, machine ID, sequence) while maintaining the familiar UUID format. You can convert between SnowflakeID (as a number), `Guid`, and `SnowflakeGuid` in any direction.
+
+**Example:**
+- SnowflakeID (ulong): `1864424336924868608`
+- SnowflakeGuid (UUID): `8b7bbd43-d429-49c6-b64c-11586f994e75`
+
+The UUID format is more readable in URLs:
+- ✅ `http://yourdomain.com/user/8b7bbd43-d429-49c6-b64c-11586f994e75`
+- ❌ `http://yourdomain.com/user/1864424336924868608`
+
+---
+
+## ✨ Features
+
+- 🆔 Generate UUID-compatible GUIDs with embedded SnowflakeID information
+- 🔄 Convert between SnowflakeID (long/ulong), Guid, and SnowflakeGuid
+- ⏰ Extract timestamp, machine ID, and sequence from generated GUIDs
+- 🗄️ Full Entity Framework Core support
+- 📦 JSON serialization support
+- 🔧 Configurable machine/instance ID (up to 1024 machines)
+
+---
+
+## 🚀 Installation
+
+Install the package via NuGet Package Manager:
+
+```bash
 dotnet add package SnowflakeGuid
 ```
 
-Configure machine ID. If ignored, `0` will be considered.  
-You must configure the machine ID on starting app. You cannot change it after generate the first SnowfalkeGuid.
-``` C#
-SnowflakeGuid.SetMachineID(1); //max is 1024
+Or via Package Manager Console:
+
+```powershell
+Install-Package SnowflakeGuid
 ```
 
+---
 
+## ⚡ Quick Start
 
-### Usage - Generate
-```C#
-  //Create a SnowflakeGuid with timestamp, datetime, machineID, sequence and Guid properties, like a comon SnowflakeID
-  SnowflakeGuid snow = SnowflakeGuid.Create();
-  Guid guid = snow.Guid;
+```csharp
+using SnowflakeGuid;
 
-  //Generate a System.Guid from Microsoft, but after you can convert back to SnowflakeGuid
-  Guid guid = SnowflakeGuid.NewGuid();
+// Configure machine ID (optional, defaults to 0)
+SnowflakeGuid.SetMachineID(1); // Max is 1024
 
+// Generate a new SnowflakeGuid
+SnowflakeGuid snow = SnowflakeGuid.Create();
+Guid guid = snow.Guid;
 
-  //Generate a System.Guid compatible json or EFCore
-  using System.ComponentModel.DataAnnotations;
-  
-  [Key]
-  public Guid guid { get; private set; } = SnowflakeGuid.NewGuid();
-
-  //Optionally you can use SnowflakeGuid as system Guid, using this.
-  //It will use the string uuid do save to a database and json, for example.
-  //NOT RECOMENDED. It not works with EFCore
-  using System.Text.Json.Serialization;
-
-  [JsonConverter(typeof(SnowflakeGuidJsonConverter))]
-  public SnowflakeGuid snow { get; private set; } = SnowflakeGuid.Create();
+// Use in Entity Framework Core
+public class User
+{
+    [Key]
+    public Guid Id { get; private set; } = SnowflakeGuid.NewGuid();
+    
+    public string Name { get; set; }
+}
 ```
 
-### Usage - Parsing SnowflakeID from long, ulong, Guid and string
-```C#
-/*Parse from a System.Guid*/
-Guid vaguidguidlue = Guid.Parse("64f3414f-3d00-1000-0000-a1d12c9e2ef9");
-Snowflake snow = SnowflakeGuid.Parse(guid);
+---
 
-/*Pase from a string (valid guid)*/
-Snowflake snow = SnowflakeGuid.Parse("64f3414f-3d00-1000-0000-a1d12c9e2ef9");
+## 📚 Usage
 
-/*Parse from long or ulong*/
-Snowflake snow = SnowflakeGuid.Parse(1864424336924868608);
+### Configuration
 
-/*Parse from string (long or ulong valid)*/
-Snowflake snow = SnowflakeGuid.ParseFromString("1864424336924868608");
+Configure the machine ID at application startup. **Important:** You cannot change the machine ID after generating the first SnowflakeGuid.
+
+```csharp
+// Set machine ID (0-1024)
+SnowflakeGuid.SetMachineID(1); // If not set, defaults to 0
 ```
 
+### Generating IDs
 
+#### Basic Generation
 
+```csharp
+// Create a SnowflakeGuid with timestamp, datetime, machineID, sequence and Guid properties
+SnowflakeGuid snow = SnowflakeGuid.Create();
+Guid guid = snow.Guid;
+```
 
+#### Generate System.Guid Compatible with EF Core
 
-### Usage - Properties of SnowflakeID
-```C#
-Snowflake snow = new Snowflake(guid);
+```csharp
+using System.ComponentModel.DataAnnotations;
 
-Console.WriteLine(snow.MachineId);      // The machine/instance ID configured. See session `Install and configure`
-Console.WriteLine(snow.Sequence);       // Sequence, starting from 0 generated automatically each millisecond
+public class Product
+{
+    [Key]
+    public Guid Id { get; private set; } = SnowflakeGuid.NewGuid();
+    
+    public string Name { get; set; }
+}
+```
 
-Console.WriteLine(snow.DateTimeUTC);    // DateTime object in +0UTC
-Console.WriteLine(snow.TimestampUTC);   // Timestamp with millisecond precision in +0UTC
+#### Using SnowflakeGuid Directly (Not Recommended)
 
+```csharp
+using System.Text.Json.Serialization;
+
+// ⚠️ NOT RECOMMENDED: Does not work with Entity Framework Core
+[JsonConverter(typeof(SnowflakeGuidJsonConverter))]
+public SnowflakeGuid Id { get; private set; } = SnowflakeGuid.Create();
+```
+
+### Parsing IDs
+
+Parse SnowflakeGuid from various formats:
+
+```csharp
+// Parse from a System.Guid
+Guid guid = Guid.Parse("64f3414f-3d00-1000-0000-a1d12c9e2ef9");
+SnowflakeGuid snow = SnowflakeGuid.Parse(guid);
+
+// Parse from a string (valid GUID format)
+SnowflakeGuid snow = SnowflakeGuid.Parse("64f3414f-3d00-1000-0000-a1d12c9e2ef9");
+
+// Parse from long or ulong
+SnowflakeGuid snow = SnowflakeGuid.Parse(1864424336924868608L);
+
+// Parse from string (long or ulong)
+SnowflakeGuid snow = SnowflakeGuid.ParseFromString("1864424336924868608");
+```
+
+### Accessing Properties
+
+Extract information from a SnowflakeGuid:
+
+```csharp
+SnowflakeGuid snow = SnowflakeGuid.Create();
+
+// Machine/Instance Information
+Console.WriteLine(snow.MachineId);      // The machine/instance ID configured
+Console.WriteLine(snow.Sequence);       // Sequence (0-4095), auto-incremented per millisecond
+
+// UTC Timestamps
+Console.WriteLine(snow.DateTimeUTC);    // DateTime object in UTC
+Console.WriteLine(snow.TimestampUTC);  // Timestamp with millisecond precision in UTC
+
+// Local Timezone Timestamps
 Console.WriteLine(snow.DateTime);       // DateTime object in your local timezone
 Console.WriteLine(snow.Timestamp);      // Timestamp with millisecond precision in your local timezone
 ```
 
-# About
- 
+---
 
-SnowflakeGuid uses 128bits wich:
- - 64bits to timestamp (max 4398032111103 milliseconds from 01/01/1970);  
- - 10 to instance ID (max 1024 machines in your infrastructure);  
- - 12 bits to sequence (max 4096 IDs for each millisecond);  
- - 42 bits to random data.  
+## 🔧 Technical Details
 
-The maximum timestamp you can generate is the maximum SnowflakeID (not Guid) as ulong (18446744073709551615) and it is `4398032111103` as timestamp.  
-It will be on `Wed May 15, 2109 03:35:11 GMT+0000` with millisecond precision.
- 
+### Bit Allocation
 
+SnowflakeGuid uses **128 bits** distributed as follows:
 
-## Reason
+| Component | Bits | Description | Maximum Value |
+|-----------|------|-------------|---------------|
+| Timestamp | 64 | Milliseconds since epoch (01/01/1970) | 4,398,032,111,103 ms |
+| Instance ID | 10 | Machine/instance identifier | 1,024 machines |
+| Sequence | 12 | Auto-increment per millisecond | 4,096 IDs/ms |
+| Random Data | 42 | Random padding | - |
 
-SnowflakeID is a 64-bit number value. In dotnet this value can be represented by a ulong. However, when converting a ulong to a string, dotnet ends up rounding it and it tends to be filled with 3 zeros at the end. So you need to work with the conversion to string even if the value is a ulong.  
+### Maximum Timestamp
 
-ulong: `1864424336924868608`  
- 
+The maximum timestamp that can be generated is `4,398,032,111,103` milliseconds from epoch, which corresponds to:
 
-We have a new `Guidv7` on `net9` but there is not a way to get the properties about the creation reason. We can't get the timestamp or machine ID for example. By the way with a original SnowflakeID and this SnowflakeGuid you can set and get back these information.
+**Wed May 15, 2109 03:35:11 GMT+0000** (with millisecond precision)
 
-Therefore, I created this lib to convert the ulong value to a uuid (Guid in dotnet).  
-You can either convert a uuid to snowflake and obtain its properties, or generate a snowflake and convert it to uuid.  
+---
 
-Guid appearance: `8b7bbd43-d429-49c6-b64c-11586f994e75` 
+## 💡 Why SnowflakeGuid?
 
+### The Problem with SnowflakeID
 
-I think it's more beautiful to see `http://yourdomain.com/user/8b7bbd43-d429-49c6-b64c-11586f994e75`  
-than `http://yourdomain.com/user/1864424336924868608`.
+SnowflakeID is a 64-bit number value represented as a `ulong` in .NET. However, when converting a `ulong` to a string, .NET may round the value or pad it with zeros, making string conversion unreliable:
+
+```
+ulong: 1864424336924868608
+```
+
+### The Problem with Guid v7
+
+While .NET 9 introduces `Guid v7`, it doesn't provide a way to extract the embedded properties (timestamp, machine ID, etc.) from the generated GUID. With SnowflakeGuid, you can:
+
+- ✅ Set and retrieve timestamp information
+- ✅ Set and retrieve machine ID
+- ✅ Set and retrieve sequence number
+- ✅ Convert between SnowflakeID (number) and GUID (UUID format)
+
+### The Solution
+
+SnowflakeGuid bridges the gap by:
+
+1. **Converting** `ulong` SnowflakeID values to UUID format (Guid in .NET)
+2. **Generating** new SnowflakeGuid values with embedded information
+3. **Extracting** all SnowflakeID properties from any generated GUID
+
+This gives you the best of both worlds: the readability of UUIDs and the information-rich nature of SnowflakeIDs.
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Credits
+
+Original work: [SnowflakeIDGenerator](https://www.nuget.org/packages/SnowflakeIDGenerator)
